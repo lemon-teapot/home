@@ -60,16 +60,16 @@
       font-size: clamp(0.78rem, 2vw, 0.92rem);
       font-weight: 300;
       font-style: italic;
-      color: #7a5535;
+      color: #d4a870;
       line-height: 1.7;
     }
     .domain {
       margin-top: 1.3rem;
       font-size: 0.65rem;
-      font-weight: 500;
-      color: #4a3020;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
+      font-weight: 300;
+      color: #d4a870;
+      letter-spacing: 0.18em;
+      text-transform: lowercase;
       font-style: normal;
     }
 
@@ -181,7 +181,8 @@
   </linearGradient>
 
   <clipPath id="wclip"><rect x="460" y="30" width="178" height="138" rx="3"/></clipPath>
-  <clipPath id="display-clip"><rect x="259" y="171" width="154" height="22"/></clipPath>
+  <!-- Blinker zone x:257-270, text zone x:272-413 -->
+  <clipPath id="display-clip"><rect x="272" y="171" width="141" height="22"/></clipPath>
   <filter id="led-glow" x="-25%" y="-25%" width="150%" height="150%">
     <feGaussianBlur stdDeviation="0.9" result="blur"/>
     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -933,9 +934,9 @@
 <g id="music-display" onclick="onLEDClick()">
   <!-- Scrolling ticker (clipped to LED screen area) -->
   <g clip-path="url(#display-clip)">
-    <g id="display-scroller" transform="translate(0,0)">
-      <text id="display-text" x="259" y="187"
-        font-family="'Courier New', Courier, monospace" font-size="13"
+    <g id="display-scroller" transform="translate(154,0)">
+      <text id="display-text" x="272" y="187"
+        font-family="'Courier New', Courier, monospace" font-size="14"
         fill="#18ee18" letter-spacing="0.08em" filter="url(#led-glow)">Cloud Veil</text>
     </g>
   </g>
@@ -944,7 +945,7 @@
   <g onclick="skipTrack()" style="cursor:pointer">
     <rect x="425" y="168" width="13" height="32" fill="transparent"/>
     <!-- Arrow 1: always bright, nudges right on pulse -->
-    <polygon points="428,181 433,185 428,189" fill="#20f020">
+    <polygon points="428,178 433,182 428,186" fill="#20f020">
       <animateTransform attributeName="transform" type="translate"
         values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"
@@ -952,7 +953,7 @@
         keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
     </polygon>
     <!-- Arrow 2: always bright, slight lag -->
-    <polygon points="428,191 433,195 428,199" fill="#20f020">
+    <polygon points="428,188 433,192 428,196" fill="#20f020">
       <animateTransform attributeName="transform" type="translate"
         values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.12s" repeatCount="indefinite"
@@ -967,8 +968,10 @@
     <title>Skip to next track</title>
   </g>
 
-  <!-- Power LED: always on, pulses between dim and bright green -->
-  <circle cx="260" cy="185" r="2" fill="#20f020">
+  <!-- Blinker zone divider (separates LED dot from scrolling text) -->
+  <line x1="270" y1="171" x2="270" y2="193" stroke="#0e240e" stroke-width="1.5"/>
+  <!-- Power LED: centred in blinker zone (x:257-270), always on -->
+  <circle cx="263" cy="183" r="2" fill="#20f020">
     <animate attributeName="fill" values="#0a500a;#20f020;#0a500a" dur="2s" repeatCount="indefinite"/>
   </circle>
 </g>
