@@ -132,17 +132,18 @@
 <body>
 
 <!-- Sound toggle button -->
-<button id="snd-btn" onclick="toggleSound()" aria-label="Toggle sound">
-  <svg id="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<!-- Initial state: muted (audio not started) — JS corrects to "Sound on" after initAudio -->
+<button id="snd-btn" class="muted" onclick="toggleSound()" aria-label="Toggle sound">
+  <svg id="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
     <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
     <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
   </svg>
-  <svg id="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+  <svg id="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
     <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
   </svg>
-  <span id="snd-label">Sound on</span>
+  <span id="snd-label">Sound off</span>
 </button>
 
 <svg class="scene" viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg">
@@ -154,8 +155,8 @@
     <stop offset="100%" stop-color="#120805" stop-opacity="0"/>
   </radialGradient>
 
-  <radialGradient id="lampglow" cx="50%" cy="30%" r="60%" gradientUnits="userSpaceOnUse"
-    fx="660" fy="255" cx="660" cy="255" r="180">
+  <radialGradient id="lampglow" gradientUnits="userSpaceOnUse"
+    cx="660" cy="255" r="180" fx="660" fy="255">
     <stop offset="0%"   stop-color="#ffaa30" stop-opacity="0.22"/>
     <stop offset="100%" stop-color="#ffaa30" stop-opacity="0"/>
   </radialGradient>
@@ -199,6 +200,12 @@
   <filter id="softshadow">
     <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000" flood-opacity="0.45"/>
   </filter>
+
+  <!-- Lamp glow (right side) — must be in defs -->
+  <radialGradient id="lg2" gradientUnits="userSpaceOnUse" cx="660" cy="255" r="200">
+    <stop offset="0%"   stop-color="#ffaa30" stop-opacity="0.18"/>
+    <stop offset="100%" stop-color="#ffaa30" stop-opacity="0"/>
+  </radialGradient>
 
 </defs>
 
@@ -261,10 +268,6 @@
 </rect>
 
 <!-- Lamp glow wash (right side) -->
-<radialGradient id="lg2" cx="660" cy="255" r="200" gradientUnits="userSpaceOnUse">
-  <stop offset="0%"   stop-color="#ffaa30" stop-opacity="0.18"/>
-  <stop offset="100%" stop-color="#ffaa30" stop-opacity="0"/>
-</radialGradient>
 <rect width="700" height="440" fill="url(#lg2)"/>
 
 <!-- ── LARGE BOOKSHELF (back wall, centre) ── -->
@@ -1011,6 +1014,12 @@ let ctx = null, masterGain, pianoGain, rainGain;
 let muted = false, curtainIsOpen = false, audioStarted = false;
 let pianoEl = null, rainEl = null;
 
+// Must be declared before buildTicker() is first called
+const DAYS        = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONS        = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let weatherCity = '...', weatherTemp = '--';
+
 // ── Playlist ──────────────────────────────────────────────────────────
 const TRACKS = [
   { file:'cloud-veil.mp3',    name:'Cloud Veil'    },
@@ -1230,11 +1239,7 @@ document.addEventListener('touchstart', onFirstInteraction,{once:true,passive:tr
 updatePlayerUI();
 updateSoundBtn();
 
-// ── Clock + LED display (time/date every second, weather every 30 min) ─
-const DAYS       = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const MONS       = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-let weatherCity = '...', weatherTemp = '--';
+// ── Clock updates every second ─────────────────────────────────────────
 
 function updateClock() {
   const now = new Date();
