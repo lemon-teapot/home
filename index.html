@@ -1030,8 +1030,9 @@ function openCurtain() {
 
   const ol = document.getElementById('curtain-open-l');
   const or_ = document.getElementById('curtain-open-r');
-  if (ol) { ol.style.opacity='1'; ol.style.pointerEvents='auto'; }
-  if (or_) { or_.style.opacity='1'; or_.style.pointerEvents='auto'; }
+  // Restore CSS-defined transition (with delay) for the fade-in
+  if (ol)  { ol.style.transition=''; ol.style.opacity='1'; ol.style.pointerEvents='auto'; }
+  if (or_) { or_.style.transition=''; or_.style.opacity='1'; or_.style.pointerEvents='auto'; }
 
   if (!audioStarted) { initAudio(); return; }
   xfade(musicGain, rainGain, 1.2);
@@ -1045,8 +1046,9 @@ function closeCurtain() {
 
   const ol = document.getElementById('curtain-open-l');
   const or_ = document.getElementById('curtain-open-r');
-  if (ol) { ol.style.opacity='0'; ol.style.pointerEvents='none'; }
-  if (or_) { or_.style.opacity='0'; or_.style.pointerEvents='none'; }
+  // Override CSS delay so tie-backs fade immediately on close
+  if (ol)  { ol.style.transition='opacity 0.35s 0s'; ol.style.opacity='0'; ol.style.pointerEvents='none'; }
+  if (or_) { or_.style.transition='opacity 0.35s 0s'; or_.style.opacity='0'; or_.style.pointerEvents='none'; }
 
   setTimeout(() => {
     const cl = document.getElementById('curtain-close-l');
