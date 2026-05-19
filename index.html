@@ -926,13 +926,7 @@
 <g id="music-display" onclick="onLEDClick()">
   <!-- Scrolling ticker (clipped to LED screen area) -->
   <g clip-path="url(#display-clip)">
-    <g id="display-scroller">
-      <animateTransform id="display-anim" attributeName="transform" type="translate"
-        values="0,0; -560,0; -560,0; 154,0; 154,0"
-        keyTimes="0; 0.75; 0.83; 0.831; 1"
-        dur="31.5s" repeatCount="indefinite"
-        calcMode="spline"
-        keySplines="0.35 0 0.65 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+    <g id="display-scroller" transform="translate(154,0)">
       <text id="display-text" x="259" y="184"
         font-family="'Courier New', Courier, monospace" font-size="12"
         fill="#18ee18" letter-spacing="0.08em" filter="url(#led-glow)">Cloud Veil</text>
@@ -1079,32 +1073,60 @@ function skipTrack() {
 }
 
 function buildTicker() {
-  const now   = new Date();
-  const day   = DAYS[now.getDay()];                          // "Tuesday"
-  const date  = now.getDate() + ' ' + FULL_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
-  const daydate = day + ', ' + date;                         // "Tuesday, 19 May 2026"
-  const track = playlist[trackIdx]?.name || '♩';
+  const now     = new Date();
+  const day     = DAYS[now.getDay()];
+  const date    = now.getDate() + ' ' + FULL_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+  const daydate = day + ', ' + date;
   const noLocation = ['...', 'No location', 'Location off', 'No permission', 'Unavailable'];
   const hasLocation = weatherCity && !noLocation.includes(weatherCity);
-  const SEP = '          ';                                  // wide gap between segments
-  let t = track;
+  const SEP = '          '; // 10-space gap between segments
+  // Show "Click to Play" until audio has started
+  const trackSeg = audioStarted ? (playlist[trackIdx]?.name || '---') : '♪  Click to Play';
+  let t = trackSeg;
   if (hasLocation) t += SEP + weatherCity + '  ' + weatherTemp + '°C';
   t += SEP + daydate + '     ';
   return t;
 }
 
-function updatePlayerUI() {
-  const text = document.getElementById('display-text');
-  const anim = document.getElementById('display-anim');
-  if (text) {
-    text.textContent = buildTicker();
-    try { if (anim) anim.beginElement(); } catch(e) {}
-  }
+// ── Smooth JS ticker (requestAnimationFrame, constant speed) ──────────
+let tickerRaf = null;
+let tickerX   = 154; // start off-screen right
+
+function startTicker() {
+  if (tickerRaf) cancelAnimationFrame(tickerRaf);
+  tickerX = 154; // reset to off-screen right each time text changes
+  let lastT = null;
+  const SPEED = 22; // px/s — steady reading pace
+
+  (function step(t) {
+    if (!lastT) lastT = t;
+    const dt = Math.min((t - lastT) / 1000, 0.05); // cap for background tabs
+    lastT = t;
+    tickerX -= SPEED * dt;
+    if (tickerX < -700) tickerX = 154; // text fully off left → jump back to right
+    const el = document.getElementById('display-scroller');
+    if (el) el.setAttribute('transform', 'translate(' + tickerX.toFixed(1) + ',0)');
+    tickerRaf = requestAnimationFrame(step);
+  })(performance.now());
 }
 
-function onLEDClick() {
-  // Clicking the LED display starts audio (same as any first interaction)
-  onFirstInteraction();
+function updatePlayerUI() {
+  const text = document.getElementById('display-text');
+  if (text) text.textContent = buildTicker();
+  startTicker();
+}
+
+function onLEDClick() { onFirstInteraction(); }
+
+// ── Sound button state ────────────────────────────────────────────────
+function updateSoundBtn() {
+  const isOn  = audioStarted && !muted;
+  const btn   = document.getElementById('snd-btn');
+  if (!btn) return;
+  btn.classList.toggle('muted', !isOn);
+  document.getElementById('snd-label').textContent = isOn ? 'Sound on' : 'Sound off';
+  document.getElementById('ico-on').style.display  = isOn ? '' : 'none';
+  document.getElementById('ico-off').style.display = isOn ? 'none' : '';
 }
 
 // ── Init audio ────────────────────────────────────────────────────────
@@ -1137,7 +1159,8 @@ function initAudio() {
   if (curtainIsOpen) rainEl.play().catch(()=>{});
 
   startFireCrackle();
-  updatePlayerUI();
+  updatePlayerUI();   // rebuild ticker with actual track name
+  updateSoundBtn();   // show "Sound on" now that audio is running
 }
 
 // ── Curtain: open ─────────────────────────────────────────────────────
@@ -1192,14 +1215,10 @@ function closeCurtain() {
 
 // ── Sound toggle ──────────────────────────────────────────────────────
 function toggleSound() {
+  if (!audioStarted) { initAudio(); return; } // first click starts audio (unmuted)
   muted = !muted;
-  const btn=document.getElementById('snd-btn');
-  btn.classList.toggle('muted', muted);
-  document.getElementById('snd-label').textContent = muted ? 'Sound off' : 'Sound on';
-  document.getElementById('ico-on').style.display  = muted ? 'none' : '';
-  document.getElementById('ico-off').style.display = muted ? '' : 'none';
-  if (!audioStarted){if(!muted)initAudio();return;}
-  masterGain.gain.linearRampToValueAtTime(muted?0:1, ctx.currentTime+0.5);
+  masterGain.gain.linearRampToValueAtTime(muted ? 0 : 1, ctx.currentTime + 0.5);
+  updateSoundBtn();
 }
 
 // ── Start on first user interaction ──────────────────────────────────
@@ -1207,8 +1226,9 @@ function onFirstInteraction(){if(!audioStarted)initAudio();}
 document.addEventListener('click',      onFirstInteraction,{once:true,passive:true});
 document.addEventListener('touchstart', onFirstInteraction,{once:true,passive:true});
 
-// Populate LED display immediately on page load (before any interaction)
+// Populate LED display + set button to "off" on page load
 updatePlayerUI();
+updateSoundBtn();
 
 // ── Clock + LED display (time/date every second, weather every 30 min) ─
 const DAYS       = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
