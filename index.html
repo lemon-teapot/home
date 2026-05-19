@@ -73,55 +73,68 @@
       font-style: normal;
     }
 
-    /* ── Gramophone disc spin ── */
-    #gram-disc-group {
-      transform-box: fill-box;
-      transform-origin: center;
-    }
-    #gram-disc-group.spinning {
-      animation: spin-disc 5s linear infinite;
-    }
-    @keyframes spin-disc { to { transform: rotate(360deg); } }
-
-    /* ── Floating music notes ── */
-    .gram-note { opacity: 0; pointer-events: none; }
-    .gram-note.playing { animation: float-note 3s ease-out infinite; }
-    #gram-note2.playing { animation-delay: 1.1s; }
-    #gram-note3.playing { animation-delay: 2.1s; }
-    @keyframes float-note {
-      0%   { opacity: 0; transform: translate(0, 0) rotate(0deg); }
-      15%  { opacity: 0.9; }
-      100% { opacity: 0; transform: translate(-16px, -42px) rotate(-12deg); }
+    /* ── Curtain slide animation ── */
+    #curtain-close-l, #curtain-close-r {
+      transition: transform 2s cubic-bezier(0.4, 0, 0.6, 1);
+      cursor: pointer;
     }
 
-    /* Fade-in hint */
-    #snd-hint {
+    /* ── Sound toggle button ── */
+    #snd-btn {
       position: fixed;
       bottom: 1.4rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1c0e06cc;
-      border: 1px solid #3a2010;
-      color: #8a6035;
-      font-size: 0.7rem;
+      right: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 1rem 0.45rem 0.75rem;
+      background: #1c0e06ee;
+      border: 1.5px solid #4a2c10;
+      border-radius: 24px;
+      color: #c8a060;
       font-family: 'Inter', sans-serif;
-      padding: 0.35rem 0.9rem;
-      border-radius: 20px;
-      white-space: nowrap;
-      animation: hint-fade 6s ease-out 1s both;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      z-index: 200;
+      outline: none;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #snd-btn:hover { background: #281808ee; border-color: #7a4820; color: #e0b870; }
+    #snd-btn.muted { color: #5a3a20; border-color: #2a1808; }
+    #snd-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+    #snd-label { white-space: nowrap; }
+
+    /* Fade-in curtain hint */
+    #curtain-hint-text {
+      animation: hint-fade 7s ease-out 1.5s both;
       pointer-events: none;
     }
     @keyframes hint-fade {
       0%   { opacity: 0; }
-      12%  { opacity: 1; }
-      75%  { opacity: 1; }
+      10%  { opacity: 1; }
+      80%  { opacity: 1; }
       100% { opacity: 0; }
     }
   </style>
 </head>
 <body>
 
-<div id="snd-hint">♪ click the gramophone to play music</div>
+<!-- Sound toggle button -->
+<button id="snd-btn" onclick="toggleSound()" aria-label="Toggle sound">
+  <svg id="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+  </svg>
+  <svg id="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+  </svg>
+  <span id="snd-label">Sound on</span>
+</button>
 
 <svg class="scene" viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -465,26 +478,21 @@
 <ellipse cx="129" cy="181" rx="5" ry="5" fill="#1e1408"/>
 <line x1="129" y1="181" x2="129" y2="177.5" stroke="#c8a060" stroke-width="1" stroke-linecap="round"/>
 <line x1="129" y1="181" x2="131.5" y2="183" stroke="#c8a060" stroke-width="1" stroke-linecap="round"/>
-<!-- ── LEMON TEAPOT (on mantel — brand element) ── -->
+<!-- ── LEMON TEAPOT (on mantel, muted amber so it reads as warm, not neon) ── -->
+<!-- Drop shadow -->
+<ellipse cx="161" cy="191" rx="13" ry="3" fill="#0a0602" opacity="0.35"/>
 <!-- Body -->
-<ellipse cx="162" cy="183" rx="16" ry="13" fill="#d4c818"/>
+<ellipse cx="161" cy="183" rx="13" ry="10" fill="#9a8a14"/>
+<ellipse cx="158" cy="180" rx="7"  ry="5"  fill="#b09a1a" opacity="0.4"/>
 <!-- Lid -->
-<ellipse cx="162" cy="170" rx="11" ry="4" fill="#c0b412"/>
-<rect x="158" y="167" width="8" height="5" rx="2" fill="#c8bc16"/>
-<circle cx="162" cy="165" r="3.5" fill="#d4c818"/>
-<!-- Knob shine -->
-<circle cx="161" cy="164" r="1.2" fill="#ece828" opacity="0.6"/>
-<!-- Spout -->
-<path d="M147 180 Q138 176 133 170 Q128 163 134 159" stroke="#b8ac10" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-<circle cx="133" cy="158" r="2" fill="#c8bc12"/>
-<!-- Handle -->
-<path d="M177 178 Q188 175 188 183 Q188 192 177 189" stroke="#b8ac10" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-<!-- Body shine -->
-<ellipse cx="156" cy="179" rx="7" ry="5" fill="#ece830" opacity="0.3"/>
-<!-- Lemon detail (tiny dots on body) -->
-<circle cx="158" cy="184" r="1.5" fill="#c0b010" opacity="0.4"/>
-<circle cx="165" cy="187" r="1.5" fill="#c0b010" opacity="0.4"/>
-<circle cx="168" cy="181" r="1.5" fill="#c0b010" opacity="0.4"/>
+<rect x="154" y="174" width="14" height="3" rx="1.5" fill="#7a6c0e"/>
+<ellipse cx="161" cy="174" rx="8" ry="2.5" fill="#8a7c10"/>
+<!-- Lid knob -->
+<ellipse cx="161" cy="171" rx="3" ry="2.5" fill="#9a8a14"/>
+<!-- Spout (short, upward-angled — not a watering can) -->
+<path d="M149 181 Q144 178 142 174" stroke="#7a6c0e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<!-- Handle (right, neat loop) -->
+<path d="M174 181 Q180 179 180 184 Q180 189 174 187" stroke="#7a6c0e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
 
 <!-- FIRE LOGS -->
 <ellipse cx="120" cy="349" rx="48" ry="8"  fill="#3a1a08"/>
@@ -745,57 +753,41 @@
 <path d="M218 386 Q228 376 220 366 Q212 356 202 362" stroke="#2a2018" stroke-width="7" fill="none" stroke-linecap="round"/>
 <path d="M218 386 Q228 376 220 366 Q212 356 202 362" stroke="#3a2e24" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
 
-<!-- ── GRAMOPHONE (clickable sound toggle) ── -->
-<g id="gramophone" onclick="toggleSound()" style="cursor:pointer" aria-label="Toggle music">
-  <!-- Small round side table -->
-  <ellipse cx="320" cy="370" rx="28" ry="7" fill="#2e1808"/>
-  <ellipse cx="320" cy="368" rx="24" ry="6" fill="#3a2010"/>
-  <rect x="312" y="370" width="7" height="20" rx="3" fill="#241408"/>
-  <rect x="322" y="370" width="7" height="20" rx="3" fill="#241408"/>
-  <!-- Cabinet body -->
-  <path d="M298 368 L300 338 L340 338 L342 368 Z" fill="#5a3010"/>
-  <path d="M299 368 L301 341 L339 341 L340 368 Z" fill="#6a3c18" opacity="0.45"/>
-  <!-- Wood grain -->
-  <line x1="308" y1="342" x2="309" y2="367" stroke="#481e08" stroke-width="1" opacity="0.45"/>
-  <line x1="316" y1="342" x2="317" y2="367" stroke="#481e08" stroke-width="1" opacity="0.45"/>
-  <line x1="324" y1="342" x2="325" y2="367" stroke="#481e08" stroke-width="1" opacity="0.45"/>
-  <line x1="332" y1="342" x2="333" y2="367" stroke="#481e08" stroke-width="1" opacity="0.45"/>
-  <!-- Cabinet top trim -->
-  <rect x="296" y="335" width="48" height="5" rx="2" fill="#7a4818"/>
-  <!-- Turntable disc (spinning group) -->
-  <g id="gram-disc-group">
-    <circle cx="320" cy="328" r="20" fill="#180a04"/>
-    <circle cx="320" cy="328" r="17" fill="#1e0e06"/>
-    <circle cx="320" cy="328" r="14" fill="none" stroke="#120804" stroke-width="1.2"/>
-    <circle cx="320" cy="328" r="10" fill="none" stroke="#120804" stroke-width="1"/>
-    <circle cx="320" cy="328" r="6"  fill="none" stroke="#120804" stroke-width="0.8"/>
-    <!-- Label -->
-    <circle cx="320" cy="328" r="4.5" fill="#8a1010"/>
-    <circle cx="320" cy="328" r="1.5" fill="#180a04"/>
-    <!-- Label text suggestion -->
-    <line x1="317" y1="328" x2="323" y2="328" stroke="#c83030" stroke-width="0.7" opacity="0.6"/>
-    <line x1="320" y1="325" x2="320" y2="331" stroke="#c83030" stroke-width="0.7" opacity="0.6"/>
-  </g>
-  <!-- Tone arm -->
-  <line x1="332" y1="320" x2="324" y2="332" stroke="#8a6020" stroke-width="2.5" stroke-linecap="round"/>
-  <circle cx="324" cy="333" r="2.5" fill="#6a4a10"/>
-  <!-- Horn pipe (leading to bell) -->
-  <path d="M319 322 Q308 308 295 296 Q282 284 268 272 Q258 264 248 258" stroke="#c89010" stroke-width="5" fill="none" stroke-linecap="round"/>
-  <path d="M319 322 Q308 308 295 296 Q282 284 268 272 Q258 264 248 258" stroke="#e0b030" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
-  <!-- Horn bell (flared opening) -->
-  <ellipse cx="238" cy="252" rx="26" ry="16" fill="#d4a018" transform="rotate(-30,238,252)"/>
-  <ellipse cx="238" cy="252" rx="19" ry="11" fill="#c09010" transform="rotate(-30,238,252)"/>
-  <ellipse cx="238" cy="252" rx="12" ry="7"  fill="#a87808" transform="rotate(-30,238,252)"/>
-  <!-- Bell shine -->
-  <path d="M255 264 Q249 256 244 248" stroke="#f0d040" stroke-width="1.5" fill="none" opacity="0.45" stroke-linecap="round"/>
-  <!-- Hover/click hint ring -->
-  <circle cx="320" cy="350" r="26" fill="none" stroke="#8a6020" stroke-width="1" opacity="0.25" stroke-dasharray="4,3"/>
+<!-- ── CLOSED CURTAIN PANELS (default: covers window; click to open) ── -->
+<!-- Left closing panel -->
+<g id="curtain-close-l" onclick="openCurtain()">
+  <path d="M450 14 L554 14 L554 210 C548 208 542 210 536 208 C530 206 524 210 518 208 C512 206 506 208 450 208 Z" fill="#7a5018"/>
+  <line x1="464" y1="14" x2="461" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="478" y1="14" x2="475" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="492" y1="14" x2="489" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="506" y1="14" x2="503" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="520" y1="14" x2="517" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="536" y1="14" x2="533" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="457" y1="14" x2="454" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
+  <line x1="471" y1="14" x2="468" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
+  <line x1="485" y1="14" x2="482" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
 </g>
-
-<!-- Floating music notes (hidden until playing) -->
-<text id="gram-note1" class="gram-note" x="224" y="248" font-size="14" fill="#d4a840" font-family="serif" transform-box="fill-box" transform-origin="center">♪</text>
-<text id="gram-note2" class="gram-note" x="208" y="238" font-size="11" fill="#d4a840" font-family="serif" transform-box="fill-box" transform-origin="center">♫</text>
-<text id="gram-note3" class="gram-note" x="232" y="232" font-size="10" fill="#d4a840" font-family="serif" transform-box="fill-box" transform-origin="center">♩</text>
+<!-- Right closing panel -->
+<g id="curtain-close-r" onclick="openCurtain()">
+  <path d="M550 14 L654 14 L654 208 C648 208 642 206 636 208 C630 210 624 208 618 210 C612 208 606 210 550 210 Z" fill="#7a5018"/>
+  <line x1="564" y1="14" x2="561" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="578" y1="14" x2="575" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="592" y1="14" x2="589" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="606" y1="14" x2="603" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="620" y1="14" x2="617" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="636" y1="14" x2="633" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
+  <line x1="557" y1="14" x2="554" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
+  <line x1="571" y1="14" x2="568" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
+  <line x1="585" y1="14" x2="582" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
+</g>
+<!-- Center seam -->
+<line id="curtain-seam" x1="552" y1="14" x2="552" y2="210" stroke="#3a2004" stroke-width="2.5" opacity="0.7"/>
+<!-- "Peek outside" hint (fades after a few seconds) -->
+<g id="curtain-hint-text" onclick="openCurtain()" style="cursor:pointer">
+  <rect x="488" y="92" width="128" height="26" rx="13" fill="#0d0704" opacity="0.65"/>
+  <text x="552" y="109" text-anchor="middle" font-size="10.5" fill="#c8a060"
+    font-family="'Inter', sans-serif" letter-spacing="0.06em">✦ peek outside</text>
+</g>
 
 <!-- ── FLOOR LAMP (right side, behind couch) ── -->
 <!-- Base -->
@@ -833,106 +825,208 @@
 </div>
 
 <script>
-// ── Music box melody engine (slow classical, G major, repeating) ──────
-const Audio = {
-  ctx: null, master: null, on: false,
-  idx: 0, nextTime: 0, timer: null,
+// ── Two-mode ambient audio + curtain interaction ──────────────────────
+// Mode A (curtain closed): slow indoor piano melody
+// Mode B (curtain open):   outdoor rain + fire crackle
+// Toggle button: mutes/unmutes whichever mode is active
 
-  // Slow waltz-like melody in G major (note, beats)
-  MELODY: [
-    ['G4',2],['B4',1],['D5',1],
-    ['G5',1.5],['D5',0.5],['B4',1],['G4',1],
-    ['A4',1],['G4',1],['E4',1],['D4',1],
-    ['G4',1],['B4',1],['D5',2],
-    ['E5',1.5],['D5',0.5],['B4',1],['A4',1],
-    ['G4',1],['A4',1],['B4',1],['D5',1],
-    ['G5',1.5],['D5',0.5],['B4',1],['A4',1],
-    ['G4',4],
-  ],
-  F: { D4:293.66, E4:329.63, G4:392.00, A4:440.00,
-       B4:493.88, D5:587.33, E5:659.25, G5:784.00 },
-  BEAT: 60/50, // seconds per beat at 50 BPM (dreamy, slow)
+let ctx = null, masterGain = null;
+let musicGain = null, rainGain = null;
+let melodyTimer = null, melodyIdx = 0, melodyNext = 0;
+let muted = false;
+let curtainIsOpen = false;
 
-  start() {
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.master = this.ctx.createGain();
-    this.master.gain.setValueAtTime(0, this.ctx.currentTime);
-    this.master.connect(this.ctx.destination);
-    // Subtle vinyl crackle underneath
-    this.addCrackle();
-    this.nextTime = this.ctx.currentTime + 0.3;
-    this.idx = 0;
-    this.schedule();
-    this.master.gain.linearRampToValueAtTime(0.75, this.ctx.currentTime + 2.5);
-    this.on = true;
-  },
+const MELODY = [
+  ['G4',2],['B4',1],['D5',1],
+  ['G5',1.5],['D5',0.5],['B4',1],['G4',1],
+  ['A4',1],['G4',1],['E4',1],['D4',1],
+  ['G4',1],['B4',1],['D5',2],
+  ['E5',1.5],['D5',0.5],['B4',1],['A4',1],
+  ['G4',1],['A4',1],['B4',1],['D5',1],
+  ['G5',1.5],['D5',0.5],['B4',1],['A4',1],
+  ['G4',3],['R',1],
+];
+const FREQ = { R:0,
+  D4:293.66, E4:329.63, G4:392.00, A4:440.00,
+  B4:493.88, D5:587.33, E5:659.25, G5:784.00 };
+const BEAT = 60 / 48; // seconds per beat — very slow
 
-  // Music box note: sine + 2nd harmonic, sharp attack, long decay
-  playNote(freq, start, beats) {
-    const dur = beats * this.BEAT;
-    [[freq, 0.38, dur * 0.92], [freq * 2, 0.09, dur * 0.5]].forEach(([f, vol, d]) => {
-      const osc = this.ctx.createOscillator();
-      const env = this.ctx.createGain();
-      osc.type = 'sine'; osc.frequency.value = f;
-      // Slight vintage wobble
-      const lfo = this.ctx.createOscillator();
-      const lfoG = this.ctx.createGain();
-      lfo.frequency.value = 5.2; lfoG.gain.value = f * 0.003;
-      lfo.connect(lfoG); lfoG.connect(osc.frequency);
-      env.gain.setValueAtTime(0, start);
-      env.gain.linearRampToValueAtTime(vol, start + 0.018);
-      env.gain.exponentialRampToValueAtTime(0.001, start + d);
-      osc.connect(env); env.connect(this.master);
-      lfo.start(start); lfo.stop(start + d);
-      osc.start(start); osc.stop(start + d);
-    });
-  },
+function initAudio() {
+  if (ctx) return;
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = ctx.createGain();
+  masterGain.gain.value = muted ? 0 : 1;
+  masterGain.connect(ctx.destination);
 
-  addCrackle() {
-    const sr = this.ctx.sampleRate, len = sr * 4;
-    const buf = this.ctx.createBuffer(1, len, sr);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.018;
-    const src = this.ctx.createBufferSource();
-    src.buffer = buf; src.loop = true;
-    const lp = this.ctx.createBiquadFilter();
-    lp.type = 'lowpass'; lp.frequency.value = 1400;
-    const g = this.ctx.createGain(); g.gain.value = 0.1;
-    src.connect(lp); lp.connect(g); g.connect(this.master);
-    src.start();
-  },
+  // ── Music chain (curtain closed) ──
+  musicGain = ctx.createGain();
+  musicGain.gain.value = 1;
+  musicGain.connect(masterGain);
+  startMelody();
 
-  schedule() {
-    while (this.nextTime < this.ctx.currentTime + 0.5) {
-      const [name, beats] = this.MELODY[this.idx];
-      this.playNote(this.F[name], this.nextTime, beats);
-      this.nextTime += beats * this.BEAT;
-      this.idx = (this.idx + 1) % this.MELODY.length;
-    }
-    this.timer = setTimeout(() => { if (this.on) this.schedule(); }, 80);
-  },
+  // ── Rain chain (curtain open) ──
+  rainGain = ctx.createGain();
+  rainGain.gain.value = 0; // starts silent
+  rainGain.connect(masterGain);
+  startRain();
+  startFireCrackle();
+}
 
-  toggle() {
-    if (!this.ctx) { this.start(); return; }
-    if (this.ctx.state === 'suspended') {
-      this.ctx.resume();
-      this.master.gain.linearRampToValueAtTime(0.75, this.ctx.currentTime + 0.6);
-      this.on = true; this.schedule();
-    } else {
-      clearTimeout(this.timer);
-      this.master.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.6);
-      setTimeout(() => { if (this.ctx) this.ctx.suspend(); }, 700);
-      this.on = false;
+function playNote(freq, start, beats) {
+  if (!freq) return;
+  const dur = beats * BEAT;
+  [[freq, 0.36, dur * 0.9], [freq * 2, 0.08, dur * 0.45]].forEach(([f, vol, d]) => {
+    const osc = ctx.createOscillator();
+    const env = ctx.createGain();
+    osc.type = 'sine'; osc.frequency.value = f;
+    env.gain.setValueAtTime(0, start);
+    env.gain.linearRampToValueAtTime(vol, start + 0.02);
+    env.gain.exponentialRampToValueAtTime(0.001, start + d);
+    osc.connect(env); env.connect(musicGain);
+    osc.start(start); osc.stop(start + d + 0.05);
+  });
+}
+
+function startMelody() {
+  melodyNext = ctx.currentTime + 0.2;
+  melodyIdx = 0;
+  scheduleMelody();
+}
+
+function scheduleMelody() {
+  while (melodyNext < ctx.currentTime + 0.6) {
+    const [name, beats] = MELODY[melodyIdx];
+    if (name !== 'R') playNote(FREQ[name], melodyNext, beats);
+    melodyNext += beats * BEAT;
+    melodyIdx = (melodyIdx + 1) % MELODY.length;
+  }
+  melodyTimer = setTimeout(scheduleMelody, 100);
+}
+
+function startRain() {
+  const sr = ctx.sampleRate, len = sr * 4;
+  const buf = ctx.createBuffer(2, len, sr);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch);
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for (let i = 0; i < len; i++) {
+      const w = Math.random()*2-1;
+      b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
+      b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
+      b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
+      d[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.1;
+      b6=w*0.115926;
     }
   }
-};
-
-function toggleSound() {
-  Audio.toggle();
-  const isOn = Audio.on;
-  document.getElementById('gram-disc-group').classList.toggle('spinning', isOn);
-  document.querySelectorAll('.gram-note').forEach(n => n.classList.toggle('playing', isOn));
+  const src = ctx.createBufferSource();
+  src.buffer = buf; src.loop = true;
+  const hp = ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=500;
+  const lp = ctx.createBiquadFilter(); lp.type='lowpass';  lp.frequency.value=5000;
+  const g  = ctx.createGain(); g.gain.value = 0.45;
+  src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(rainGain);
+  src.start();
 }
+
+function startFireCrackle() {
+  // Brown noise base (low rumble)
+  const sr = ctx.sampleRate, len = sr * 3;
+  const buf = ctx.createBuffer(1, len, sr);
+  const d = buf.getChannelData(0); let last = 0;
+  for (let i = 0; i < len; i++) {
+    last = (last + 0.02*(Math.random()*2-1))/1.02;
+    d[i] = last * 3.2;
+  }
+  const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+  const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=500;
+  const g  = ctx.createGain(); g.gain.value = 0.18;
+  src.connect(lp); lp.connect(g); g.connect(rainGain);
+  src.start();
+  scheduleCrackle();
+}
+
+function scheduleCrackle() {
+  setTimeout(() => {
+    if (!ctx || curtainIsOpen === false) { scheduleCrackle(); return; }
+    const len = Math.floor(ctx.sampleRate * (0.02 + Math.random()*0.05));
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i=0; i<len; i++) d[i]=(Math.random()*2-1)*(1-i/len)*(1-i/len);
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=800;
+    const g  = ctx.createGain(); g.gain.value = 0.06+Math.random()*0.14;
+    src.connect(lp); lp.connect(g); g.connect(rainGain);
+    src.start();
+    scheduleCrackle();
+  }, 500 + Math.random()*2500);
+}
+
+function crossfade(fromGain, toGain, duration) {
+  const t = ctx.currentTime;
+  fromGain.gain.linearRampToValueAtTime(0, t + duration);
+  toGain.gain.linearRampToValueAtTime(1, t + duration);
+}
+
+// ── Curtain interaction ───────────────────────────────────────────────
+function openCurtain() {
+  if (curtainIsOpen) return;
+  curtainIsOpen = true;
+
+  // Animate curtain panels apart
+  const cl = document.getElementById('curtain-close-l');
+  const cr = document.getElementById('curtain-close-r');
+  const seam = document.getElementById('curtain-seam');
+  const hint = document.getElementById('curtain-hint-text');
+  cl.style.transform = 'translateX(-108px)';
+  cr.style.transform = 'translateX(108px)';
+  if (seam) seam.style.opacity = '0';
+  if (hint) hint.style.display = 'none';
+
+  // Switch audio: music → rain
+  if (!ctx) { initAudio(); return; } // audio starts with rain already faded in
+  crossfade(musicGain, rainGain, 2);
+}
+
+// ── Sound toggle ──────────────────────────────────────────────────────
+function toggleSound() {
+  muted = !muted;
+  const btn   = document.getElementById('snd-btn');
+  const label = document.getElementById('snd-label');
+  const iOn   = document.getElementById('ico-on');
+  const iOff  = document.getElementById('ico-off');
+
+  btn.classList.toggle('muted', muted);
+  label.textContent = muted ? 'Sound off' : 'Sound on';
+  iOn.style.display  = muted ? 'none' : '';
+  iOff.style.display = muted ? '' : 'none';
+
+  if (!ctx) { if (!muted) initAudio(); return; }
+  const t = ctx.currentTime;
+  masterGain.gain.linearRampToValueAtTime(muted ? 0 : 1, t + 0.5);
+}
+
+// ── Autostart on first interaction ───────────────────────────────────
+function tryStart() {
+  if (ctx) return;
+  initAudio();
+  // Attempt to let the melody play immediately (browser may block)
+  ctx.resume().catch(() => {});
+  document.removeEventListener('click', tryStart);
+  document.removeEventListener('touchstart', tryStart);
+}
+
+// Try autoplay, fall back to first-interaction
+(async () => {
+  try {
+    initAudio();
+    await ctx.resume();
+  } catch(e) {
+    // Autoplay blocked — start on first user interaction instead
+    ctx = null; masterGain = null; musicGain = null; rainGain = null;
+    clearTimeout(melodyTimer);
+    document.addEventListener('click',      tryStart, { once: true });
+    document.addEventListener('touchstart', tryStart, { once: true });
+  }
+})();
 </script>
 
 </body>
