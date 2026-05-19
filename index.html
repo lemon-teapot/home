@@ -113,8 +113,8 @@
     #snd-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
     #snd-label { white-space: nowrap; }
 
-    /* Music player fades in after curtain opens */
-    #music-player { transition: opacity 0.6s 1.4s; }
+    /* LED display fades in after curtain opens */
+    #music-display { transition: opacity 0.6s 1.4s; }
 
     /* Fade-in curtain hint */
     #curtain-hint-text {
@@ -180,6 +180,11 @@
   </linearGradient>
 
   <clipPath id="wclip"><rect x="460" y="30" width="178" height="138" rx="3"/></clipPath>
+  <clipPath id="display-clip"><rect x="250" y="195" width="150" height="13"/></clipPath>
+  <filter id="led-glow" x="-25%" y="-25%" width="150%" height="150%">
+    <feGaussianBlur stdDeviation="0.9" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
 
   <filter id="fluffy" x="-8%" y="-8%" width="116%" height="116%">
     <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" seed="3" result="n"/>
@@ -481,12 +486,39 @@
 <path d="M108 168 Q109.5 164 108 159" stroke="#ffb830" stroke-width="1.5" fill="none" stroke-linecap="round">
   <animate attributeName="d" values="M108 168 Q110 164 108 159;M108 168 Q106 164 108 160;M108 168 Q110 165 108 159" dur="1.0s" begin="-0.3s" repeatCount="indefinite"/>
 </path>
-<!-- Small clock on mantel -->
-<rect x="120" y="174" width="18" height="14" rx="4" fill="#2a1808"/>
-<ellipse cx="129" cy="181" rx="6" ry="6" fill="#1a1008"/>
-<ellipse cx="129" cy="181" rx="5" ry="5" fill="#1e1408"/>
-<line x1="129" y1="181" x2="129" y2="177.5" stroke="#c8a060" stroke-width="1" stroke-linecap="round"/>
-<line x1="129" y1="181" x2="131.5" y2="183" stroke="#c8a060" stroke-width="1" stroke-linecap="round"/>
+<!-- ── WALL CLOCK (above fireplace, left of bookshelf, shows actual time) ── -->
+<!-- Outer decorative surround -->
+<circle cx="133" cy="115" r="33" fill="#1e1008"/>
+<circle cx="133" cy="115" r="31" fill="#160c06"/>
+<!-- Clock face -->
+<circle cx="133" cy="115" r="29" fill="#0e0806"/>
+<!-- Hour tick marks (12 positions, r=25.5 for major, r=26 for dots) -->
+<!-- Major ticks: 12, 3, 6, 9 -->
+<rect x="130.5" y="88" width="5" height="4" rx="1" fill="#c8a060"/>
+<rect x="155"   y="112.5" width="4" height="5" rx="1" fill="#c8a060"/>
+<rect x="130.5" y="138" width="5" height="4" rx="1" fill="#c8a060"/>
+<rect x="108"   y="112.5" width="4" height="5" rx="1" fill="#c8a060"/>
+<!-- Minor tick dots (the other 8 hours) -->
+<circle cx="145.5" cy="91.4"  r="1.5" fill="#7a6040"/>
+<circle cx="154.7" cy="102.5" r="1.5" fill="#7a6040"/>
+<circle cx="154.7" cy="127.5" r="1.5" fill="#7a6040"/>
+<circle cx="145.5" cy="138.6" r="1.5" fill="#7a6040"/>
+<circle cx="120.5" cy="138.6" r="1.5" fill="#7a6040"/>
+<circle cx="111.3" cy="127.5" r="1.5" fill="#7a6040"/>
+<circle cx="111.3" cy="102.5" r="1.5" fill="#7a6040"/>
+<circle cx="120.5" cy="91.4"  r="1.5" fill="#7a6040"/>
+<!-- Clock hands (x2,y2 updated every second by JS) -->
+<line id="clock-hour"   x1="133" y1="115" x2="133" y2="97"  stroke="#c8a060" stroke-width="3"   stroke-linecap="round"/>
+<line id="clock-minute" x1="133" y1="115" x2="133" y2="92"  stroke="#d8b878" stroke-width="2"   stroke-linecap="round"/>
+<line id="clock-second" x1="133" y1="115" x2="133" y2="89"  stroke="#e85020" stroke-width="1"   stroke-linecap="round"/>
+<!-- Counterweight stub on second hand -->
+<line id="clock-second-tail" x1="133" y1="115" x2="133" y2="122" stroke="#e85020" stroke-width="1" stroke-linecap="round"/>
+<!-- Centre cap -->
+<circle cx="133" cy="115" r="3" fill="#c8a060"/>
+<circle cx="133" cy="115" r="1.5" fill="#160c06"/>
+<!-- Outer rim highlight -->
+<circle cx="133" cy="115" r="29" fill="none" stroke="#2e1a08" stroke-width="2"/>
+<circle cx="133" cy="115" r="33" fill="none" stroke="#3a2010" stroke-width="2"/>
 <!-- ── LEMON TEAPOT (on mantel, muted amber so it reads as warm, not neon) ── -->
 <!-- Drop shadow -->
 <ellipse cx="161" cy="191" rx="13" ry="3" fill="#0a0602" opacity="0.35"/>
@@ -865,66 +897,72 @@
   <ellipse cx="643" cy="212" rx="17" ry="5" fill="#4a3008" opacity="0.55"/>
 </g>
 
-<!-- ── MINI MUSIC PLAYER (on side table, visible when curtain open) ── -->
-<!-- Small vintage-style radio/player on the wall shelf area, right side -->
-<g id="music-player" onclick="skipTrack()" style="cursor:pointer" opacity="0">
-  <!-- Player body -->
-  <rect x="614" y="192" width="36" height="24" rx="5" fill="#2a1808"/>
-  <rect x="616" y="194" width="32" height="20" rx="4" fill="#1e1006"/>
-  <!-- Speaker grille dots -->
-  <circle cx="622" cy="199" r="1.2" fill="#3a2010"/>
-  <circle cx="626" cy="199" r="1.2" fill="#3a2010"/>
-  <circle cx="630" cy="199" r="1.2" fill="#3a2010"/>
-  <circle cx="622" cy="203" r="1.2" fill="#3a2010"/>
-  <circle cx="626" cy="203" r="1.2" fill="#3a2010"/>
-  <circle cx="630" cy="203" r="1.2" fill="#3a2010"/>
-  <circle cx="622" cy="207" r="1.2" fill="#3a2010"/>
-  <circle cx="626" cy="207" r="1.2" fill="#3a2010"/>
-  <circle cx="630" cy="207" r="1.2" fill="#3a2010"/>
-  <!-- Skip button: pulses to invite clicking -->
-  <rect x="635" y="197" width="10" height="14" rx="3">
-    <animate attributeName="fill"
-      values="#3a2010;#3a2010;#5a3018;#3a2010;#5a3018;#3a2010;#3a2010;#3a2010"
-      keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1"
-      dur="2.4s" repeatCount="indefinite"/>
-  </rect>
-  <!-- First arrow: nudges right in a double-tap pattern -->
-  <polygon points="637,201 640,204 637,207" fill="#c8a060" opacity="0.9">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; 0,0; 2.5,0; 0,0; 2.5,0; 0,0; 0,0; 0,0"
-      keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1"
-      dur="2.4s" repeatCount="indefinite"
-      calcMode="spline"
-      keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
-    <animate attributeName="opacity"
-      values="0.9;0.9;1;0.9;1;0.9;0.9;0.9"
-      keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1"
-      dur="2.4s" repeatCount="indefinite"/>
-  </polygon>
-  <!-- Second arrow: same pattern, slight lag for cascade feel -->
-  <polygon points="640,201 643,204 640,207" fill="#c8a060" opacity="0.9">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; 0,0; 2.5,0; 0,0; 2.5,0; 0,0; 0,0; 0,0"
-      keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1"
-      dur="2.4s" begin="0.1s" repeatCount="indefinite"
-      calcMode="spline"
-      keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
-    <animate attributeName="opacity"
-      values="0.9;0.9;1;0.9;1;0.9;0.9;0.9"
-      keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1"
-      dur="2.4s" begin="0.1s" repeatCount="indefinite"/>
-  </polygon>
-  <!-- Tiny LED indicator (glows when playing) -->
-  <circle id="player-led" cx="620" cy="210" r="1.8" fill="#2a1808"/>
-  <!-- Track name display (tiny text, updates via JS) -->
-  <rect x="616" y="194" width="18" height="7" rx="1" fill="#0e1810" opacity="0.8"/>
-  <text id="player-track-label" x="625" y="200" text-anchor="middle" font-size="4.5"
-    fill="#4a8040" font-family="'Inter', monospace" letter-spacing="0.02em">♩ ♩ ♩</text>
-  <!-- Player "feet" -->
-  <rect x="618" y="215" width="4" height="2" rx="1" fill="#241408"/>
-  <rect x="642" y="215" width="4" height="2" rx="1" fill="#241408"/>
-  <!-- Hover tooltip hint -->
-  <title>Skip to next track</title>
+<!-- ── LED DISPLAY (bottom of bookshelf, scrolling track title + skip) ── -->
+<g id="music-display" style="opacity:0">
+  <!-- Bezel -->
+  <rect x="244" y="193" width="202" height="17" rx="3" fill="#1a0e06"/>
+  <!-- Screen -->
+  <rect x="247" y="195" width="196" height="13" rx="2" fill="#050e05"/>
+  <!-- Subtle scanline texture -->
+  <line x1="247" y1="198" x2="443" y2="198" stroke="#081208" stroke-width="0.6" opacity="0.5"/>
+  <line x1="247" y1="201" x2="443" y2="201" stroke="#081208" stroke-width="0.6" opacity="0.5"/>
+  <line x1="247" y1="204" x2="443" y2="204" stroke="#081208" stroke-width="0.6" opacity="0.5"/>
+  <line x1="247" y1="207" x2="443" y2="207" stroke="#081208" stroke-width="0.6" opacity="0.5"/>
+  <!-- Divider between text and skip area -->
+  <line x1="403" y1="195" x2="403" y2="208" stroke="#0a1a08" stroke-width="1.5"/>
+  <!-- Skip button background -->
+  <rect x="404" y="195" width="37" height="13" rx="1" fill="#040c04"/>
+
+  <!-- Scrolling track title (clipped) -->
+  <g clip-path="url(#display-clip)">
+    <g id="display-scroller">
+      <animateTransform id="display-anim" attributeName="transform" type="translate"
+        values="150,0; -110,0; -110,0; 150,0; 150,0"
+        keyTimes="0; 0.58; 0.70; 0.701; 1"
+        dur="13s" repeatCount="indefinite"
+        calcMode="spline"
+        keySplines="0.35 0 0.65 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
+      <text id="display-text" x="250" y="204"
+        font-family="'Courier New', Courier, monospace" font-size="9"
+        fill="#18ee18" letter-spacing="0.1em" filter="url(#led-glow)">Cloud Veil</text>
+    </g>
+  </g>
+
+  <!-- Skip arrows (animated double-nudge, green LED) -->
+  <g onclick="skipTrack()" style="cursor:pointer">
+    <rect x="404" y="195" width="37" height="13" rx="1" fill="transparent"/>
+    <!-- Arrow 1 -->
+    <polygon points="411,198 416,201.5 411,205" fill="#18ee18">
+      <animateTransform attributeName="transform" type="translate"
+        values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
+        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"
+        calcMode="spline"
+        keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+      <animate attributeName="opacity" values="0.7;0.7;1;0.7;1;0.7;0.7;0.7"
+        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
+    </polygon>
+    <!-- Arrow 2 (cascade lag) -->
+    <polygon points="417,198 422,201.5 417,205" fill="#18ee18">
+      <animateTransform attributeName="transform" type="translate"
+        values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
+        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.1s" repeatCount="indefinite"
+        calcMode="spline"
+        keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+      <animate attributeName="opacity" values="0.7;0.7;1;0.7;1;0.7;0.7;0.7"
+        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.1s" repeatCount="indefinite"/>
+    </polygon>
+    <!-- Button glow pulse -->
+    <rect x="404" y="195" width="37" height="13" rx="1" fill="none" stroke="#18ee18" stroke-width="0.5">
+      <animate attributeName="opacity" values="0.2;0.2;0.6;0.2;0.6;0.2;0.2;0.2"
+        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
+    </rect>
+    <title>Skip to next track</title>
+  </g>
+
+  <!-- LED power dot (always on when display is visible) -->
+  <circle cx="251" cy="201.5" r="1.8" fill="#18ee18" opacity="0.5">
+    <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2s" repeatCount="indefinite"/>
+  </circle>
 </g>
 
 <!-- ── FLOOR LAMP (right side, behind couch) ── -->
@@ -974,10 +1012,10 @@ let pianoEl = null, rainEl = null;
 
 // ── Playlist ──────────────────────────────────────────────────────────
 const TRACKS = [
-  { file:'track1.mp3', name:'Cloud Veil' },
-  { file:'track2.mp3', name:'Cloud Veil II' },
-  { file:'track3.mp3', name:'Rain on Glass' },
-  { file:'track4.mp3', name:'Rain Glass II' },
+  { file:'cloud-veil.mp3',    name:'Cloud Veil'    },
+  { file:'morning-mist.mp3',  name:'Morning Mist'  },
+  { file:'rain-on-glass.mp3', name:'Rain on Glass' },
+  { file:'night-study.mp3',   name:'Night Study'   },
 ];
 let playlist = [...TRACKS], trackIdx = 0;
 
@@ -1034,12 +1072,14 @@ function skipTrack() {
 }
 
 function updatePlayerUI() {
-  const label  = document.getElementById('player-track-label');
-  const led    = document.getElementById('player-led');
-  const player = document.getElementById('music-player');
-  if (label) label.textContent = (playlist[trackIdx]?.name || '').slice(0,10);
-  if (led)   led.setAttribute('fill', curtainIsOpen ? '#48cc48' : '#2a1808');
-  if (player) player.style.opacity = curtainIsOpen ? '1' : '0';
+  const display = document.getElementById('music-display');
+  const text    = document.getElementById('display-text');
+  const anim    = document.getElementById('display-anim');
+  if (text) {
+    text.textContent = (playlist[trackIdx]?.name || '') + '   ♩   ';
+    try { if (anim) anim.beginElement(); } catch(e) {}
+  }
+  if (display) display.style.opacity = curtainIsOpen ? '1' : '0';
 }
 
 // ── Init audio ────────────────────────────────────────────────────────
@@ -1141,6 +1181,37 @@ function toggleSound() {
 function onFirstInteraction(){if(!audioStarted)initAudio();}
 document.addEventListener('click',      onFirstInteraction,{once:true,passive:true});
 document.addEventListener('touchstart', onFirstInteraction,{once:true,passive:true});
+
+// ── Analog wall clock (shows actual local time, updates every second) ─
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours() % 12 + now.getMinutes() / 60;
+  const m = now.getMinutes() + now.getSeconds() / 60;
+  const s = now.getSeconds();
+  const cx = 133, cy = 115;
+
+  function hand(id, deg, r) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const rad = (deg - 90) * Math.PI / 180;
+    el.setAttribute('x2', (cx + r * Math.cos(rad)).toFixed(2));
+    el.setAttribute('y2', (cy + r * Math.sin(rad)).toFixed(2));
+  }
+  function tail(id, deg, r) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const rad = (deg + 90) * Math.PI / 180; // opposite direction
+    el.setAttribute('x2', (cx + r * Math.cos(rad)).toFixed(2));
+    el.setAttribute('y2', (cy + r * Math.sin(rad)).toFixed(2));
+  }
+
+  hand('clock-hour',        h * 30,  18);
+  hand('clock-minute',      m * 6,   23);
+  hand('clock-second',      s * 6,   26);
+  tail('clock-second-tail', s * 6,    7); // counterweight
+}
+setInterval(updateClock, 1000);
+updateClock();
 </script>
 
 </body>
