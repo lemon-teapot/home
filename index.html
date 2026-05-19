@@ -75,13 +75,13 @@
 
     /* ── Curtain panels ── */
     #curtain-close-l, #curtain-close-r {
-      transition: transform 2s cubic-bezier(0.4,0,0.6,1), opacity 1s 1.2s;
+      transition: transform 0.8s cubic-bezier(0.4,0,0.6,1), opacity 0.5s 0.5s;
       cursor: pointer;
     }
     #curtain-open-l, #curtain-open-r {
       opacity: 0;
       pointer-events: none;
-      transition: opacity 1s 2s;
+      transition: opacity 0.5s 0.8s;
       cursor: pointer;
     }
 
@@ -1034,7 +1034,7 @@ function openCurtain() {
   if (or_) { or_.style.opacity='1'; or_.style.pointerEvents='auto'; }
 
   if (!audioStarted) { initAudio(); return; }
-  xfade(musicGain, rainGain, 2.5);
+  xfade(musicGain, rainGain, 1.2);
   clearTimeout(melodyTimer);
 }
 
@@ -1055,10 +1055,10 @@ function closeCurtain() {
     cr.style.transform='translateX(0)'; cr.style.opacity='1'; cr.style.pointerEvents='auto';
     const seam = document.getElementById('curtain-seam');
     if (seam) seam.style.opacity='0.7';
-  }, 500);
+  }, 250);
 
   if (!audioStarted) return;
-  xfade(rainGain, musicGain, 2.5);
+  xfade(rainGain, musicGain, 1.2);
   melodyNext = ctx.currentTime + 2.6;
   melodyIdx = 0;
   scheduleMelody();
