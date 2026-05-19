@@ -180,7 +180,7 @@
   </linearGradient>
 
   <clipPath id="wclip"><rect x="460" y="30" width="178" height="138" rx="3"/></clipPath>
-  <clipPath id="display-clip"><rect x="254" y="197" width="143" height="11"/></clipPath>
+  <clipPath id="display-clip"><rect x="259" y="171" width="154" height="22"/></clipPath>
   <filter id="led-glow" x="-25%" y="-25%" width="150%" height="150%">
     <feGaussianBlur stdDeviation="0.9" result="blur"/>
     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -268,15 +268,15 @@
 <rect width="700" height="440" fill="url(#lg2)"/>
 
 <!-- ── LARGE BOOKSHELF (back wall, centre) ── -->
-<!-- Frame -->
-<rect x="244" y="40" width="200" height="152" rx="4" fill="#1a0d06"/>
+<!-- Frame (extended to include taller slot 4 for LED display) -->
+<rect x="244" y="40" width="200" height="172" rx="4" fill="#1a0d06"/>
 <!-- Shelf boards -->
 <rect x="246" y="80"  width="196" height="5" fill="#261408"/>
 <rect x="246" y="118" width="196" height="5" fill="#261408"/>
 <rect x="246" y="156" width="196" height="5" fill="#261408"/>
 <!-- Side panels -->
-<rect x="244" y="40" width="8"   height="152" fill="#221008"/>
-<rect x="436" y="40" width="8"   height="152" fill="#221008"/>
+<rect x="244" y="40" width="8"   height="172" fill="#221008"/>
+<rect x="436" y="40" width="8"   height="172" fill="#221008"/>
 <!-- Shelf 1 (y 43–80): tall books -->
 <rect x="252" y="44" width="14" height="36" rx="1" fill="#7a1c1c"/>
 <rect x="267" y="47" width="11" height="33" rx="1" fill="#1a3a20"/>
@@ -323,13 +323,34 @@
 <rect x="396" y="124" width="12" height="32" rx="1" fill="#481050"/>
 <rect x="409" y="125" width="14" height="31" rx="1" fill="#604010"/>
 <rect x="424" y="124" width="10" height="32" rx="1" fill="#1a2838"/>
-<!-- Small decorative books stacked on top of shelf -->
-<rect x="254" y="34" width="8"  height="8" rx="1" fill="#7a1c1c"/>
-<rect x="263" y="35" width="6"  height="7" rx="1" fill="#1a3820"/>
-<rect x="270" y="33" width="9"  height="9" rx="1" fill="#1c3468"/>
-<!-- Outer frame highlight -->
-<rect x="244" y="40" width="200" height="152" rx="4" fill="none" stroke="#2c1808" stroke-width="4"/>
-<rect x="246" y="42" width="196" height="148" rx="3" fill="none" stroke="#3a2210" stroke-width="1"/>
+<!-- Outer frame highlight (extended) -->
+<rect x="244" y="40" width="200" height="172" rx="4" fill="none" stroke="#2c1808" stroke-width="4"/>
+<rect x="246" y="42" width="196" height="168" rx="3" fill="none" stroke="#3a2210" stroke-width="1"/>
+
+<!-- ── WOODEN LED BOX (slot 4 — 1.5× taller than regular shelves) ── -->
+<!-- Wooden outer housing -->
+<rect x="250" y="164" width="192" height="44" rx="4" fill="#3a1a08"/>
+<!-- Wood grain -->
+<line x1="252" y1="166" x2="440" y2="166" stroke="#4a2410" stroke-width="0.8" opacity="0.5"/>
+<line x1="252" y1="205" x2="440" y2="205" stroke="#2a1206" stroke-width="0.8" opacity="0.5"/>
+<line x1="260" y1="164" x2="258" y2="208" stroke="#4a2410" stroke-width="0.7" opacity="0.3"/>
+<line x1="430" y1="164" x2="428" y2="208" stroke="#4a2410" stroke-width="0.7" opacity="0.3"/>
+<!-- Inner bezel / screen surround -->
+<rect x="254" y="168" width="169" height="32" rx="3" fill="#1a0e06"/>
+<!-- LED screen -->
+<rect x="257" y="171" width="163" height="22" rx="2" fill="#030a03"/>
+<!-- Scanlines -->
+<line x1="257" y1="174" x2="420" y2="174" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
+<line x1="257" y1="178" x2="420" y2="178" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
+<line x1="257" y1="182" x2="420" y2="182" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
+<line x1="257" y1="186" x2="420" y2="186" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
+<line x1="257" y1="190" x2="420" y2="190" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
+<!-- Skip button housing (right side of wooden box) -->
+<rect x="425" y="168" width="13" height="32" rx="2" fill="#1a0e06"/>
+<rect x="427" y="171" width="9"  height="22" rx="1" fill="#030a03"/>
+<!-- Wooden knob on skip button -->
+<rect x="250" y="172" width="3" height="4" rx="1" fill="#5a2a10"/>
+<rect x="250" y="180" width="3" height="4" rx="1" fill="#5a2a10"/>
 
 <!-- ── WINDOW ── -->
 <rect x="452" y="20" width="200" height="158" rx="6" fill="#221406"/>
@@ -899,98 +920,55 @@
 </g>
 
 <!-- ── LED DISPLAY (3-row: music / location+temp / day+date+time) ── -->
+<!-- ── LED SINGLE-ROW TICKER (inside wooden box in bookshelf slot 4) ── -->
 <g id="music-display" style="opacity:0">
-  <!-- Bezel -->
-  <rect x="244" y="193" width="202" height="50" rx="3" fill="#1a0e06"/>
-  <!-- Screen background -->
-  <rect x="247" y="195" width="196" height="46" rx="2" fill="#030a03"/>
-  <!-- Scanlines (subtle) -->
-  <line x1="247" y1="199" x2="443" y2="199" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
-  <line x1="247" y1="203" x2="443" y2="203" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
-  <line x1="247" y1="207" x2="443" y2="207" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
-  <line x1="247" y1="211" x2="443" y2="211" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
-  <line x1="247" y1="215" x2="443" y2="215" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
-  <line x1="247" y1="219" x2="443" y2="219" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
-  <line x1="247" y1="223" x2="443" y2="223" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
-  <line x1="247" y1="227" x2="443" y2="227" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
-  <line x1="247" y1="231" x2="443" y2="231" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
-  <line x1="247" y1="235" x2="443" y2="235" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
-
-  <!-- Row dividers -->
-  <line x1="247" y1="211" x2="443" y2="211" stroke="#0e240e" stroke-width="1.2"/>
-  <line x1="247" y1="226" x2="403" y2="226" stroke="#0e240e" stroke-width="1.2"/>
-
-  <!-- Vertical divider (text / skip button) -->
-  <line x1="403" y1="195" x2="403" y2="241" stroke="#0e240e" stroke-width="1.5"/>
-
-  <!-- Skip button area -->
-  <rect x="404" y="195" width="39" height="46" rx="1" fill="#040d04"/>
-
-  <!-- ── ROW 1: Scrolling track title ── -->
+  <!-- Scrolling ticker (clipped to LED screen area) -->
   <g clip-path="url(#display-clip)">
     <g id="display-scroller">
       <animateTransform id="display-anim" attributeName="transform" type="translate"
-        values="143,0; -120,0; -120,0; 143,0; 143,0"
-        keyTimes="0; 0.58; 0.70; 0.701; 1"
-        dur="14s" repeatCount="indefinite"
+        values="154,0; -520,0; -520,0; 154,0; 154,0"
+        keyTimes="0; 0.80; 0.88; 0.881; 1"
+        dur="21s" repeatCount="indefinite"
         calcMode="spline"
         keySplines="0.35 0 0.65 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
-      <text id="display-text" x="254" y="206"
-        font-family="'Courier New', Courier, monospace" font-size="9"
+      <text id="display-text" x="259" y="184"
+        font-family="'Courier New', Courier, monospace" font-size="11"
         fill="#18ee18" letter-spacing="0.08em" filter="url(#led-glow)">Cloud Veil</text>
     </g>
   </g>
 
-  <!-- ── ROW 2: Location + Temperature ── -->
-  <text id="led-city" x="254" y="221"
-    font-family="'Courier New', Courier, monospace" font-size="8.5"
-    fill="#14cc14" letter-spacing="0.06em" filter="url(#led-glow)">…</text>
-  <text id="led-temp" x="398" y="221" text-anchor="end"
-    font-family="'Courier New', Courier, monospace" font-size="8.5"
-    fill="#14cc14" letter-spacing="0.06em" filter="url(#led-glow)">--°C</text>
-
-  <!-- ── ROW 3: Day + Date + Time ── -->
-  <text id="led-day" x="254" y="236"
-    font-family="'Courier New', Courier, monospace" font-size="8.5"
-    fill="#14cc14" letter-spacing="0.06em" filter="url(#led-glow)">---</text>
-  <text id="led-datetime" x="398" y="236" text-anchor="end"
-    font-family="'Courier New', Courier, monospace" font-size="8.5"
-    fill="#14cc14" letter-spacing="0.06em" filter="url(#led-glow)">-- --- ----  --:--:--</text>
-
-  <!-- ── SKIP BUTTON (right column, centred vertically) ── -->
+  <!-- Skip arrows (inside the skip housing on right of wooden box) -->
   <g onclick="skipTrack()" style="cursor:pointer">
-    <rect x="404" y="195" width="39" height="46" fill="transparent"/>
-    <!-- Arrow 1 -->
-    <polygon points="416,211 423,218 416,225" fill="#18ee18">
+    <rect x="425" y="168" width="13" height="32" fill="transparent"/>
+    <polygon points="428,178 433,182 428,186" fill="#18ee18">
       <animateTransform attributeName="transform" type="translate"
-        values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
+        values="0,0;0,0;2,0;0,0;2,0;0,0;0,0;0,0"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"
         calcMode="spline"
         keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
-      <animate attributeName="opacity" values="0.7;0.7;1;0.7;1;0.7;0.7;0.7"
+      <animate attributeName="opacity" values="0.6;0.6;1;0.6;1;0.6;0.6;0.6"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
     </polygon>
-    <!-- Arrow 2 -->
-    <polygon points="423,211 430,218 423,225" fill="#18ee18">
+    <polygon points="428,188 433,192 428,196" fill="#18ee18">
       <animateTransform attributeName="transform" type="translate"
-        values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
+        values="0,0;0,0;2,0;0,0;2,0;0,0;0,0;0,0"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.1s" repeatCount="indefinite"
         calcMode="spline"
         keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
-      <animate attributeName="opacity" values="0.7;0.7;1;0.7;1;0.7;0.7;0.7"
+      <animate attributeName="opacity" values="0.6;0.6;1;0.6;1;0.6;0.6;0.6"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.1s" repeatCount="indefinite"/>
     </polygon>
-    <!-- Skip box glow pulse -->
-    <rect x="405" y="196" width="37" height="44" rx="1" fill="none" stroke="#18ee18" stroke-width="0.6">
+    <!-- Glow ring on skip housing -->
+    <rect x="427" y="171" width="9" height="22" rx="1" fill="none" stroke="#18ee18" stroke-width="0.5">
       <animate attributeName="opacity" values="0.15;0.15;0.55;0.15;0.55;0.15;0.15;0.15"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
     </rect>
     <title>Skip to next track</title>
   </g>
 
-  <!-- Power LED dot -->
-  <circle cx="251" cy="218" r="2" fill="#18ee18" opacity="0.45">
-    <animate attributeName="opacity" values="0.35;0.65;0.35" dur="2s" repeatCount="indefinite"/>
+  <!-- Power LED (left side of screen) -->
+  <circle cx="260" cy="182" r="1.8" fill="#18ee18" opacity="0.45">
+    <animate attributeName="opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite"/>
   </circle>
 </g>
 
@@ -1100,12 +1078,22 @@ function skipTrack() {
   nextTrack();
 }
 
+function buildTicker() {
+  const now  = new Date();
+  const day  = DAYS[now.getDay()].slice(0,3).toUpperCase();
+  const date = now.getDate() + ' ' + MONS[now.getMonth()].toUpperCase() + ' ' + now.getFullYear();
+  const track = playlist[trackIdx]?.name || '---';
+  const city  = weatherCity;
+  const temp  = weatherTemp !== '--' ? weatherTemp + '°C' : '--°C';
+  return track + '   ♪   ' + city + '  ' + temp + '   ♪   ' + day + ' ' + date + '   ';
+}
+
 function updatePlayerUI() {
   const display = document.getElementById('music-display');
   const text    = document.getElementById('display-text');
   const anim    = document.getElementById('display-anim');
   if (text) {
-    text.textContent = (playlist[trackIdx]?.name || '') + '   ♩   ';
+    text.textContent = buildTicker();
     try { if (anim) anim.beginElement(); } catch(e) {}
   }
   if (display) display.style.opacity = curtainIsOpen ? '1' : '0';
@@ -1242,21 +1230,7 @@ function updateClock() {
   hand('clock-second', s * 6,  26);
   tail('clock-second-tail', s * 6, 7);
 
-  // LED row 2: location + temp (updates when weather data arrives)
-  const cityEl = document.getElementById('led-city');
-  const tempEl = document.getElementById('led-temp');
-  if (cityEl) cityEl.textContent = weatherCity;
-  if (tempEl) tempEl.textContent = weatherTemp + '°C';
-
-  // LED row 3: day + date + time (every second)
-  const pad  = n => String(n).padStart(2, '0');
-  const day  = DAYS[now.getDay()].slice(0, 3).toUpperCase();
-  const date = now.getDate() + ' ' + MONS[now.getMonth()] + ' ' + now.getFullYear();
-  const time = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
-  const dayEl = document.getElementById('led-day');
-  const dtEl  = document.getElementById('led-datetime');
-  if (dayEl) dayEl.textContent = day;
-  if (dtEl)  dtEl.textContent  = date + '  ' + time;
+  // (clock only — ticker is updated on track change and weather fetch)
 }
 setInterval(updateClock, 1000);
 updateClock();
@@ -1276,13 +1250,15 @@ async function fetchWeather() {
       ]);
       const geo = await geoRes.json();
       const wx  = await wxRes.json();
-      weatherCity = (geo.city || geo.locality || geo.principalSubdivision || 'Unknown').slice(0, 20);
+      weatherCity = (geo.city || geo.locality || geo.principalSubdivision || 'Unknown').slice(0, 18);
       weatherTemp = Math.round(wx.current_weather.temperature);
     } catch(e) {
       weatherCity = 'Unavailable'; weatherTemp = '--';
     }
+    updatePlayerUI(); // rebuild ticker with fresh location + temp
   }, () => {
-    weatherCity = 'No permission'; weatherTemp = '--';
+    weatherCity = 'No location'; weatherTemp = '--';
+    updatePlayerUI();
   }, { timeout: 8000 });
 }
 fetchWeather();
