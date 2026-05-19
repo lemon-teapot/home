@@ -926,7 +926,7 @@
 <g id="music-display" onclick="onLEDClick()">
   <!-- Scrolling ticker (clipped to LED screen area) -->
   <g clip-path="url(#display-clip)">
-    <g id="display-scroller" transform="translate(154,0)">
+    <g id="display-scroller" transform="translate(0,0)">
       <text id="display-text" x="259" y="184"
         font-family="'Courier New', Courier, monospace" font-size="12"
         fill="#18ee18" letter-spacing="0.08em" filter="url(#led-glow)">Cloud Veil</text>
@@ -1088,26 +1088,26 @@ function buildTicker() {
   return t;
 }
 
-// ── Smooth JS ticker (requestAnimationFrame, constant speed) ──────────
+// ── Smooth JS ticker (requestAnimationFrame, constant 22 px/s) ───────
 let tickerRaf = null;
-let tickerX   = 154; // start off-screen right
+let tickerX   = 0;
+
+function tickerStep(t) {
+  tickerStep._last = tickerStep._last || t;
+  const dt = Math.min((t - tickerStep._last) / 1000, 0.05);
+  tickerStep._last = t;
+  tickerX -= 22 * dt;
+  if (tickerX < -700) tickerX = 160; // off left → jump to off right
+  const el = document.getElementById('display-scroller');
+  if (el) el.setAttribute('transform', 'translate(' + tickerX.toFixed(1) + ',0)');
+  tickerRaf = requestAnimationFrame(tickerStep);
+}
 
 function startTicker() {
   if (tickerRaf) cancelAnimationFrame(tickerRaf);
-  tickerX = 154; // reset to off-screen right each time text changes
-  let lastT = null;
-  const SPEED = 22; // px/s — steady reading pace
-
-  (function step(t) {
-    if (!lastT) lastT = t;
-    const dt = Math.min((t - lastT) / 1000, 0.05); // cap for background tabs
-    lastT = t;
-    tickerX -= SPEED * dt;
-    if (tickerX < -700) tickerX = 154; // text fully off left → jump back to right
-    const el = document.getElementById('display-scroller');
-    if (el) el.setAttribute('transform', 'translate(' + tickerX.toFixed(1) + ',0)');
-    tickerRaf = requestAnimationFrame(step);
-  })(performance.now());
+  tickerX = 0;             // text starts at left edge of clip — immediately visible
+  tickerStep._last = null; // reset timestamp so first dt is 0
+  tickerRaf = requestAnimationFrame(tickerStep);
 }
 
 function updatePlayerUI() {
@@ -1241,7 +1241,7 @@ function updateClock() {
   const h   = now.getHours() % 12 + now.getMinutes() / 60;
   const m   = now.getMinutes() + now.getSeconds() / 60;
   const s   = now.getSeconds();
-  const cx  = 133, cy = 115;
+  const cx = 133, cy = 115; // group-local coords (translate wrapper shifts -8px visually)
 
   function hand(id, deg, r) {
     const el = document.getElementById(id);
