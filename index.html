@@ -88,7 +88,7 @@
     /* ── Sound toggle button ── */
     #snd-btn {
       position: fixed;
-      bottom: 1.4rem;
+      top: 1.2rem;
       right: 1.4rem;
       display: flex;
       align-items: center;
@@ -509,6 +509,7 @@
   <animate attributeName="d" values="M108 168 Q110 164 108 159;M108 168 Q106 164 108 160;M108 168 Q110 165 108 159" dur="1.0s" begin="-0.3s" repeatCount="indefinite"/>
 </path>
 <!-- ── WALL CLOCK (above fireplace, left of bookshelf, shows actual time) ── -->
+<g transform="translate(0,-8)">
 <!-- Outer decorative surround -->
 <circle cx="133" cy="115" r="33" fill="#1e1008"/>
 <circle cx="133" cy="115" r="31" fill="#160c06"/>
@@ -541,6 +542,7 @@
 <!-- Outer rim highlight -->
 <circle cx="133" cy="115" r="29" fill="none" stroke="#2e1a08" stroke-width="2"/>
 <circle cx="133" cy="115" r="33" fill="none" stroke="#3a2010" stroke-width="2"/>
+</g><!-- end clock translate -->
 <!-- ── LEMON TEAPOT (on mantel, muted amber so it reads as warm, not neon) ── -->
 <!-- Drop shadow -->
 <ellipse cx="161" cy="191" rx="13" ry="3" fill="#0a0602" opacity="0.35"/>
@@ -928,7 +930,7 @@
       <animateTransform id="display-anim" attributeName="transform" type="translate"
         values="154,0; -520,0; -520,0; 154,0; 154,0"
         keyTimes="0; 0.80; 0.88; 0.881; 1"
-        dur="21s" repeatCount="indefinite"
+        dur="31.5s" repeatCount="indefinite"
         calcMode="spline"
         keySplines="0.35 0 0.65 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
       <text id="display-text" x="259" y="184"
@@ -1079,13 +1081,16 @@ function skipTrack() {
 }
 
 function buildTicker() {
-  const now  = new Date();
-  const day  = DAYS[now.getDay()].slice(0,3).toUpperCase();
-  const date = now.getDate() + ' ' + MONS[now.getMonth()].toUpperCase() + ' ' + now.getFullYear();
+  const now   = new Date();
+  const day   = DAYS[now.getDay()].toUpperCase();
+  const date  = now.getDate() + ' ' + MONS[now.getMonth()].toUpperCase() + ' ' + now.getFullYear();
   const track = playlist[trackIdx]?.name || '---';
-  const city  = weatherCity;
-  const temp  = weatherTemp !== '--' ? weatherTemp + '°C' : '--°C';
-  return track + '   ♪   ' + city + '  ' + temp + '   ♪   ' + day + ' ' + date + '   ';
+  const noLocation = ['...', 'No location', 'Location off', 'No permission', 'Unavailable'];
+  const hasLocation = weatherCity && !noLocation.includes(weatherCity);
+  let t = track;
+  if (hasLocation) t += '   ♪   ' + weatherCity + '  ' + weatherTemp + '°C';
+  t += '   ♪   ' + day + ' ' + date + '   ';
+  return t;
 }
 
 function updatePlayerUI() {
