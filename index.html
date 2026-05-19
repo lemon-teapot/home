@@ -350,8 +350,8 @@
 <line x1="257" y1="186" x2="420" y2="186" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
 <line x1="257" y1="190" x2="420" y2="190" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
 <!-- Skip button housing (right side of wooden box) -->
-<rect x="425" y="168" width="13" height="32" rx="2" fill="#1a0e06"/>
-<rect x="427" y="171" width="9"  height="22" rx="1" fill="#030a03"/>
+<rect x="423" y="168" width="18" height="32" rx="2" fill="#1a0e06"/>
+<rect x="425" y="171" width="14" height="22" rx="1" fill="#030a03"/>
 <!-- Wooden knob on skip button -->
 <rect x="250" y="172" width="3" height="4" rx="1" fill="#5a2a10"/>
 <rect x="250" y="180" width="3" height="4" rx="1" fill="#5a2a10"/>
@@ -943,8 +943,8 @@
 
   <!-- Skip arrows (inside the skip housing on right of wooden box) -->
   <g onclick="skipTrack()" style="cursor:pointer">
-    <rect x="425" y="168" width="13" height="32" fill="transparent"/>
-    <!-- >> chevrons side-by-side, up 4px, nudge animation on the pair -->
+    <rect x="423" y="168" width="18" height="32" fill="transparent"/>
+    <!-- >> chevrons side-by-side, dropped 3px, nudge animation on the pair -->
     <g>
       <animateTransform attributeName="transform" type="translate"
         values="0,0;0,0;2,0;0,0;2,0;0,0;0,0;0,0"
@@ -952,12 +952,12 @@
         calcMode="spline"
         keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
       <!-- Left chevron > -->
-      <path d="M428,175 L431,179 L428,183" fill="none" stroke="#20f020" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M426,178 L429,182 L426,186" fill="none" stroke="#20f020" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
       <!-- Right chevron > -->
-      <path d="M431,175 L434,179 L431,183" fill="none" stroke="#20f020" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M429,178 L432,182 L429,186" fill="none" stroke="#20f020" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
     <!-- Glow ring: always visible at base opacity -->
-    <rect x="427" y="171" width="9" height="22" rx="1" fill="none" stroke="#20f020" stroke-width="0.8" opacity="0.5">
+    <rect x="425" y="171" width="14" height="22" rx="1" fill="none" stroke="#20f020" stroke-width="0.8" opacity="0.5">
       <animate attributeName="opacity" values="0.4;0.4;0.9;0.4;0.9;0.4;0.4;0.4"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
     </rect>
