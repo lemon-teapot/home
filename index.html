@@ -12,7 +12,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🫖</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;1,300&family=Pinyon+Script&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;1,300&family=Lora:ital,wght@0,400;0,600;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -150,14 +150,14 @@
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
     }
     .nb-page {
-      width: min(480px, 84vw); height: min(580px, 84vh);
+      width: min(420px, 80vw); height: min(580px, 84vh);
       background: #f0e6ca;
       background-image: repeating-linear-gradient(
-        transparent, transparent 27px,
-        rgba(180,150,100,0.16) 27px, rgba(180,150,100,0.16) 28px
+        transparent, transparent 31px,
+        rgba(180,150,100,0.18) 31px, rgba(180,150,100,0.18) 32px
       );
       border-radius: 0 4px 4px 0;
-      padding: 2.4rem 2.4rem 3rem 2rem;
+      padding: 2.8rem 2.2rem 3rem 1.8rem;
       position: relative; overflow: hidden;
       box-shadow: inset -3px 0 8px rgba(0,0,0,0.1);
     }
@@ -183,16 +183,18 @@
     }
     .nb-next:hover { border-width: 0 0 56px 56px; }
     .nb-next.dim    { opacity: 0.25; cursor: default; }
-    /* Page content */
+    /* Page content — Lora for book-like feel, line-height matches ruled lines */
     .nb-content {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 0.82rem; color: #3a2a14; line-height: 1.82;
+      font-family: 'Lora', Georgia, serif;
+      font-size: 1rem; color: #3a2a14; line-height: 32px;
       height: calc(100% - 2.6rem); overflow: hidden;
     }
     .nb-content h2 {
-      font-size: 0.95rem; letter-spacing: 0.1em; text-transform: uppercase;
-      color: #2a1a08; border-bottom: 1px solid #c8a870;
-      padding-bottom: 0.3rem; margin-bottom: 0.85rem; margin-top: 0;
+      font-family: 'Lora', Georgia, serif;
+      font-size: 1.1rem; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 600; color: #2a1a08; border-bottom: 1px solid #c8a870;
+      padding-bottom: 0.3rem; margin-bottom: 0rem; margin-top: 0;
+      line-height: 32px;
     }
     .nb-content p  { margin-bottom: 0.7rem; }
     .nb-content ul { padding-left: 1.2em; }
@@ -1509,7 +1511,7 @@ const BOOK_CHAPTERS = [
 <p>Repository: <a href="https://github.com/lemon-teapot/lemonteapot-home">lemon-teapot/lemonteapot-home</a></p>`
   },
   {
-    title: 'Credits',
+    title: 'Credits', noTitle: true,
     html: `<div class="nb-credits-wrap">
 <hr class="nb-credits-divider">
 <div class="nb-credits-name">bunbun</div>
@@ -1538,7 +1540,7 @@ function flipBook(dir) {
 }
 function renderBook() {
   const ch = BOOK_CHAPTERS[bookPage];
-  document.getElementById('nb-content').innerHTML = `<h2>${ch.title}</h2>${ch.html}`;
+  document.getElementById('nb-content').innerHTML = (ch.noTitle ? '' : `<h2>${ch.title}</h2>`) + ch.html;
   document.getElementById('nb-footer').textContent =
     `${bookPage + 1}  /  ${BOOK_CHAPTERS.length}`;
   document.querySelector('.nb-prev').classList.toggle('dim', bookPage === 0);
