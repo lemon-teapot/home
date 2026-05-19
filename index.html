@@ -113,8 +113,8 @@
     #snd-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
     #snd-label { white-space: nowrap; }
 
-    /* LED display fades in after curtain opens */
-    #music-display { transition: opacity 0.6s 1.4s; }
+    /* LED display always visible */
+    #music-display { cursor: pointer; }
 
     /* Fade-in curtain hint */
     #curtain-hint-text {
@@ -923,7 +923,7 @@
 
 <!-- ── LED DISPLAY (3-row: music / location+temp / day+date+time) ── -->
 <!-- ── LED SINGLE-ROW TICKER (inside wooden box in bookshelf slot 4) ── -->
-<g id="music-display" style="opacity:0">
+<g id="music-display" onclick="onLEDClick()">
   <!-- Scrolling ticker (clipped to LED screen area) -->
   <g clip-path="url(#display-clip)">
     <g id="display-scroller">
@@ -934,7 +934,7 @@
         calcMode="spline"
         keySplines="0.35 0 0.65 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
       <text id="display-text" x="259" y="184"
-        font-family="'Courier New', Courier, monospace" font-size="11"
+        font-family="'Courier New', Courier, monospace" font-size="12"
         fill="#18ee18" letter-spacing="0.08em" filter="url(#led-glow)">Cloud Veil</text>
     </g>
   </g>
@@ -1082,26 +1082,31 @@ function skipTrack() {
 
 function buildTicker() {
   const now   = new Date();
-  const day   = DAYS[now.getDay()].toUpperCase();
-  const date  = now.getDate() + ' ' + MONS[now.getMonth()].toUpperCase() + ' ' + now.getFullYear();
-  const track = playlist[trackIdx]?.name || '---';
+  const day   = DAYS[now.getDay()];                          // "Tuesday"
+  const date  = now.getDate() + ' ' + FULL_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+  const daydate = day + ', ' + date;                         // "Tuesday, 19 May 2026"
+  const track = playlist[trackIdx]?.name || '♩';
   const noLocation = ['...', 'No location', 'Location off', 'No permission', 'Unavailable'];
   const hasLocation = weatherCity && !noLocation.includes(weatherCity);
+  const SEP = '          ';                                  // wide gap between segments
   let t = track;
-  if (hasLocation) t += '   ♪   ' + weatherCity + '  ' + weatherTemp + '°C';
-  t += '   ♪   ' + day + ' ' + date + '   ';
+  if (hasLocation) t += SEP + weatherCity + '  ' + weatherTemp + '°C';
+  t += SEP + daydate + '     ';
   return t;
 }
 
 function updatePlayerUI() {
-  const display = document.getElementById('music-display');
-  const text    = document.getElementById('display-text');
-  const anim    = document.getElementById('display-anim');
+  const text = document.getElementById('display-text');
+  const anim = document.getElementById('display-anim');
   if (text) {
     text.textContent = buildTicker();
     try { if (anim) anim.beginElement(); } catch(e) {}
   }
-  if (display) display.style.opacity = curtainIsOpen ? '1' : '0';
+}
+
+function onLEDClick() {
+  // Clicking the LED display starts audio (same as any first interaction)
+  onFirstInteraction();
 }
 
 // ── Init audio ────────────────────────────────────────────────────────
@@ -1204,9 +1209,13 @@ function onFirstInteraction(){if(!audioStarted)initAudio();}
 document.addEventListener('click',      onFirstInteraction,{once:true,passive:true});
 document.addEventListener('touchstart', onFirstInteraction,{once:true,passive:true});
 
+// Populate LED display immediately on page load (before any interaction)
+updatePlayerUI();
+
 // ── Clock + LED display (time/date every second, weather every 30 min) ─
-const DAYS  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const MONS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS       = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONS       = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 let weatherCity = '...', weatherTemp = '--';
 
 function updateClock() {
