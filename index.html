@@ -925,16 +925,15 @@
 
 <script>
 // ── Audio ──────────────────────────────────────────────────────────────
-// Curtain CLOSED: synthesised piano melody (synthGain 0.5)
-// Curtain OPEN:   Suno MP3 playlist (pianoGain 0.5) + rain MP3 (rainGain 0.25)
-// masterGain: mute toggle (1 ↔ 0); fire crackle always audible at 0.04
+// Piano MP3 playlist: ALWAYS playing once started (50% vol)
+// Rain MP3: layers on top when curtain is open (25% vol)
+// masterGain: mute toggle (1 ↔ 0); fire crackle always at 0.04
 
-let ctx = null, masterGain, synthGain, pianoGain, rainGain;
-let melodyTimer = null, melodyIdx = 0, melodyNext = 0;
+let ctx = null, masterGain, pianoGain, rainGain;
 let muted = false, curtainIsOpen = false, audioStarted = false;
 let pianoEl = null, rainEl = null;
 
-// ── Playlist ─────────────────────────────────────────────────────────
+// ── Playlist ──────────────────────────────────────────────────────────
 const TRACKS = [
   { file:'track1.mp3', name:'Cloud Veil' },
   { file:'track2.mp3', name:'Cloud Veil II' },
@@ -944,57 +943,10 @@ const TRACKS = [
 let playlist = [...TRACKS], trackIdx = 0;
 
 function shuffle(arr) {
-  for (let i = arr.length-1; i > 0; i--) {
-    const j = Math.floor(Math.random()*(i+1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+  for (let i=arr.length-1; i>0; i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
   }
-}
-
-// ── Synthesised piano (curtain closed) ───────────────────────────────
-const MELODY = [
-  ['G4',2],['B4',1],['D5',1],
-  ['G5',1.5],['D5',0.5],['B4',1],['G4',1],
-  ['A4',1],['G4',1],['E4',1],['D4',1],
-  ['G4',1],['B4',1],['D5',2],
-  ['E5',1.5],['D5',0.5],['B4',1],['A4',1],
-  ['G4',1],['A4',1],['B4',1],['D5',1],
-  ['G5',1.5],['D5',0.5],['B4',1],['A4',1],
-  ['G4',3],['R',1],
-];
-const FREQ = { R:0, D4:293.66, E4:329.63, G4:392.00, A4:440.00,
-               B4:493.88, D5:587.33, E5:659.25, G5:784.00 };
-const BEAT = 60/46;
-
-function playNote(freq, start, beats) {
-  if (!freq || !ctx) return;
-  const dur = beats * BEAT;
-  [{r:1,a:0.42,d:dur*0.92,t:'triangle'},{r:2,a:0.13,d:dur*0.55,t:'sine'},
-   {r:3,a:0.05,d:dur*0.35,t:'sine'},{r:4.02,a:0.02,d:dur*0.22,t:'sine'}]
-  .forEach(({r,a,d,t}) => {
-    const osc=ctx.createOscillator(), env=ctx.createGain();
-    osc.type=t; osc.frequency.value=freq*r;
-    env.gain.setValueAtTime(0,start);
-    env.gain.linearRampToValueAtTime(a,start+0.008);
-    env.gain.setTargetAtTime(a*0.55,start+0.015,0.04);
-    env.gain.exponentialRampToValueAtTime(0.0001,start+d);
-    osc.connect(env); env.connect(synthGain);
-    osc.start(start); osc.stop(start+d+0.05);
-  });
-}
-
-function startMelody() {
-  melodyNext = ctx.currentTime + 0.15;
-  melodyIdx = 0;
-  scheduleMelody();
-}
-function scheduleMelody() {
-  while (melodyNext < ctx.currentTime + 0.55) {
-    const [name,beats] = MELODY[melodyIdx];
-    if (name !== 'R') playNote(FREQ[name], melodyNext, beats);
-    melodyNext += beats * BEAT;
-    melodyIdx = (melodyIdx+1) % MELODY.length;
-  }
-  melodyTimer = setTimeout(scheduleMelody, 80);
 }
 
 // ── Fire crackle (always, very subtle) ───────────────────────────────
@@ -1061,23 +1013,17 @@ function initAudio() {
   masterGain.gain.value = muted ? 0 : 1;
   masterGain.connect(ctx.destination);
 
-  // Synth piano (curtain closed, 50% volume)
-  synthGain = ctx.createGain();
-  synthGain.gain.value = curtainIsOpen ? 0 : 0.5;
-  synthGain.connect(masterGain);
-  if (!curtainIsOpen) startMelody();
-
-  // Suno piano playlist (curtain open, 50% volume)
+  // Piano MP3 playlist — always playing (50% vol)
   pianoGain = ctx.createGain();
-  pianoGain.gain.value = curtainIsOpen ? 0.5 : 0;
+  pianoGain.gain.value = 0.5;
   pianoGain.connect(masterGain);
   pianoEl = new Audio();
   ctx.createMediaElementSource(pianoEl).connect(pianoGain);
   pianoEl.addEventListener('ended', nextTrack);
   shuffle(playlist); trackIdx = 0;
-  if (curtainIsOpen) loadTrack(trackIdx);
+  loadTrack(trackIdx);
 
-  // Rain MP3 (curtain open, 25% volume)
+  // Rain MP3 — only when curtain open (25% vol)
   rainGain = ctx.createGain();
   rainGain.gain.value = curtainIsOpen ? 0.25 : 0;
   rainGain.connect(masterGain);
@@ -1109,12 +1055,8 @@ function openCurtain() {
   if (or_){or_.style.transition='';or_.style.opacity='1';or_.style.pointerEvents='auto';}
 
   if (!audioStarted) { initAudio(); return; }
-  const t = ctx.currentTime;
-  synthGain.gain.linearRampToValueAtTime(0, t+1.2);
-  pianoGain.gain.linearRampToValueAtTime(0.5, t+1.2);
-  rainGain.gain.linearRampToValueAtTime(0.25, t+1.2);
-  clearTimeout(melodyTimer);
-  loadTrack(trackIdx);
+  // Fade rain in — piano keeps playing uninterrupted
+  rainGain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 1.2);
   rainEl.play().catch(()=>{});
   updatePlayerUI();
 }
@@ -1138,14 +1080,9 @@ function closeCurtain() {
   },250);
 
   if (!audioStarted) return;
-  const t = ctx.currentTime;
-  synthGain.gain.linearRampToValueAtTime(0.5, t+1.2);
-  pianoGain.gain.linearRampToValueAtTime(0, t+1.2);
-  rainGain.gain.linearRampToValueAtTime(0, t+1.2);
-  melodyNext = ctx.currentTime + 1.3;
-  melodyIdx = 0;
-  scheduleMelody();
-  setTimeout(()=>{ if(pianoEl)pianoEl.pause(); if(rainEl)rainEl.pause(); }, 1400);
+  // Fade rain out — piano keeps playing uninterrupted
+  rainGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.2);
+  setTimeout(() => { if (rainEl) rainEl.pause(); }, 1400);
   updatePlayerUI();
 }
 
