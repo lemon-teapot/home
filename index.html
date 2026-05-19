@@ -1049,12 +1049,12 @@
   <!-- Skip arrows: pulsating >> synced to blinker (2s cycle), box 3px wider on left -->
   <g onclick="skipTrack()" style="cursor:pointer">
     <rect x="420" y="168" width="21" height="32" fill="transparent"/>
-    <!-- Left chevron > (pulse stroke colour, 2s) -->
-    <path d="M423,178 L426,182 L423,186" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Left chevron > (+5px right, 2px gap between arrows) -->
+    <path d="M428,178 L431,182 L428,186" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="2s" repeatCount="indefinite"/>
     </path>
-    <!-- Right chevron > (slight lag) -->
-    <path d="M426,178 L429,182 L426,186" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Right chevron > (2px gap from left) -->
+    <path d="M433,178 L436,182 L433,186" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="2s" begin="0.1s" repeatCount="indefinite"/>
     </path>
     <!-- Glow ring: pulse opacity, 2s cycle -->
