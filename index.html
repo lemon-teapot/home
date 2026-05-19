@@ -1016,7 +1016,6 @@ let pianoEl = null, rainEl = null;
 
 // Must be declared before buildTicker() is first called
 const DAYS        = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const MONS        = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 let weatherCity = '...', weatherTemp = '--';
 
@@ -1218,7 +1217,8 @@ function closeCurtain() {
   if (!audioStarted) return;
   // Fade rain out — piano keeps playing uninterrupted
   rainGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.2);
-  setTimeout(() => { if (rainEl) rainEl.pause(); }, 1400);
+  // Only pause rain if curtain is still closed by the time the fade completes
+  setTimeout(() => { if (rainEl && !curtainIsOpen) rainEl.pause(); }, 1400);
   updatePlayerUI();
 }
 
