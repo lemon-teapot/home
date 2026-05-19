@@ -73,9 +73,15 @@
       font-style: normal;
     }
 
-    /* ── Curtain slide animation ── */
+    /* ── Curtain panels ── */
     #curtain-close-l, #curtain-close-r {
-      transition: transform 2s cubic-bezier(0.4, 0, 0.6, 1);
+      transition: transform 2s cubic-bezier(0.4,0,0.6,1), opacity 1s 1.2s;
+      cursor: pointer;
+    }
+    #curtain-open-l, #curtain-open-r {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s 2s;
       cursor: pointer;
     }
 
@@ -754,39 +760,95 @@
 <path d="M218 386 Q228 376 220 366 Q212 356 202 362" stroke="#3a2e24" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
 
 <!-- ── CLOSED CURTAIN PANELS (default: covers window; click to open) ── -->
-<!-- Left closing panel -->
+<!-- CLOSED panels (cover window, click to open) -->
 <g id="curtain-close-l" onclick="openCurtain()">
-  <path d="M450 14 L554 14 L554 210 C548 208 542 210 536 208 C530 206 524 210 518 208 C512 206 506 208 450 208 Z" fill="#7a5018"/>
-  <line x1="464" y1="14" x2="461" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="478" y1="14" x2="475" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="492" y1="14" x2="489" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="506" y1="14" x2="503" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="520" y1="14" x2="517" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="536" y1="14" x2="533" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="457" y1="14" x2="454" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
-  <line x1="471" y1="14" x2="468" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
-  <line x1="485" y1="14" x2="482" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
+  <path d="M450 14 L554 14 L554 212 C534 210 514 212 494 210 C474 208 462 210 450 210 Z" fill="#7a5018"/>
+  <line x1="462" y1="14" x2="459" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="474" y1="14" x2="471" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="486" y1="14" x2="483" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="498" y1="14" x2="495" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="510" y1="14" x2="507" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="522" y1="14" x2="519" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="534" y1="14" x2="531" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="546" y1="14" x2="543" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="456" y1="14" x2="453" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+  <line x1="468" y1="14" x2="465" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+  <line x1="480" y1="14" x2="477" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
 </g>
-<!-- Right closing panel -->
 <g id="curtain-close-r" onclick="openCurtain()">
-  <path d="M550 14 L654 14 L654 208 C648 208 642 206 636 208 C630 210 624 208 618 210 C612 208 606 210 550 210 Z" fill="#7a5018"/>
-  <line x1="564" y1="14" x2="561" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="578" y1="14" x2="575" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="592" y1="14" x2="589" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="606" y1="14" x2="603" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="620" y1="14" x2="617" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="636" y1="14" x2="633" y2="208" stroke="#5a3808" stroke-width="1.5" opacity="0.45"/>
-  <line x1="557" y1="14" x2="554" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
-  <line x1="571" y1="14" x2="568" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
-  <line x1="585" y1="14" x2="582" y2="208" stroke="#9a6828" stroke-width="0.8" opacity="0.3"/>
+  <path d="M550 14 L654 14 L654 210 C642 210 630 212 618 210 C606 208 594 210 582 212 C570 210 560 210 550 212 Z" fill="#7a5018"/>
+  <line x1="562" y1="14" x2="559" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="574" y1="14" x2="571" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="586" y1="14" x2="583" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="598" y1="14" x2="595" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="610" y1="14" x2="607" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="622" y1="14" x2="619" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="634" y1="14" x2="631" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="646" y1="14" x2="643" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+  <line x1="556" y1="14" x2="553" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+  <line x1="568" y1="14" x2="565" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+  <line x1="580" y1="14" x2="577" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
 </g>
-<!-- Center seam -->
-<line id="curtain-seam" x1="552" y1="14" x2="552" y2="210" stroke="#3a2004" stroke-width="2.5" opacity="0.7"/>
-<!-- "Peek outside" hint (fades after a few seconds) -->
+<line id="curtain-seam" x1="552" y1="14" x2="552" y2="212" stroke="#3a2004" stroke-width="2.5" opacity="0.7"/>
 <g id="curtain-hint-text" onclick="openCurtain()" style="cursor:pointer">
-  <rect x="488" y="92" width="128" height="26" rx="13" fill="#0d0704" opacity="0.65"/>
-  <text x="552" y="109" text-anchor="middle" font-size="10.5" fill="#c8a060"
-    font-family="'Inter', sans-serif" letter-spacing="0.06em">✦ peek outside</text>
+  <rect x="490" y="93" width="124" height="24" rx="12" fill="#0d0704" opacity="0.6"/>
+  <text x="552" y="109" text-anchor="middle" font-size="10" fill="#c8a060"
+    font-family="'Inter', sans-serif" letter-spacing="0.07em">✦ peek outside</text>
+</g>
+
+<!-- OPEN (tie-back) curtain shapes — fade in after panels slide away -->
+<!-- Left tie-back: gathered and held at ~y:100, cascades below -->
+<g id="curtain-open-l" onclick="closeCurtain()">
+  <!-- Upper drape strips from rod to tie -->
+  <path d="M448 14 L474 14 C472 36 470 62 468 86 C464 91 460 92 456 89 C452 62 450 36 448 14 Z" fill="#7a5018"/>
+  <line x1="453" y1="15" x2="450" y2="88"  stroke="#5a3808" stroke-width="1.2" opacity="0.45"/>
+  <line x1="459" y1="15" x2="457" y2="87"  stroke="#5a3808" stroke-width="1.2" opacity="0.45"/>
+  <line x1="465" y1="15" x2="463" y2="86"  stroke="#5a3808" stroke-width="1.2" opacity="0.45"/>
+  <line x1="471" y1="15" x2="469" y2="86"  stroke="#5a3808" stroke-width="1.2" opacity="0.45"/>
+  <line x1="456" y1="15" x2="453" y2="88"  stroke="#9a6828" stroke-width="0.7" opacity="0.25"/>
+  <line x1="462" y1="15" x2="460" y2="87"  stroke="#9a6828" stroke-width="0.7" opacity="0.25"/>
+  <line x1="468" y1="15" x2="466" y2="86"  stroke="#9a6828" stroke-width="0.7" opacity="0.25"/>
+  <!-- Tie-back cord band -->
+  <path d="M450 88 Q461 85 472 88 L472 101 Q461 104 450 101 Z" fill="#3e2806"/>
+  <ellipse cx="461" cy="94" rx="14" ry="5" fill="#5a3808"/>
+  <!-- Decorative tieback knot/rosette -->
+  <ellipse cx="454" cy="97" rx="9" ry="5.5" fill="#8a5c18" transform="rotate(-18,454,97)"/>
+  <ellipse cx="454" cy="97" rx="5.5" ry="3.5" fill="#7a5018" transform="rotate(-18,454,97)"/>
+  <circle  cx="454" cy="97" r="2.5" fill="#b07830" opacity="0.85"/>
+  <!-- Lower cascade (widening) -->
+  <path d="M446 103 C443 128 440 164 444 212 L478 212 C476 164 476 128 474 103 Z" fill="#6a4010"/>
+  <line x1="450" y1="105" x2="447" y2="210" stroke="#5a3808" stroke-width="1.2" opacity="0.38"/>
+  <line x1="458" y1="105" x2="456" y2="211" stroke="#5a3808" stroke-width="1.2" opacity="0.38"/>
+  <line x1="466" y1="105" x2="464" y2="211" stroke="#5a3808" stroke-width="1.2" opacity="0.38"/>
+  <line x1="474" y1="105" x2="472" y2="210" stroke="#5a3808" stroke-width="1.2" opacity="0.38"/>
+  <ellipse cx="461" cy="212" rx="17" ry="5" fill="#4a3008" opacity="0.55"/>
+</g>
+
+<!-- Right tie-back -->
+<g id="curtain-open-r" onclick="closeCurtain()">
+  <!-- Upper drape -->
+  <path d="M630 14 L656 14 C656 36 654 62 652 86 C648 92 644 93 640 89 C636 62 632 36 630 14 Z" fill="#7a5018"/>
+  <line x1="633" y1="15" x2="631" y2="88"  stroke="#5a3808" stroke-width="1.2" opacity="0.45"/>
+  <line x1="639" y1="15" x2="637" y2="87"  stroke="#5a3808" stroke-width="1.2" opacity="0.45"/>
+  <line x1="645" y1="15" x2="643" y2="86"  stroke="#5a3808" stroke-width="1.2" opacity="0.45"/>
+  <line x1="651" y1="15" x2="649" y2="86"  stroke="#5a3808" stroke-width="1.2" opacity="0.45"/>
+  <line x1="636" y1="15" x2="634" y2="88"  stroke="#9a6828" stroke-width="0.7" opacity="0.25"/>
+  <line x1="642" y1="15" x2="640" y2="87"  stroke="#9a6828" stroke-width="0.7" opacity="0.25"/>
+  <line x1="648" y1="15" x2="646" y2="86"  stroke="#9a6828" stroke-width="0.7" opacity="0.25"/>
+  <!-- Tie-back cord -->
+  <path d="M632 88 Q643 85 654 88 L654 101 Q643 104 632 101 Z" fill="#3e2806"/>
+  <ellipse cx="643" cy="94" rx="14" ry="5" fill="#5a3808"/>
+  <!-- Knot/rosette (opposite side — right side of right panel) -->
+  <ellipse cx="650" cy="97" rx="9" ry="5.5" fill="#8a5c18" transform="rotate(18,650,97)"/>
+  <ellipse cx="650" cy="97" rx="5.5" ry="3.5" fill="#7a5018" transform="rotate(18,650,97)"/>
+  <circle  cx="650" cy="97" r="2.5" fill="#b07830" opacity="0.85"/>
+  <!-- Lower cascade -->
+  <path d="M626 103 C626 128 624 164 626 212 L660 212 C660 164 658 128 658 103 Z" fill="#6a4010"/>
+  <line x1="630" y1="105" x2="629" y2="210" stroke="#5a3808" stroke-width="1.2" opacity="0.38"/>
+  <line x1="638" y1="105" x2="637" y2="211" stroke="#5a3808" stroke-width="1.2" opacity="0.38"/>
+  <line x1="646" y1="105" x2="645" y2="211" stroke="#5a3808" stroke-width="1.2" opacity="0.38"/>
+  <line x1="654" y1="105" x2="653" y2="210" stroke="#5a3808" stroke-width="1.2" opacity="0.38"/>
+  <ellipse cx="643" cy="212" rx="17" ry="5" fill="#4a3008" opacity="0.55"/>
 </g>
 
 <!-- ── FLOOR LAMP (right side, behind couch) ── -->
@@ -825,16 +887,10 @@
 </div>
 
 <script>
-// ── Two-mode ambient audio + curtain interaction ──────────────────────
-// Mode A (curtain closed): slow indoor piano melody
-// Mode B (curtain open):   outdoor rain + fire crackle
-// Toggle button: mutes/unmutes whichever mode is active
-
-let ctx = null, masterGain = null;
-let musicGain = null, rainGain = null;
+// ── Audio: Mode A = piano melody (curtain closed), Mode B = rain (curtain open) ──
+let ctx = null, masterGain, musicGain, rainGain;
 let melodyTimer = null, melodyIdx = 0, melodyNext = 0;
-let muted = false;
-let curtainIsOpen = false;
+let muted = false, curtainIsOpen = false, audioStarted = false;
 
 const MELODY = [
   ['G4',2],['B4',1],['D5',1],
@@ -846,61 +902,45 @@ const MELODY = [
   ['G5',1.5],['D5',0.5],['B4',1],['A4',1],
   ['G4',3],['R',1],
 ];
-const FREQ = { R:0,
-  D4:293.66, E4:329.63, G4:392.00, A4:440.00,
-  B4:493.88, D5:587.33, E5:659.25, G5:784.00 };
-const BEAT = 60 / 48; // seconds per beat — very slow
+const FREQ = { R:0, D4:293.66, E4:329.63, G4:392.00, A4:440.00,
+               B4:493.88, D5:587.33, E5:659.25, G5:784.00 };
+const BEAT = 60 / 46;
 
-function initAudio() {
-  if (ctx) return;
-  ctx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = ctx.createGain();
-  masterGain.gain.value = muted ? 0 : 1;
-  masterGain.connect(ctx.destination);
-
-  // ── Music chain (curtain closed) ──
-  musicGain = ctx.createGain();
-  musicGain.gain.value = 1;
-  musicGain.connect(masterGain);
-  startMelody();
-
-  // ── Rain chain (curtain open) ──
-  rainGain = ctx.createGain();
-  rainGain.gain.value = 0; // starts silent
-  rainGain.connect(masterGain);
-  startRain();
-  startFireCrackle();
-}
-
-function playNote(freq, start, beats) {
-  if (!freq) return;
+// ── Piano note: 4 harmonics with characteristic hammer envelope ──
+function playPiano(freq, start, beats) {
+  if (!freq || !ctx) return;
   const dur = beats * BEAT;
-  [[freq, 0.36, dur * 0.9], [freq * 2, 0.08, dur * 0.45]].forEach(([f, vol, d]) => {
-    const osc = ctx.createOscillator();
-    const env = ctx.createGain();
-    osc.type = 'sine'; osc.frequency.value = f;
+  [
+    { r:1,    a:0.42, d:dur*0.92, t:'triangle' },
+    { r:2,    a:0.13, d:dur*0.55, t:'sine' },
+    { r:3,    a:0.05, d:dur*0.35, t:'sine' },
+    { r:4.02, a:0.02, d:dur*0.22, t:'sine' }, // slightly inharmonic 4th
+  ].forEach(({r, a, d, t}) => {
+    const osc = ctx.createOscillator(), env = ctx.createGain();
+    osc.type = t; osc.frequency.value = freq * r;
     env.gain.setValueAtTime(0, start);
-    env.gain.linearRampToValueAtTime(vol, start + 0.02);
-    env.gain.exponentialRampToValueAtTime(0.001, start + d);
+    env.gain.linearRampToValueAtTime(a, start + 0.008);    // fast attack
+    env.gain.setTargetAtTime(a * 0.55, start + 0.015, 0.04); // initial drop
+    env.gain.exponentialRampToValueAtTime(0.0001, start + d);
     osc.connect(env); env.connect(musicGain);
     osc.start(start); osc.stop(start + d + 0.05);
   });
 }
 
 function startMelody() {
-  melodyNext = ctx.currentTime + 0.2;
+  melodyNext = ctx.currentTime + 0.15;
   melodyIdx = 0;
   scheduleMelody();
 }
 
 function scheduleMelody() {
-  while (melodyNext < ctx.currentTime + 0.6) {
+  while (melodyNext < ctx.currentTime + 0.55) {
     const [name, beats] = MELODY[melodyIdx];
-    if (name !== 'R') playNote(FREQ[name], melodyNext, beats);
+    if (name !== 'R') playPiano(FREQ[name], melodyNext, beats);
     melodyNext += beats * BEAT;
     melodyIdx = (melodyIdx + 1) % MELODY.length;
   }
-  melodyTimer = setTimeout(scheduleMelody, 100);
+  melodyTimer = setTimeout(scheduleMelody, 80);
 }
 
 function startRain() {
@@ -914,119 +954,134 @@ function startRain() {
       b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
       b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
       b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
-      d[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.1;
-      b6=w*0.115926;
+      d[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.1; b6=w*0.115926;
     }
   }
-  const src = ctx.createBufferSource();
-  src.buffer = buf; src.loop = true;
-  const hp = ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=500;
-  const lp = ctx.createBiquadFilter(); lp.type='lowpass';  lp.frequency.value=5000;
-  const g  = ctx.createGain(); g.gain.value = 0.45;
+  const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+  const hp = ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=480;
+  const lp = ctx.createBiquadFilter(); lp.type='lowpass';  lp.frequency.value=5200;
+  const g  = ctx.createGain(); g.gain.value = 0.42;
   src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(rainGain);
   src.start();
-}
-
-function startFireCrackle() {
-  // Brown noise base (low rumble)
-  const sr = ctx.sampleRate, len = sr * 3;
-  const buf = ctx.createBuffer(1, len, sr);
-  const d = buf.getChannelData(0); let last = 0;
-  for (let i = 0; i < len; i++) {
-    last = (last + 0.02*(Math.random()*2-1))/1.02;
-    d[i] = last * 3.2;
-  }
-  const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
-  const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=500;
-  const g  = ctx.createGain(); g.gain.value = 0.18;
-  src.connect(lp); lp.connect(g); g.connect(rainGain);
-  src.start();
+  // Fire crackle base
+  const sr2 = ctx.sampleRate, len2 = sr2 * 3;
+  const buf2 = ctx.createBuffer(1, len2, sr2); const dd = buf2.getChannelData(0); let last=0;
+  for (let i=0; i<len2; i++) { last=(last+0.02*(Math.random()*2-1))/1.02; dd[i]=last*3; }
+  const src2 = ctx.createBufferSource(); src2.buffer=buf2; src2.loop=true;
+  const lp2 = ctx.createBiquadFilter(); lp2.type='lowpass'; lp2.frequency.value=500;
+  const g2  = ctx.createGain(); g2.gain.value=0.16;
+  src2.connect(lp2); lp2.connect(g2); g2.connect(rainGain); src2.start();
   scheduleCrackle();
 }
 
 function scheduleCrackle() {
   setTimeout(() => {
-    if (!ctx || curtainIsOpen === false) { scheduleCrackle(); return; }
-    const len = Math.floor(ctx.sampleRate * (0.02 + Math.random()*0.05));
+    if (!ctx) return;
+    const len = Math.floor(ctx.sampleRate*(0.02+Math.random()*0.05));
     const buf = ctx.createBuffer(1, len, ctx.sampleRate);
     const d = buf.getChannelData(0);
     for (let i=0; i<len; i++) d[i]=(Math.random()*2-1)*(1-i/len)*(1-i/len);
-    const src = ctx.createBufferSource(); src.buffer = buf;
+    const src = ctx.createBufferSource(); src.buffer=buf;
     const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=800;
-    const g  = ctx.createGain(); g.gain.value = 0.06+Math.random()*0.14;
-    src.connect(lp); lp.connect(g); g.connect(rainGain);
-    src.start();
+    const g  = ctx.createGain(); g.gain.value=0.06+Math.random()*0.14;
+    src.connect(lp); lp.connect(g); g.connect(rainGain); src.start();
     scheduleCrackle();
-  }, 500 + Math.random()*2500);
+  }, 600 + Math.random()*2800);
 }
 
-function crossfade(fromGain, toGain, duration) {
+function initAudio() {
+  if (audioStarted) return;
+  audioStarted = true;
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = ctx.createGain(); masterGain.gain.value = muted ? 0 : 1;
+  masterGain.connect(ctx.destination);
+  musicGain = ctx.createGain(); musicGain.gain.value = curtainIsOpen ? 0 : 1;
+  musicGain.connect(masterGain);
+  rainGain = ctx.createGain(); rainGain.gain.value = curtainIsOpen ? 1 : 0;
+  rainGain.connect(masterGain);
+  if (!curtainIsOpen) startMelody();
+  startRain();
+}
+
+function xfade(from, to, dur) {
   const t = ctx.currentTime;
-  fromGain.gain.linearRampToValueAtTime(0, t + duration);
-  toGain.gain.linearRampToValueAtTime(1, t + duration);
+  from.gain.linearRampToValueAtTime(0, t + dur);
+  to.gain.linearRampToValueAtTime(1, t + dur);
 }
 
-// ── Curtain interaction ───────────────────────────────────────────────
+// ── Curtain: open ────────────────────────────────────────────────────
 function openCurtain() {
   if (curtainIsOpen) return;
   curtainIsOpen = true;
 
-  // Animate curtain panels apart
   const cl = document.getElementById('curtain-close-l');
   const cr = document.getElementById('curtain-close-r');
-  const seam = document.getElementById('curtain-seam');
-  const hint = document.getElementById('curtain-hint-text');
   cl.style.transform = 'translateX(-108px)';
   cr.style.transform = 'translateX(108px)';
-  if (seam) seam.style.opacity = '0';
+  cl.style.opacity   = '0';
+  cr.style.opacity   = '0';
+  cl.style.pointerEvents = 'none';
+  cr.style.pointerEvents = 'none';
+
+  const seam = document.getElementById('curtain-seam');
+  const hint = document.getElementById('curtain-hint-text');
+  if (seam) { seam.style.transition='opacity 0.5s'; seam.style.opacity='0'; }
   if (hint) hint.style.display = 'none';
 
-  // Switch audio: music → rain
-  if (!ctx) { initAudio(); return; } // audio starts with rain already faded in
-  crossfade(musicGain, rainGain, 2);
+  const ol = document.getElementById('curtain-open-l');
+  const or_ = document.getElementById('curtain-open-r');
+  if (ol) { ol.style.opacity='1'; ol.style.pointerEvents='auto'; }
+  if (or_) { or_.style.opacity='1'; or_.style.pointerEvents='auto'; }
+
+  if (!audioStarted) { initAudio(); return; }
+  xfade(musicGain, rainGain, 2.5);
+  clearTimeout(melodyTimer);
 }
 
-// ── Sound toggle ──────────────────────────────────────────────────────
+// ── Curtain: close ───────────────────────────────────────────────────
+function closeCurtain() {
+  if (!curtainIsOpen) return;
+  curtainIsOpen = false;
+
+  const ol = document.getElementById('curtain-open-l');
+  const or_ = document.getElementById('curtain-open-r');
+  if (ol) { ol.style.opacity='0'; ol.style.pointerEvents='none'; }
+  if (or_) { or_.style.opacity='0'; or_.style.pointerEvents='none'; }
+
+  setTimeout(() => {
+    const cl = document.getElementById('curtain-close-l');
+    const cr = document.getElementById('curtain-close-r');
+    cl.style.transform='translateX(0)'; cl.style.opacity='1'; cl.style.pointerEvents='auto';
+    cr.style.transform='translateX(0)'; cr.style.opacity='1'; cr.style.pointerEvents='auto';
+    const seam = document.getElementById('curtain-seam');
+    if (seam) seam.style.opacity='0.7';
+  }, 500);
+
+  if (!audioStarted) return;
+  xfade(rainGain, musicGain, 2.5);
+  melodyNext = ctx.currentTime + 2.6;
+  melodyIdx = 0;
+  scheduleMelody();
+}
+
+// ── Sound toggle ─────────────────────────────────────────────────────
 function toggleSound() {
   muted = !muted;
-  const btn   = document.getElementById('snd-btn');
-  const label = document.getElementById('snd-label');
-  const iOn   = document.getElementById('ico-on');
-  const iOff  = document.getElementById('ico-off');
-
+  const btn = document.getElementById('snd-btn');
   btn.classList.toggle('muted', muted);
-  label.textContent = muted ? 'Sound off' : 'Sound on';
-  iOn.style.display  = muted ? 'none' : '';
-  iOff.style.display = muted ? '' : 'none';
-
-  if (!ctx) { if (!muted) initAudio(); return; }
-  const t = ctx.currentTime;
-  masterGain.gain.linearRampToValueAtTime(muted ? 0 : 1, t + 0.5);
+  document.getElementById('snd-label').textContent = muted ? 'Sound off' : 'Sound on';
+  document.getElementById('ico-on').style.display  = muted ? 'none' : '';
+  document.getElementById('ico-off').style.display = muted ? '' : 'none';
+  if (!audioStarted) { if (!muted) initAudio(); return; }
+  masterGain.gain.linearRampToValueAtTime(muted ? 0 : 1, ctx.currentTime + 0.5);
 }
 
-// ── Autostart on first interaction ───────────────────────────────────
-function tryStart() {
-  if (ctx) return;
-  initAudio();
-  // Attempt to let the melody play immediately (browser may block)
-  ctx.resume().catch(() => {});
-  document.removeEventListener('click', tryStart);
-  document.removeEventListener('touchstart', tryStart);
+// ── Start audio on first user interaction (browser autoplay policy) ──
+function onFirstInteraction() {
+  if (!audioStarted) initAudio();
 }
-
-// Try autoplay, fall back to first-interaction
-(async () => {
-  try {
-    initAudio();
-    await ctx.resume();
-  } catch(e) {
-    // Autoplay blocked — start on first user interaction instead
-    ctx = null; masterGain = null; musicGain = null; rainGain = null;
-    clearTimeout(melodyTimer);
-    document.addEventListener('click',      tryStart, { once: true });
-    document.addEventListener('touchstart', tryStart, { once: true });
-  }
-})();
+document.addEventListener('click',      onFirstInteraction, { once: true, passive: true });
+document.addEventListener('touchstart', onFirstInteraction, { once: true, passive: true });
 </script>
 
 </body>
