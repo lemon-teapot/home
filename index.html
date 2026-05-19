@@ -928,8 +928,8 @@
   <g clip-path="url(#display-clip)">
     <g id="display-scroller">
       <animateTransform id="display-anim" attributeName="transform" type="translate"
-        values="154,0; -520,0; -520,0; 154,0; 154,0"
-        keyTimes="0; 0.80; 0.88; 0.881; 1"
+        values="0,0; -560,0; -560,0; 154,0; 154,0"
+        keyTimes="0; 0.75; 0.83; 0.831; 1"
         dur="31.5s" repeatCount="indefinite"
         calcMode="spline"
         keySplines="0.35 0 0.65 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
@@ -942,35 +942,33 @@
   <!-- Skip arrows (inside the skip housing on right of wooden box) -->
   <g onclick="skipTrack()" style="cursor:pointer">
     <rect x="425" y="168" width="13" height="32" fill="transparent"/>
-    <polygon points="428,178 433,182 428,186" fill="#18ee18">
+    <!-- Arrow 1: always bright, nudges right on pulse -->
+    <polygon points="428,178 433,182 428,186" fill="#20f020">
       <animateTransform attributeName="transform" type="translate"
-        values="0,0;0,0;2,0;0,0;2,0;0,0;0,0;0,0"
+        values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"
         calcMode="spline"
         keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
-      <animate attributeName="opacity" values="0.6;0.6;1;0.6;1;0.6;0.6;0.6"
-        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
     </polygon>
-    <polygon points="428,188 433,192 428,196" fill="#18ee18">
+    <!-- Arrow 2: always bright, slight lag -->
+    <polygon points="428,188 433,192 428,196" fill="#20f020">
       <animateTransform attributeName="transform" type="translate"
-        values="0,0;0,0;2,0;0,0;2,0;0,0;0,0;0,0"
-        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.1s" repeatCount="indefinite"
+        values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
+        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.12s" repeatCount="indefinite"
         calcMode="spline"
         keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
-      <animate attributeName="opacity" values="0.6;0.6;1;0.6;1;0.6;0.6;0.6"
-        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.1s" repeatCount="indefinite"/>
     </polygon>
-    <!-- Glow ring on skip housing -->
-    <rect x="427" y="171" width="9" height="22" rx="1" fill="none" stroke="#18ee18" stroke-width="0.5">
-      <animate attributeName="opacity" values="0.15;0.15;0.55;0.15;0.55;0.15;0.15;0.15"
+    <!-- Glow ring: always visible at base opacity -->
+    <rect x="427" y="171" width="9" height="22" rx="1" fill="none" stroke="#20f020" stroke-width="0.8" opacity="0.5">
+      <animate attributeName="opacity" values="0.4;0.4;0.9;0.4;0.9;0.4;0.4;0.4"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
     </rect>
     <title>Skip to next track</title>
   </g>
 
-  <!-- Power LED (left side of screen) -->
-  <circle cx="260" cy="182" r="1.8" fill="#18ee18" opacity="0.45">
-    <animate attributeName="opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite"/>
+  <!-- Power LED: always on, pulses between dim and bright green -->
+  <circle cx="260" cy="182" r="2" fill="#20f020">
+    <animate attributeName="fill" values="#0a500a;#20f020;#0a500a" dur="2s" repeatCount="indefinite"/>
   </circle>
 </g>
 
