@@ -762,35 +762,46 @@
 <path d="M218 386 Q228 376 220 366 Q212 356 202 362" stroke="#2a2018" stroke-width="7" fill="none" stroke-linecap="round"/>
 <path d="M218 386 Q228 376 220 366 Q212 356 202 362" stroke="#3a2e24" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
 
-<!-- ── CLOSED CURTAIN PANELS (default: covers window; click to open) ── -->
-<!-- CLOSED panels (cover window, click to open) -->
-<g id="curtain-close-l" onclick="openCurtain()">
-  <path d="M450 14 L554 14 L554 212 C534 210 514 212 494 210 C474 208 462 210 450 210 Z" fill="#7a5018"/>
-  <line x1="462" y1="14" x2="459" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="474" y1="14" x2="471" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="486" y1="14" x2="483" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="498" y1="14" x2="495" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="510" y1="14" x2="507" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="522" y1="14" x2="519" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="534" y1="14" x2="531" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="546" y1="14" x2="543" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="456" y1="14" x2="453" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
-  <line x1="468" y1="14" x2="465" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
-  <line x1="480" y1="14" x2="477" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+<!-- ── CLOSED CURTAIN PANELS — breathing wrappers reveal a sliver outside ── -->
+<!-- Left panel: slow drift outward, as if stirred by a draught -->
+<g id="curtain-breathe-l">
+  <animateTransform attributeName="transform" type="translate"
+    values="0,0; -9,0; 0,0" dur="6s" begin="0s" repeatCount="indefinite"
+    calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1"/>
+  <g id="curtain-close-l" onclick="openCurtain()">
+    <path d="M450 14 L554 14 L554 212 C534 210 514 212 494 210 C474 208 462 210 450 210 Z" fill="#7a5018"/>
+    <line x1="462" y1="14" x2="459" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="474" y1="14" x2="471" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="486" y1="14" x2="483" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="498" y1="14" x2="495" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="510" y1="14" x2="507" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="522" y1="14" x2="519" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="534" y1="14" x2="531" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="546" y1="14" x2="543" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="456" y1="14" x2="453" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+    <line x1="468" y1="14" x2="465" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+    <line x1="480" y1="14" x2="477" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+  </g>
 </g>
-<g id="curtain-close-r" onclick="openCurtain()">
-  <path d="M550 14 L654 14 L654 210 C642 210 630 212 618 210 C606 208 594 210 582 212 C570 210 560 210 550 212 Z" fill="#7a5018"/>
-  <line x1="562" y1="14" x2="559" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="574" y1="14" x2="571" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="586" y1="14" x2="583" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="598" y1="14" x2="595" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="610" y1="14" x2="607" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="622" y1="14" x2="619" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="634" y1="14" x2="631" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="646" y1="14" x2="643" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
-  <line x1="556" y1="14" x2="553" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
-  <line x1="568" y1="14" x2="565" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
-  <line x1="580" y1="14" x2="577" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+<!-- Right panel: same drift, slightly offset phase for natural feel -->
+<g id="curtain-breathe-r">
+  <animateTransform attributeName="transform" type="translate"
+    values="0,0; 9,0; 0,0" dur="6s" begin="-0.8s" repeatCount="indefinite"
+    calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1"/>
+  <g id="curtain-close-r" onclick="openCurtain()">
+    <path d="M550 14 L654 14 L654 210 C642 210 630 212 618 210 C606 208 594 210 582 212 C570 210 560 210 550 212 Z" fill="#7a5018"/>
+    <line x1="562" y1="14" x2="559" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="574" y1="14" x2="571" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="586" y1="14" x2="583" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="598" y1="14" x2="595" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="610" y1="14" x2="607" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="622" y1="14" x2="619" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="634" y1="14" x2="631" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="646" y1="14" x2="643" y2="210" stroke="#5a3808" stroke-width="1.5" opacity="0.4"/>
+    <line x1="556" y1="14" x2="553" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+    <line x1="568" y1="14" x2="565" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+    <line x1="580" y1="14" x2="577" y2="210" stroke="#9a6828" stroke-width="0.7" opacity="0.22"/>
+  </g>
 </g>
 <line id="curtain-seam" x1="552" y1="14" x2="552" y2="212" stroke="#3a2004" stroke-width="2.5" opacity="0.7"/>
 <g id="curtain-hint-text" onclick="openCurtain()" style="cursor:pointer">
@@ -870,11 +881,39 @@
   <circle cx="622" cy="207" r="1.2" fill="#3a2010"/>
   <circle cx="626" cy="207" r="1.2" fill="#3a2010"/>
   <circle cx="630" cy="207" r="1.2" fill="#3a2010"/>
-  <!-- Skip button (right side of player) -->
-  <rect x="635" y="197" width="10" height="14" rx="3" fill="#3a2010"/>
-  <!-- Skip icon: two small triangles pointing right -->
-  <polygon points="637,201 640,204 637,207" fill="#c8a060" opacity="0.9"/>
-  <polygon points="640,201 643,204 640,207" fill="#c8a060" opacity="0.9"/>
+  <!-- Skip button: pulses to invite clicking -->
+  <rect x="635" y="197" width="10" height="14" rx="3">
+    <animate attributeName="fill"
+      values="#3a2010;#3a2010;#5a3018;#3a2010;#5a3018;#3a2010;#3a2010;#3a2010"
+      keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1"
+      dur="2.4s" repeatCount="indefinite"/>
+  </rect>
+  <!-- First arrow: nudges right in a double-tap pattern -->
+  <polygon points="637,201 640,204 637,207" fill="#c8a060" opacity="0.9">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 0,0; 2.5,0; 0,0; 2.5,0; 0,0; 0,0; 0,0"
+      keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1"
+      dur="2.4s" repeatCount="indefinite"
+      calcMode="spline"
+      keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity"
+      values="0.9;0.9;1;0.9;1;0.9;0.9;0.9"
+      keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1"
+      dur="2.4s" repeatCount="indefinite"/>
+  </polygon>
+  <!-- Second arrow: same pattern, slight lag for cascade feel -->
+  <polygon points="640,201 643,204 640,207" fill="#c8a060" opacity="0.9">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 0,0; 2.5,0; 0,0; 2.5,0; 0,0; 0,0; 0,0"
+      keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1"
+      dur="2.4s" begin="0.1s" repeatCount="indefinite"
+      calcMode="spline"
+      keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity"
+      values="0.9;0.9;1;0.9;1;0.9;0.9;0.9"
+      keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1"
+      dur="2.4s" begin="0.1s" repeatCount="indefinite"/>
+  </polygon>
   <!-- Tiny LED indicator (glows when playing) -->
   <circle id="player-led" cx="620" cy="210" r="1.8" fill="#2a1808"/>
   <!-- Track name display (tiny text, updates via JS) -->
