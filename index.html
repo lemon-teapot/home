@@ -8,6 +8,8 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; img-src 'self' data:; base-uri 'self'; form-action 'none'; frame-ancestors 'none'">
   <title>Lemon Teapot — Something warm is brewing</title>
+  <!-- Favicon: lemon teapot emoji as SVG data URI -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🫖</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -71,48 +73,47 @@
       font-style: normal;
     }
 
-    /* ── Sound button ── */
-    #snd-btn {
-      position: fixed;
-      bottom: 1.4rem;
-      right: 1.4rem;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: #1c0e06;
-      border: 1.5px solid #3a2010;
-      color: #a07848;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
-      z-index: 100;
-      outline: none;
+    /* ── Gramophone disc spin ── */
+    #gram-disc-group {
+      transform-box: fill-box;
+      transform-origin: center;
     }
-    #snd-btn:hover { background: #281508; border-color: #6a3820; color: #d4a060; }
-    #snd-btn.on   { border-color: #7a4820; color: #d4a060; }
-    #snd-btn svg  { width: 18px; height: 18px; }
+    #gram-disc-group.spinning {
+      animation: spin-disc 5s linear infinite;
+    }
+    @keyframes spin-disc { to { transform: rotate(360deg); } }
+
+    /* ── Floating music notes ── */
+    .gram-note { opacity: 0; pointer-events: none; }
+    .gram-note.playing { animation: float-note 3s ease-out infinite; }
+    #gram-note2.playing { animation-delay: 1.1s; }
+    #gram-note3.playing { animation-delay: 2.1s; }
+    @keyframes float-note {
+      0%   { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+      15%  { opacity: 0.9; }
+      100% { opacity: 0; transform: translate(-16px, -42px) rotate(-12deg); }
+    }
 
     /* Fade-in hint */
     #snd-hint {
       position: fixed;
-      bottom: 1.75rem;
-      right: 4rem;
+      bottom: 1.4rem;
+      left: 50%;
+      transform: translateX(-50%);
       background: #1c0e06cc;
       border: 1px solid #3a2010;
       color: #8a6035;
       font-size: 0.7rem;
       font-family: 'Inter', sans-serif;
-      padding: 0.35rem 0.75rem;
+      padding: 0.35rem 0.9rem;
       border-radius: 20px;
       white-space: nowrap;
-      animation: hint-fade 5s ease-out 0.8s both;
+      animation: hint-fade 6s ease-out 1s both;
       pointer-events: none;
     }
     @keyframes hint-fade {
-      0%   { opacity: 0; transform: translateX(6px); }
-      15%  { opacity: 1; transform: translateX(0); }
+      0%   { opacity: 0; }
+      12%  { opacity: 1; }
       75%  { opacity: 1; }
       100% { opacity: 0; }
     }
@@ -120,19 +121,7 @@
 </head>
 <body>
 
-<!-- Sound toggle -->
-<button id="snd-btn" aria-label="Toggle ambient sound" onclick="toggleSound()">
-  <svg id="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-    <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
-  </svg>
-  <svg id="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-  </svg>
-</button>
-<div id="snd-hint">✦ ambient sound</div>
+<div id="snd-hint">♪ click the gramophone to play music</div>
 
 <svg class="scene" viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -160,12 +149,12 @@
   </linearGradient>
 
   <linearGradient id="curtL" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0%"   stop-color="#3d1018"/>
-    <stop offset="100%" stop-color="#5a1a22"/>
+    <stop offset="0%"   stop-color="#5a3808"/>
+    <stop offset="100%" stop-color="#7a5018"/>
   </linearGradient>
   <linearGradient id="curtR" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0%"   stop-color="#5a1a22"/>
-    <stop offset="100%" stop-color="#3d1018"/>
+    <stop offset="0%"   stop-color="#7a5018"/>
+    <stop offset="100%" stop-color="#5a3808"/>
   </linearGradient>
 
   <clipPath id="wclip"><rect x="460" y="30" width="178" height="138" rx="3"/></clipPath>
@@ -251,42 +240,114 @@
 </radialGradient>
 <rect width="700" height="440" fill="url(#lg2)"/>
 
-<!-- ── PAINTING ON WALL ── -->
-<rect x="290" y="52" width="118" height="88" rx="4" fill="#1a0d06"/>
-<rect x="296" y="58" width="106" height="76" rx="2" fill="#16202e"/>
-<!-- Night landscape in painting -->
-<rect x="296" y="58" width="106" height="76" fill="#182438" rx="2"/>
-<path d="M296 110 L318 88 L340 104 L362 80 L384 96 L402 84 L402 134 L296 134 Z" fill="#0e1828"/>
-<ellipse cx="372" cy="76" rx="9" ry="9" fill="#c8d8e8" opacity="0.55"/>
-<ellipse cx="372" cy="76" rx="7" ry="7" fill="#d8e8f0" opacity="0.45"/>
-<path d="M296 116 Q349 108 402 116 L402 134 L296 134 Z" fill="#0c1520" opacity="0.7"/>
-<!-- Small stars in painting -->
-<circle cx="308" cy="66" r="0.8" fill="#e8f0ff" opacity="0.7"/>
-<circle cx="325" cy="62" r="0.8" fill="#e8f0ff" opacity="0.5"/>
-<circle cx="345" cy="70" r="0.8" fill="#e8f0ff" opacity="0.6"/>
-<circle cx="315" cy="78" r="0.7" fill="#e8f0ff" opacity="0.4"/>
-<circle cx="390" cy="64" r="0.8" fill="#e8f0ff" opacity="0.6"/>
-<!-- Frame moulding -->
-<rect x="290" y="52" width="118" height="88" rx="4" fill="none" stroke="#2a1808" stroke-width="5"/>
-<rect x="292" y="54" width="114" height="84" rx="3" fill="none" stroke="#3a2210" stroke-width="1.5"/>
-
-<!-- ── BOOKSHELF (right wall, partially visible) ── -->
-<rect x="440" y="198" width="14" height="138" rx="2" fill="#1e1008"/>
-<!-- Books (behind curtain edge, barely visible) -->
-<rect x="441" y="202" width="12" height="22" rx="1" fill="#5a2020"/>
-<rect x="441" y="226" width="12" height="18" rx="1" fill="#1a3820"/>
-<rect x="441" y="246" width="12" height="25" rx="1" fill="#2a2050"/>
-<rect x="441" y="273" width="12" height="20" rx="1" fill="#4a2810"/>
-<rect x="441" y="295" width="12" height="30" rx="1" fill="#1e2e18"/>
+<!-- ── LARGE BOOKSHELF (back wall, centre) ── -->
+<!-- Frame -->
+<rect x="244" y="40" width="200" height="152" rx="4" fill="#1a0d06"/>
 <!-- Shelf boards -->
-<rect x="439" y="224" width="15" height="3" fill="#1a1008"/>
-<rect x="439" y="245" width="15" height="3" fill="#1a1008"/>
-<rect x="439" y="272" width="15" height="3" fill="#1a1008"/>
-<rect x="439" y="294" width="15" height="3" fill="#1a1008"/>
+<rect x="246" y="80"  width="196" height="5" fill="#261408"/>
+<rect x="246" y="118" width="196" height="5" fill="#261408"/>
+<rect x="246" y="156" width="196" height="5" fill="#261408"/>
+<!-- Side panels -->
+<rect x="244" y="40" width="8"   height="152" fill="#221008"/>
+<rect x="436" y="40" width="8"   height="152" fill="#221008"/>
+<!-- Shelf 1 (y 43–80): tall books -->
+<rect x="252" y="44" width="14" height="36" rx="1" fill="#7a1c1c"/>
+<rect x="267" y="47" width="11" height="33" rx="1" fill="#1a3a20"/>
+<rect x="279" y="43" width="16" height="37" rx="1" fill="#1c3468"/>
+<rect x="296" y="46" width="12" height="34" rx="1" fill="#6a3608"/>
+<rect x="309" y="43" width="15" height="37" rx="1" fill="#3a1860"/>
+<rect x="325" y="47" width="11" height="33" rx="1" fill="#7a4a0a"/>
+<rect x="337" y="44" width="14" height="36" rx="1" fill="#1a4618"/>
+<rect x="352" y="46" width="13" height="34" rx="1" fill="#601818"/>
+<rect x="366" y="43" width="15" height="37" rx="1" fill="#2a3a18"/>
+<rect x="382" y="46" width="12" height="34" rx="1" fill="#3a1658"/>
+<rect x="395" y="44" width="13" height="36" rx="1" fill="#18304a"/>
+<rect x="409" y="47" width="11" height="33" rx="1" fill="#7a5818"/>
+<rect x="421" y="43" width="13" height="37" rx="1" fill="#381808"/>
+<!-- Book spine lines (texture) -->
+<line x1="259" y1="50" x2="259" y2="78" stroke="#5a1010" stroke-width="0.6" opacity="0.5"/>
+<line x1="286" y1="50" x2="286" y2="78" stroke="#141a3a" stroke-width="0.6" opacity="0.5"/>
+<line x1="316" y1="50" x2="316" y2="78" stroke="#281248" stroke-width="0.6" opacity="0.5"/>
+<!-- Shelf 2 (y 85–118) -->
+<rect x="252" y="87" width="12" height="31" rx="1" fill="#1a4218"/>
+<rect x="265" y="85" width="15" height="33" rx="1" fill="#641818"/>
+<rect x="281" y="88" width="11" height="30" rx="1" fill="#203060"/>
+<rect x="293" y="85" width="14" height="33" rx="1" fill="#6a4010"/>
+<rect x="308" y="87" width="13" height="31" rx="1" fill="#1e1e50"/>
+<rect x="322" y="85" width="12" height="33" rx="1" fill="#184218"/>
+<rect x="335" y="88" width="16" height="30" rx="1" fill="#7a2010"/>
+<rect x="352" y="85" width="11" height="33" rx="1" fill="#183050"/>
+<rect x="364" y="87" width="14" height="31" rx="1" fill="#4a1810"/>
+<rect x="379" y="85" width="12" height="33" rx="1" fill="#1e3a18"/>
+<rect x="392" y="88" width="15" height="30" rx="1" fill="#501830"/>
+<rect x="408" y="85" width="13" height="33" rx="1" fill="#7a5010"/>
+<rect x="422" y="87" width="12" height="31" rx="1" fill="#182838"/>
+<!-- Shelf 3 (y 123–156) -->
+<rect x="252" y="124" width="16" height="32" rx="1" fill="#5a1818"/>
+<rect x="269" y="126" width="12" height="30" rx="1" fill="#183818"/>
+<rect x="282" y="123" width="14" height="33" rx="1" fill="#182860"/>
+<rect x="297" y="125" width="11" height="31" rx="1" fill="#6a3808"/>
+<rect x="309" y="123" width="15" height="33" rx="1" fill="#2a1860"/>
+<rect x="325" y="126" width="13" height="30" rx="1" fill="#184018"/>
+<rect x="339" y="124" width="12" height="32" rx="1" fill="#681210"/>
+<rect x="352" y="125" width="14" height="31" rx="1" fill="#1a2e50"/>
+<rect x="367" y="123" width="11" height="33" rx="1" fill="#4a2008"/>
+<rect x="379" y="125" width="16" height="31" rx="1" fill="#1c3a18"/>
+<rect x="396" y="124" width="12" height="32" rx="1" fill="#481050"/>
+<rect x="409" y="125" width="14" height="31" rx="1" fill="#604010"/>
+<rect x="424" y="124" width="10" height="32" rx="1" fill="#1a2838"/>
+<!-- Small decorative object on top shelf -->
+<rect x="252" y="36" width="24" height="5" rx="2" fill="#3a2010"/>
+<circle cx="276" cy="36" r="5" fill="#c8a838" opacity="0.7"/>
+<!-- Outer frame highlight -->
+<rect x="244" y="40" width="200" height="152" rx="4" fill="none" stroke="#2c1808" stroke-width="4"/>
+<rect x="246" y="42" width="196" height="148" rx="3" fill="none" stroke="#3a2210" stroke-width="1"/>
 
 <!-- ── WINDOW ── -->
 <rect x="452" y="20" width="200" height="158" rx="6" fill="#221406"/>
-<rect x="460" y="30" width="178" height="138" rx="3" fill="url(#sky)"/>
+<!-- Deep night sky -->
+<rect x="460" y="30" width="178" height="138" rx="3" fill="#07101a"/>
+<!-- Moon (partial, behind cloud) -->
+<circle cx="612" cy="52" r="16" fill="#c8d8e0" opacity="0.55"/>
+<ellipse cx="600" cy="48" rx="24" ry="12" fill="#090f1a" opacity="0.8"/>
+<ellipse cx="622" cy="56" rx="18" ry="9"  fill="#090f1a" opacity="0.7"/>
+<!-- Stars -->
+<circle cx="470" cy="38" r="0.9" fill="#e8f2ff" opacity="0.75"/>
+<circle cx="482" cy="44" r="0.7" fill="#e8f2ff" opacity="0.55"/>
+<circle cx="498" cy="36" r="0.8" fill="#e8f2ff" opacity="0.65"/>
+<circle cx="516" cy="42" r="0.6" fill="#e8f2ff" opacity="0.45"/>
+<circle cx="534" cy="35" r="0.9" fill="#e8f2ff" opacity="0.7"/>
+<circle cx="552" cy="46" r="0.7" fill="#e8f2ff" opacity="0.5"/>
+<circle cx="570" cy="38" r="0.8" fill="#e8f2ff" opacity="0.6"/>
+<circle cx="588" cy="35" r="0.6" fill="#e8f2ff" opacity="0.4"/>
+<!-- Pine tree silhouettes (bottom of window) -->
+<polygon points="461,168 466,128 471,168" fill="#040a12"/>
+<polygon points="462,152 466,134 470,152" fill="#040a12"/>
+<polygon points="463,140 466,142 469,140" fill="#040a12"/>
+<polygon points="469,168 476,115 483,168" fill="#050b14"/>
+<polygon points="470,148 476,123 482,148" fill="#050b14"/>
+<polygon points="471,132 476,128 481,132" fill="#050b14"/>
+<polygon points="481,168 490,102 499,168" fill="#040a12"/>
+<polygon points="482,145 490,114 498,145" fill="#040a12"/>
+<polygon points="483,128 490,118 497,128" fill="#040a12"/>
+<polygon points="498,168 509,108 520,168" fill="#050b14"/>
+<polygon points="499,148 509,118 519,148" fill="#050b14"/>
+<polygon points="508,168 517,118 526,168" fill="#040a12"/>
+<polygon points="509,150 517,126 525,150" fill="#040a12"/>
+<polygon points="524,168 535,104 546,168" fill="#050b14"/>
+<polygon points="525,148 535,116 545,148" fill="#050b14"/>
+<polygon points="544,168 553,115 562,168" fill="#040a12"/>
+<polygon points="545,150 553,124 561,150" fill="#040a12"/>
+<polygon points="560,168 571,110 582,168" fill="#050b14"/>
+<polygon points="561,148 571,122 581,148" fill="#050b14"/>
+<polygon points="580,168 590,120 600,168" fill="#040a12"/>
+<polygon points="581,150 590,130 599,150" fill="#040a12"/>
+<polygon points="598,168 609,115 620,168" fill="#050b14"/>
+<polygon points="599,148 609,126 619,148" fill="#050b14"/>
+<polygon points="618,168 628,122 638,168" fill="#040a12"/>
+<polygon points="619,150 628,132 637,150" fill="#040a12"/>
+<!-- Ground/horizon fog line -->
+<rect x="460" y="155" width="178" height="13" rx="0" fill="#0a1828" opacity="0.6"/>
 <!-- Rain drops clipped to window -->
 <g clip-path="url(#wclip)">
   <g opacity="0.6">
@@ -361,15 +422,15 @@
 <circle cx="656" cy="18" r="5" fill="#3a2010"/>
 <!-- Left drape -->
 <path d="M448 20 C452 60 446 100 450 140 C453 175 448 190 452 206 L468 206 C466 188 470 172 468 138 C464 98 468 58 466 20 Z" fill="url(#curtL)"/>
-<path d="M452 20 C455 55 450 95 453 135 C456 168 452 182 455 200" stroke="#2e0c14" stroke-width="1.5" fill="none" opacity="0.5"/>
-<path d="M460 20 C463 58 457 98 461 138 C464 168 460 183 462 200" stroke="#2e0c14" stroke-width="1.5" fill="none" opacity="0.4"/>
+<path d="M452 20 C455 55 450 95 453 135 C456 168 452 182 455 200" stroke="#3a2006" stroke-width="1.5" fill="none" opacity="0.5"/>
+<path d="M460 20 C463 58 457 98 461 138 C464 168 460 183 462 200" stroke="#3a2006" stroke-width="1.5" fill="none" opacity="0.4"/>
 <!-- Left drape bottom gather -->
-<ellipse cx="460" cy="206" rx="10" ry="4" fill="#4a1520" opacity="0.7"/>
+<ellipse cx="460" cy="206" rx="10" ry="4" fill="#6a4010" opacity="0.7"/>
 <!-- Right drape -->
 <path d="M634 20 C638 58 632 98 636 138 C639 172 634 188 638 206 L654 206 C650 190 654 175 652 140 C650 100 654 60 650 20 Z" fill="url(#curtR)"/>
-<path d="M638 20 C641 55 636 95 639 135 C642 168 638 182 640 200" stroke="#2e0c14" stroke-width="1.5" fill="none" opacity="0.5"/>
-<path d="M646 20 C649 58 644 98 647 138 C650 168 646 183 648 200" stroke="#2e0c14" stroke-width="1.5" fill="none" opacity="0.4"/>
-<ellipse cx="642" cy="206" rx="10" ry="4" fill="#4a1520" opacity="0.7"/>
+<path d="M638 20 C641 55 636 95 639 135 C642 168 638 182 640 200" stroke="#3a2006" stroke-width="1.5" fill="none" opacity="0.5"/>
+<path d="M646 20 C649 58 644 98 647 138 C650 168 646 183 648 200" stroke="#3a2006" stroke-width="1.5" fill="none" opacity="0.4"/>
+<ellipse cx="642" cy="206" rx="10" ry="4" fill="#6a4010" opacity="0.7"/>
 
 <!-- ── FIREPLACE ── -->
 <rect x="28" y="195" width="210" height="158" rx="8" fill="#1e1208"/>
@@ -404,13 +465,26 @@
 <ellipse cx="129" cy="181" rx="5" ry="5" fill="#1e1408"/>
 <line x1="129" y1="181" x2="129" y2="177.5" stroke="#c8a060" stroke-width="1" stroke-linecap="round"/>
 <line x1="129" y1="181" x2="131.5" y2="183" stroke="#c8a060" stroke-width="1" stroke-linecap="round"/>
-<!-- Small figurine/vase -->
-<rect x="145" y="180" width="10" height="8" rx="3" fill="#1e3020"/>
-<ellipse cx="150" cy="180" rx="7" ry="3" fill="#243a28"/>
-<ellipse cx="150" cy="188" rx="6" ry="2.5" fill="#1e3020"/>
-<!-- Decorative card/photo leaning on mantel -->
-<rect x="163" y="173" width="14" height="16" rx="2" fill="#c8a050" transform="rotate(5,163,180)"/>
-<rect x="165" y="175" width="10" height="12" rx="1" fill="#1a2030" transform="rotate(5,163,180)"/>
+<!-- ── LEMON TEAPOT (on mantel — brand element) ── -->
+<!-- Body -->
+<ellipse cx="162" cy="183" rx="16" ry="13" fill="#d4c818"/>
+<!-- Lid -->
+<ellipse cx="162" cy="170" rx="11" ry="4" fill="#c0b412"/>
+<rect x="158" y="167" width="8" height="5" rx="2" fill="#c8bc16"/>
+<circle cx="162" cy="165" r="3.5" fill="#d4c818"/>
+<!-- Knob shine -->
+<circle cx="161" cy="164" r="1.2" fill="#ece828" opacity="0.6"/>
+<!-- Spout -->
+<path d="M147 180 Q138 176 133 170 Q128 163 134 159" stroke="#b8ac10" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<circle cx="133" cy="158" r="2" fill="#c8bc12"/>
+<!-- Handle -->
+<path d="M177 178 Q188 175 188 183 Q188 192 177 189" stroke="#b8ac10" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<!-- Body shine -->
+<ellipse cx="156" cy="179" rx="7" ry="5" fill="#ece830" opacity="0.3"/>
+<!-- Lemon detail (tiny dots on body) -->
+<circle cx="158" cy="184" r="1.5" fill="#c0b010" opacity="0.4"/>
+<circle cx="165" cy="187" r="1.5" fill="#c0b010" opacity="0.4"/>
+<circle cx="168" cy="181" r="1.5" fill="#c0b010" opacity="0.4"/>
 
 <!-- FIRE LOGS -->
 <ellipse cx="120" cy="349" rx="48" ry="8"  fill="#3a1a08"/>
@@ -474,21 +548,18 @@
 <line x1="238" y1="192" x2="244" y2="352" stroke="#1a1008" stroke-width="4" stroke-linecap="round"/>
 <circle cx="238" cy="194" r="5" fill="#1e1408"/>
 
-<!-- ── GREEN CARPET ── -->
-<path d="M105 368 Q390 356 645 368 L652 440 Q390 448 98 440 Z" fill="#1e3e18"/>
+<!-- ── GREEN CARPET (dark forest green, elliptical) ── -->
+<ellipse cx="390" cy="404" rx="250" ry="42" fill="#102210"/>
 <!-- Border rings -->
-<path d="M118 370 Q390 359 632 370 L638 437 Q390 444 112 437 Z" fill="none" stroke="#2e5a22" stroke-width="3"/>
-<path d="M132 372 Q390 362 618 372 L624 434 Q390 440 126 434 Z" fill="none" stroke="#1a3414" stroke-width="1.5"/>
-<!-- Inner pattern: oval motif -->
-<ellipse cx="390" cy="404" rx="110" ry="14" fill="none" stroke="#2a5020" stroke-width="2"   opacity="0.5"/>
-<ellipse cx="390" cy="404" rx="65"  ry="9"  fill="none" stroke="#2a5020" stroke-width="1.5" opacity="0.4"/>
+<ellipse cx="390" cy="404" rx="236" ry="38" fill="none" stroke="#1e4018" stroke-width="3"/>
+<ellipse cx="390" cy="404" rx="218" ry="34" fill="none" stroke="#163414" stroke-width="1.5"/>
+<!-- Inner oval motif -->
+<ellipse cx="390" cy="404" rx="130" ry="18" fill="none" stroke="#1e4018" stroke-width="1.5" opacity="0.55"/>
+<ellipse cx="390" cy="404" rx="80"  ry="11" fill="none" stroke="#1e4018" stroke-width="1"   opacity="0.45"/>
 <!-- Diamond centre -->
-<path d="M390 394 L397 404 L390 414 L383 404 Z" fill="none" stroke="#366028" stroke-width="1.5" opacity="0.4"/>
-<!-- Corner flourishes -->
-<path d="M155 378 Q160 374 165 378" stroke="#346022" stroke-width="1.5" fill="none" opacity="0.4"/>
-<path d="M615 378 Q620 374 625 378" stroke="#346022" stroke-width="1.5" fill="none" opacity="0.4"/>
+<path d="M390 396 L396 404 L390 412 L384 404 Z" fill="none" stroke="#286020" stroke-width="1.5" opacity="0.4"/>
 <!-- Fringe hint -->
-<path d="M98 440 Q390 448 652 440" stroke="#3a6830" stroke-width="2.5" fill="none" opacity="0.45"/>
+<path d="M140 404 Q390 446 640 404" stroke="#204818" stroke-width="2" fill="none" opacity="0.4"/>
 
 <!-- ── LARGE PLANT (between fireplace + couch) ── -->
 <!-- Pot -->
@@ -530,8 +601,8 @@
 <!-- Decorative cushions -->
 <ellipse cx="296" cy="272" rx="22" ry="18" fill="#7a2828"/>
 <ellipse cx="296" cy="270" rx="16" ry="13" fill="#8a3030" opacity="0.5"/>
-<ellipse cx="574" cy="272" rx="22" ry="18" fill="#284a60"/>
-<ellipse cx="574" cy="270" rx="16" ry="13" fill="#306070" opacity="0.5"/>
+<ellipse cx="574" cy="272" rx="22" ry="18" fill="#8a3a18"/>
+<ellipse cx="574" cy="270" rx="16" ry="13" fill="#a04820" opacity="0.5"/>
 
 <!-- BLANKET -->
 <path d="M278 298 Q400 286 608 302 L610 372 Q400 382 275 370 Z" fill="#8a3828" opacity="0.92"/>
@@ -650,6 +721,82 @@
   <animateTransform attributeName="transform" type="translate" values="0,0;5,-20" dur="3s" begin="-2s" repeatCount="indefinite"/>
 </path>
 
+<!-- ── SLEEPING CAT (on carpet near fire) ── -->
+<!-- Body (curled) -->
+<ellipse cx="192" cy="382" rx="30" ry="14" fill="#2a2018" transform="rotate(-8,192,382)"/>
+<ellipse cx="192" cy="380" rx="20" ry="9"  fill="#3a2e24" opacity="0.4" transform="rotate(-8,192,382)"/>
+<!-- Head -->
+<circle cx="165" cy="374" r="13" fill="#2a2018"/>
+<circle cx="165" cy="373" r="9"  fill="#3a2e24" opacity="0.35"/>
+<!-- Ears -->
+<polygon points="158,363 162,354 167,363" fill="#2a2018"/>
+<polygon points="163,363 166,355 170,363" fill="#2a2018"/>
+<polygon points="159,364 162,358 165,364" fill="#4a3830" opacity="0.5"/>
+<!-- Closed eyes (sleeping) -->
+<path d="M160 372 Q163 369 166 372" stroke="#1a1510" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path d="M166 373 Q169 370 172 373" stroke="#1a1510" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<!-- Tiny nose -->
+<ellipse cx="164" cy="376" rx="2" ry="1.5" fill="#7a4040" opacity="0.7"/>
+<!-- Whiskers -->
+<line x1="146" y1="375" x2="160" y2="376" stroke="#4a3828" stroke-width="0.8" opacity="0.5"/>
+<line x1="146" y1="378" x2="160" y2="378" stroke="#4a3828" stroke-width="0.8" opacity="0.5"/>
+<line x1="168" y1="376" x2="182" y2="374" stroke="#4a3828" stroke-width="0.8" opacity="0.5"/>
+<!-- Tail wrapping around body -->
+<path d="M218 386 Q228 376 220 366 Q212 356 202 362" stroke="#2a2018" stroke-width="7" fill="none" stroke-linecap="round"/>
+<path d="M218 386 Q228 376 220 366 Q212 356 202 362" stroke="#3a2e24" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+
+<!-- ── GRAMOPHONE (clickable sound toggle) ── -->
+<g id="gramophone" onclick="toggleSound()" style="cursor:pointer" aria-label="Toggle music">
+  <!-- Small round side table -->
+  <ellipse cx="320" cy="370" rx="28" ry="7" fill="#2e1808"/>
+  <ellipse cx="320" cy="368" rx="24" ry="6" fill="#3a2010"/>
+  <rect x="312" y="370" width="7" height="20" rx="3" fill="#241408"/>
+  <rect x="322" y="370" width="7" height="20" rx="3" fill="#241408"/>
+  <!-- Cabinet body -->
+  <path d="M298 368 L300 338 L340 338 L342 368 Z" fill="#5a3010"/>
+  <path d="M299 368 L301 341 L339 341 L340 368 Z" fill="#6a3c18" opacity="0.45"/>
+  <!-- Wood grain -->
+  <line x1="308" y1="342" x2="309" y2="367" stroke="#481e08" stroke-width="1" opacity="0.45"/>
+  <line x1="316" y1="342" x2="317" y2="367" stroke="#481e08" stroke-width="1" opacity="0.45"/>
+  <line x1="324" y1="342" x2="325" y2="367" stroke="#481e08" stroke-width="1" opacity="0.45"/>
+  <line x1="332" y1="342" x2="333" y2="367" stroke="#481e08" stroke-width="1" opacity="0.45"/>
+  <!-- Cabinet top trim -->
+  <rect x="296" y="335" width="48" height="5" rx="2" fill="#7a4818"/>
+  <!-- Turntable disc (spinning group) -->
+  <g id="gram-disc-group">
+    <circle cx="320" cy="328" r="20" fill="#180a04"/>
+    <circle cx="320" cy="328" r="17" fill="#1e0e06"/>
+    <circle cx="320" cy="328" r="14" fill="none" stroke="#120804" stroke-width="1.2"/>
+    <circle cx="320" cy="328" r="10" fill="none" stroke="#120804" stroke-width="1"/>
+    <circle cx="320" cy="328" r="6"  fill="none" stroke="#120804" stroke-width="0.8"/>
+    <!-- Label -->
+    <circle cx="320" cy="328" r="4.5" fill="#8a1010"/>
+    <circle cx="320" cy="328" r="1.5" fill="#180a04"/>
+    <!-- Label text suggestion -->
+    <line x1="317" y1="328" x2="323" y2="328" stroke="#c83030" stroke-width="0.7" opacity="0.6"/>
+    <line x1="320" y1="325" x2="320" y2="331" stroke="#c83030" stroke-width="0.7" opacity="0.6"/>
+  </g>
+  <!-- Tone arm -->
+  <line x1="332" y1="320" x2="324" y2="332" stroke="#8a6020" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="324" cy="333" r="2.5" fill="#6a4a10"/>
+  <!-- Horn pipe (leading to bell) -->
+  <path d="M319 322 Q308 308 295 296 Q282 284 268 272 Q258 264 248 258" stroke="#c89010" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M319 322 Q308 308 295 296 Q282 284 268 272 Q258 264 248 258" stroke="#e0b030" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
+  <!-- Horn bell (flared opening) -->
+  <ellipse cx="238" cy="252" rx="26" ry="16" fill="#d4a018" transform="rotate(-30,238,252)"/>
+  <ellipse cx="238" cy="252" rx="19" ry="11" fill="#c09010" transform="rotate(-30,238,252)"/>
+  <ellipse cx="238" cy="252" rx="12" ry="7"  fill="#a87808" transform="rotate(-30,238,252)"/>
+  <!-- Bell shine -->
+  <path d="M255 264 Q249 256 244 248" stroke="#f0d040" stroke-width="1.5" fill="none" opacity="0.45" stroke-linecap="round"/>
+  <!-- Hover/click hint ring -->
+  <circle cx="320" cy="350" r="26" fill="none" stroke="#8a6020" stroke-width="1" opacity="0.25" stroke-dasharray="4,3"/>
+</g>
+
+<!-- Floating music notes (hidden until playing) -->
+<text id="gram-note1" class="gram-note" x="224" y="248" font-size="14" fill="#d4a840" font-family="serif" transform-box="fill-box" transform-origin="center">♪</text>
+<text id="gram-note2" class="gram-note" x="208" y="238" font-size="11" fill="#d4a840" font-family="serif" transform-box="fill-box" transform-origin="center">♫</text>
+<text id="gram-note3" class="gram-note" x="232" y="232" font-size="10" fill="#d4a840" font-family="serif" transform-box="fill-box" transform-origin="center">♩</text>
+
 <!-- ── FLOOR LAMP (right side, behind couch) ── -->
 <!-- Base -->
 <ellipse cx="652" cy="370" rx="16" ry="5" fill="#1a0e06"/>
@@ -686,130 +833,95 @@
 </div>
 
 <script>
-// ── Procedural Ambient Audio Engine ──────────────────────────────────
+// ── Music box melody engine (slow classical, G major, repeating) ──────
 const Audio = {
-  ctx: null,
-  master: null,
-  on: false,
-  crackleTimer: null,
+  ctx: null, master: null, on: false,
+  idx: 0, nextTime: 0, timer: null,
+
+  // Slow waltz-like melody in G major (note, beats)
+  MELODY: [
+    ['G4',2],['B4',1],['D5',1],
+    ['G5',1.5],['D5',0.5],['B4',1],['G4',1],
+    ['A4',1],['G4',1],['E4',1],['D4',1],
+    ['G4',1],['B4',1],['D5',2],
+    ['E5',1.5],['D5',0.5],['B4',1],['A4',1],
+    ['G4',1],['A4',1],['B4',1],['D5',1],
+    ['G5',1.5],['D5',0.5],['B4',1],['A4',1],
+    ['G4',4],
+  ],
+  F: { D4:293.66, E4:329.63, G4:392.00, A4:440.00,
+       B4:493.88, D5:587.33, E5:659.25, G5:784.00 },
+  BEAT: 60/50, // seconds per beat at 50 BPM (dreamy, slow)
 
   start() {
     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
     this.master = this.ctx.createGain();
     this.master.gain.setValueAtTime(0, this.ctx.currentTime);
     this.master.connect(this.ctx.destination);
-    this.makeRain();
-    this.makeFire();
-    this.master.gain.linearRampToValueAtTime(1, this.ctx.currentTime + 2);
+    // Subtle vinyl crackle underneath
+    this.addCrackle();
+    this.nextTime = this.ctx.currentTime + 0.3;
+    this.idx = 0;
+    this.schedule();
+    this.master.gain.linearRampToValueAtTime(0.75, this.ctx.currentTime + 2.5);
     this.on = true;
   },
 
-  // Pink noise → bandpass → sounds like light rain on glass
-  makeRain() {
-    const sr  = this.ctx.sampleRate;
-    const len = sr * 3;
-    const buf = this.ctx.createBuffer(2, len, sr);
-    for (let ch = 0; ch < 2; ch++) {
-      const d = buf.getChannelData(ch);
-      let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
-      for (let i = 0; i < len; i++) {
-        const w = Math.random()*2-1;
-        b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
-        b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
-        b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
-        d[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.09;
-        b6=w*0.115926;
-      }
-    }
+  // Music box note: sine + 2nd harmonic, sharp attack, long decay
+  playNote(freq, start, beats) {
+    const dur = beats * this.BEAT;
+    [[freq, 0.38, dur * 0.92], [freq * 2, 0.09, dur * 0.5]].forEach(([f, vol, d]) => {
+      const osc = this.ctx.createOscillator();
+      const env = this.ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = f;
+      // Slight vintage wobble
+      const lfo = this.ctx.createOscillator();
+      const lfoG = this.ctx.createGain();
+      lfo.frequency.value = 5.2; lfoG.gain.value = f * 0.003;
+      lfo.connect(lfoG); lfoG.connect(osc.frequency);
+      env.gain.setValueAtTime(0, start);
+      env.gain.linearRampToValueAtTime(vol, start + 0.018);
+      env.gain.exponentialRampToValueAtTime(0.001, start + d);
+      osc.connect(env); env.connect(this.master);
+      lfo.start(start); lfo.stop(start + d);
+      osc.start(start); osc.stop(start + d);
+    });
+  },
+
+  addCrackle() {
+    const sr = this.ctx.sampleRate, len = sr * 4;
+    const buf = this.ctx.createBuffer(1, len, sr);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.018;
     const src = this.ctx.createBufferSource();
     src.buffer = buf; src.loop = true;
-
-    const hp = this.ctx.createBiquadFilter();
-    hp.type='highpass'; hp.frequency.value=600;
     const lp = this.ctx.createBiquadFilter();
-    lp.type='lowpass'; lp.frequency.value=5000;
-    const bp = this.ctx.createBiquadFilter();
-    bp.type='bandpass'; bp.frequency.value=1800; bp.Q.value=0.6;
-
-    const g = this.ctx.createGain(); g.gain.value=0.32;
-
-    src.connect(hp); hp.connect(lp); lp.connect(bp); bp.connect(g);
-    g.connect(this.master);
+    lp.type = 'lowpass'; lp.frequency.value = 1400;
+    const g = this.ctx.createGain(); g.gain.value = 0.1;
+    src.connect(lp); lp.connect(g); g.connect(this.master);
     src.start();
   },
 
-  // Brown noise + slow LFO modulation → fire rumble base
-  makeFire() {
-    const sr  = this.ctx.sampleRate;
-    const len = sr * 4;
-    const buf = this.ctx.createBuffer(2, len, sr);
-    for (let ch = 0; ch < 2; ch++) {
-      const d = buf.getChannelData(ch);
-      let last=0;
-      for (let i = 0; i < len; i++) {
-        last = (last + 0.02*(Math.random()*2-1))/1.02;
-        d[i] = last*3.5;
-      }
+  schedule() {
+    while (this.nextTime < this.ctx.currentTime + 0.5) {
+      const [name, beats] = this.MELODY[this.idx];
+      this.playNote(this.F[name], this.nextTime, beats);
+      this.nextTime += beats * this.BEAT;
+      this.idx = (this.idx + 1) % this.MELODY.length;
     }
-    const src = this.ctx.createBufferSource();
-    src.buffer = buf; src.loop = true;
-
-    const lp = this.ctx.createBiquadFilter();
-    lp.type='lowpass'; lp.frequency.value=600;
-
-    // Slow amplitude flutter (fire breathing)
-    const lfo = this.ctx.createOscillator();
-    lfo.frequency.value=0.4;
-    const lfoGain = this.ctx.createGain();
-    lfoGain.gain.value=0.08;
-    lfo.connect(lfoGain);
-
-    const fireGain = this.ctx.createGain();
-    fireGain.gain.value=0.22;
-    lfoGain.connect(fireGain.gain);
-
-    src.connect(lp); lp.connect(fireGain);
-    fireGain.connect(this.master);
-    src.start(); lfo.start();
-    this.scheduleCrackle();
-  },
-
-  // Random wood crackle pops
-  scheduleCrackle() {
-    if (!this.on) return;
-    const delay = 400 + Math.random()*2800;
-    this.crackleTimer = setTimeout(() => {
-      if (!this.on || !this.ctx || this.ctx.state==='suspended') {
-        this.scheduleCrackle(); return;
-      }
-      const dur = 0.02 + Math.random()*0.06;
-      const len = Math.floor(this.ctx.sampleRate * dur);
-      const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
-      const d   = buf.getChannelData(0);
-      for (let i=0; i<len; i++) d[i]=(Math.random()*2-1)*(1-i/len)*(1-i/len);
-
-      const src = this.ctx.createBufferSource();
-      src.buffer = buf;
-      const lp = this.ctx.createBiquadFilter();
-      lp.type='lowpass'; lp.frequency.value=900;
-      const g  = this.ctx.createGain();
-      g.gain.value = 0.08 + Math.random()*0.18;
-
-      src.connect(lp); lp.connect(g); g.connect(this.master);
-      src.start();
-      this.scheduleCrackle();
-    }, delay);
+    this.timer = setTimeout(() => { if (this.on) this.schedule(); }, 80);
   },
 
   toggle() {
     if (!this.ctx) { this.start(); return; }
-    if (this.ctx.state==='suspended') {
+    if (this.ctx.state === 'suspended') {
       this.ctx.resume();
-      this.master.gain.linearRampToValueAtTime(1, this.ctx.currentTime+0.6);
-      this.on = true;
+      this.master.gain.linearRampToValueAtTime(0.75, this.ctx.currentTime + 0.6);
+      this.on = true; this.schedule();
     } else {
-      this.master.gain.linearRampToValueAtTime(0, this.ctx.currentTime+0.5);
-      setTimeout(()=>{ if(this.ctx) this.ctx.suspend(); }, 600);
+      clearTimeout(this.timer);
+      this.master.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.6);
+      setTimeout(() => { if (this.ctx) this.ctx.suspend(); }, 700);
       this.on = false;
     }
   }
@@ -817,13 +929,9 @@ const Audio = {
 
 function toggleSound() {
   Audio.toggle();
-  const btn   = document.getElementById('snd-btn');
-  const iOff  = document.getElementById('ico-off');
-  const iOn   = document.getElementById('ico-on');
-  const isOn  = Audio.on;
-  btn.classList.toggle('on', isOn);
-  iOff.style.display = isOn ? 'none' : '';
-  iOn.style.display  = isOn ? '' : 'none';
+  const isOn = Audio.on;
+  document.getElementById('gram-disc-group').classList.toggle('spinning', isOn);
+  document.querySelectorAll('.gram-note').forEach(n => n.classList.toggle('playing', isOn));
 }
 </script>
 
