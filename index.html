@@ -944,22 +944,18 @@
   <!-- Skip arrows (inside the skip housing on right of wooden box) -->
   <g onclick="skipTrack()" style="cursor:pointer">
     <rect x="425" y="168" width="13" height="32" fill="transparent"/>
-    <!-- Arrow 1: always bright, nudges right on pulse -->
-    <polygon points="428,178 433,182 428,186" fill="#20f020">
+    <!-- >> chevrons side-by-side, up 4px, nudge animation on the pair -->
+    <g>
       <animateTransform attributeName="transform" type="translate"
-        values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
+        values="0,0;0,0;2,0;0,0;2,0;0,0;0,0;0,0"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"
         calcMode="spline"
         keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
-    </polygon>
-    <!-- Arrow 2: always bright, slight lag -->
-    <polygon points="428,188 433,192 428,196" fill="#20f020">
-      <animateTransform attributeName="transform" type="translate"
-        values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
-        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.12s" repeatCount="indefinite"
-        calcMode="spline"
-        keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
-    </polygon>
+      <!-- Left chevron > -->
+      <path d="M428,175 L431,179 L428,183" fill="none" stroke="#20f020" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Right chevron > -->
+      <path d="M431,175 L434,179 L431,183" fill="none" stroke="#20f020" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
     <!-- Glow ring: always visible at base opacity -->
     <rect x="427" y="171" width="9" height="22" rx="1" fill="none" stroke="#20f020" stroke-width="0.8" opacity="0.5">
       <animate attributeName="opacity" values="0.4;0.4;0.9;0.4;0.9;0.4;0.4;0.4"
