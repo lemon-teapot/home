@@ -561,6 +561,10 @@
 <path d="M149 181 Q144 178 142 174" stroke="#7a6c0e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
 <!-- Handle (right, neat loop) -->
 <path d="M174 181 Q180 179 180 184 Q180 189 174 187" stroke="#7a6c0e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<!-- Lemon inscription on body: oval lemon shape + tiny leaf -->
+<ellipse cx="161" cy="183" rx="6" ry="4.5" fill="none" stroke="#c8b010" stroke-width="0.9" opacity="0.7"/>
+<line x1="161" y1="178.5" x2="161" y2="176" stroke="#5a7a10" stroke-width="1" opacity="0.7"/>
+<ellipse cx="162.5" cy="175.5" rx="2.5" ry="1.5" fill="none" stroke="#5a7a10" stroke-width="0.8" transform="rotate(-25,162.5,175.5)" opacity="0.7"/>
 
 <!-- FIRE LOGS -->
 <ellipse cx="120" cy="349" rx="48" ry="8"  fill="#3a1a08"/>
@@ -1080,32 +1084,53 @@ function skipTrack() {
   nextTrack();
 }
 
-function buildTicker() {
-  const now     = new Date();
-  const day     = DAYS[now.getDay()];
-  const date    = now.getDate() + ' ' + FULL_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
-  const daydate = day + ', ' + date;
-  const noLocation = ['...', 'No location', 'Location off', 'No permission', 'Unavailable'];
-  const hasLocation = weatherCity && !noLocation.includes(weatherCity);
-  const SEP = '          '; // 10-space gap between segments
-  // Show "Click to Play" until audio has started
-  const trackSeg = audioStarted ? (playlist[trackIdx]?.name || '---') : '♪  Click to Play';
-  let t = trackSeg;
-  if (hasLocation) t += SEP + weatherCity + '  ' + weatherTemp + '°C';
-  t += SEP + daydate + '     ';
-  return t;
+// ── Non-overlapping segment ticker ────────────────────────────────────
+// Each segment scrolls fully off-screen left before the next enters from right.
+// Uses getComputedTextLength() for accurate per-segment width measurement.
+
+let tickerRaf      = null;
+let tickerX        = 154;   // current scroller translate (154 = off-screen right)
+let tickerSegIdx   = 0;
+let tickerSegs     = [];
+let tickerSegWidth = 200;   // rendered px width of current segment
+
+function buildSegments() {
+  const now    = new Date();
+  const day    = DAYS[now.getDay()];
+  const date   = now.getDate() + ' ' + FULL_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+  const noLoc  = ['...','No location','Location off','No permission','Unavailable'];
+  const hasLoc = weatherCity && !noLoc.includes(weatherCity);
+  const track  = audioStarted ? (playlist[trackIdx]?.name || '---') : '♪  Click to Play';
+  const segs   = [track];
+  if (hasLoc) segs.push(weatherCity + '  ' + weatherTemp + '°C');
+  segs.push(day + ', ' + date);
+  return segs;
 }
 
-// ── Smooth JS ticker (requestAnimationFrame, constant 22 px/s) ───────
-let tickerRaf = null;
-let tickerX   = 0;
+function loadSegment(idx) {
+  tickerSegs   = buildSegments();
+  tickerSegIdx = ((idx % tickerSegs.length) + tickerSegs.length) % tickerSegs.length;
+  const textEl = document.getElementById('display-text');
+  if (!textEl) return;
+  textEl.textContent = tickerSegs[tickerSegIdx];
+  // getComputedTextLength() forces SVG layout → exact rendered width
+  tickerSegWidth = (typeof textEl.getComputedTextLength === 'function')
+    ? (textEl.getComputedTextLength() || textEl.textContent.length * 8.2)
+    : textEl.textContent.length * 8.2;
+}
 
 function tickerStep(t) {
   tickerStep._last = tickerStep._last || t;
   const dt = Math.min((t - tickerStep._last) / 1000, 0.05);
   tickerStep._last = t;
   tickerX -= 22 * dt;
-  if (tickerX < -700) tickerX = 160; // off left → jump to off right
+
+  // Current segment fully off screen left → load next segment from right
+  if (tickerX < -(tickerSegWidth + 30)) {
+    tickerX = 154;
+    loadSegment(tickerSegIdx + 1);
+  }
+
   const el = document.getElementById('display-scroller');
   if (el) el.setAttribute('transform', 'translate(' + tickerX.toFixed(1) + ',0)');
   tickerRaf = requestAnimationFrame(tickerStep);
@@ -1113,15 +1138,14 @@ function tickerStep(t) {
 
 function startTicker() {
   if (tickerRaf) cancelAnimationFrame(tickerRaf);
-  tickerX = 0;             // text starts at left edge of clip — immediately visible
-  tickerStep._last = null; // reset timestamp so first dt is 0
+  tickerStep._last = null;
+  tickerX = 154; // enter from right
+  loadSegment(0);
   tickerRaf = requestAnimationFrame(tickerStep);
 }
 
 function updatePlayerUI() {
-  const text = document.getElementById('display-text');
-  if (text) text.textContent = buildTicker();
-  startTicker();
+  startTicker(); // restart from segment 0 (shows new track name immediately)
 }
 
 function onLEDClick() { onFirstInteraction(); }
@@ -1292,10 +1316,9 @@ async function fetchWeather() {
     } catch(e) {
       weatherCity = 'Unavailable'; weatherTemp = '--';
     }
-    updatePlayerUI(); // rebuild ticker with fresh location + temp
+    // No restart needed — loadSegment() calls buildSegments() fresh at each transition
   }, () => {
     weatherCity = 'No location'; weatherTemp = '--';
-    updatePlayerUI();
   }, { timeout: 8000 });
 }
 fetchWeather();
