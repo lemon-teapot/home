@@ -12,7 +12,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🫖</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;1,300&family=Pinyon+Script&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -127,6 +127,111 @@
       80%  { opacity: 1; }
       100% { opacity: 0; }
     }
+
+    /* ── Notebook popup ─────────────────────────────────────────── */
+    #book-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(8,4,2,0.92); z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    #book-overlay.open { display: flex; }
+    .nb-wrap {
+      position: relative; display: flex; align-items: stretch;
+      filter: drop-shadow(0 18px 52px rgba(0,0,0,0.8));
+    }
+    .nb-rings {
+      width: 26px; background: #3a3028; border-radius: 6px 0 0 6px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: space-evenly; padding: 14px 0; flex-shrink: 0;
+    }
+    .nb-ring {
+      width: 17px; height: 17px; border-radius: 50%;
+      background: #1e1810; border: 2px solid #5a4a38;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+    }
+    .nb-page {
+      width: min(480px, 84vw); height: min(580px, 84vh);
+      background: #f0e6ca;
+      background-image: repeating-linear-gradient(
+        transparent, transparent 27px,
+        rgba(180,150,100,0.16) 27px, rgba(180,150,100,0.16) 28px
+      );
+      border-radius: 0 4px 4px 0;
+      padding: 2.4rem 2.4rem 3rem 2rem;
+      position: relative; overflow: hidden;
+      box-shadow: inset -3px 0 8px rgba(0,0,0,0.1);
+    }
+    /* Top-left dog-ear = previous chapter */
+    .nb-prev {
+      position: absolute; top: 0; left: 0; width: 0; height: 0;
+      border-style: solid; border-width: 40px 40px 0 0;
+      border-color: #d4c8a0 transparent transparent transparent;
+      cursor: pointer; z-index: 10;
+      filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.25));
+      transition: border-width 0.15s;
+    }
+    .nb-prev:hover { border-width: 50px 50px 0 0; }
+    .nb-prev.dim    { opacity: 0.25; cursor: default; }
+    /* Bottom-right dog-ear = next chapter */
+    .nb-next {
+      position: absolute; bottom: 0; right: 0; width: 0; height: 0;
+      border-style: solid; border-width: 0 0 44px 44px;
+      border-color: transparent transparent #d4c8a0 transparent;
+      cursor: pointer; z-index: 10;
+      filter: drop-shadow(-1px -1px 2px rgba(0,0,0,0.25));
+      transition: border-width 0.15s;
+    }
+    .nb-next:hover { border-width: 0 0 56px 56px; }
+    .nb-next.dim    { opacity: 0.25; cursor: default; }
+    /* Page content */
+    .nb-content {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 0.82rem; color: #3a2a14; line-height: 1.82;
+      height: calc(100% - 2.6rem); overflow: hidden;
+    }
+    .nb-content h2 {
+      font-size: 0.95rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #2a1a08; border-bottom: 1px solid #c8a870;
+      padding-bottom: 0.3rem; margin-bottom: 0.85rem; margin-top: 0;
+    }
+    .nb-content p  { margin-bottom: 0.7rem; }
+    .nb-content ul { padding-left: 1.2em; }
+    .nb-content li { margin-bottom: 0.3rem; }
+    .nb-content a  { color: #7a4010; }
+    .nb-content table { border-collapse: collapse; font-size: 0.78rem; width: 100%; }
+    .nb-content td, .nb-content th {
+      border: 1px solid #c8a870; padding: 0.25rem 0.5rem; text-align: left;
+    }
+    .nb-content th { background: rgba(180,140,80,0.12); }
+    /* Credits chapter */
+    .nb-credits-wrap { text-align: center; padding-top: 1.5rem; }
+    .nb-credits-name {
+      font-family: 'Pinyon Script', cursive;
+      font-size: 3.2rem; color: #2a1a08; line-height: 1.1;
+    }
+    .nb-credits-latin {
+      font-family: Georgia, serif; font-style: italic;
+      font-size: 0.72rem; color: #7a6040; margin-top: 0.5rem;
+      letter-spacing: 0.06em;
+    }
+    .nb-credits-divider {
+      border: none; border-top: 1px solid #c8a870;
+      width: 50%; margin: 1.2rem auto 1rem;
+    }
+    /* Footer */
+    .nb-footer {
+      position: absolute; bottom: 0.7rem; left: 50%;
+      transform: translateX(-50%);
+      font-family: Georgia, serif; font-size: 0.63rem;
+      color: #a08050; letter-spacing: 0.14em; white-space: nowrap;
+    }
+    .nb-close {
+      position: absolute; top: -2.2rem; right: 0;
+      background: none; border: none; color: #c8a060;
+      font-size: 1.1rem; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .nb-close:hover { color: #e0c880; }
   </style>
 </head>
 <body>
@@ -350,8 +455,8 @@
 <line x1="257" y1="186" x2="420" y2="186" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
 <line x1="257" y1="190" x2="420" y2="190" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
 <!-- Skip button housing (right side of wooden box) -->
-<rect x="423" y="168" width="18" height="32" rx="2" fill="#1a0e06"/>
-<rect x="425" y="171" width="14" height="22" rx="1" fill="#030a03"/>
+<rect x="420" y="168" width="21" height="32" rx="2" fill="#1a0e06"/>
+<rect x="422" y="171" width="17" height="22" rx="1" fill="#030a03"/>
 <!-- Wooden knob on skip button -->
 <rect x="250" y="172" width="3" height="4" rx="1" fill="#5a2a10"/>
 <rect x="250" y="180" width="3" height="4" rx="1" fill="#5a2a10"/>
@@ -937,29 +1042,24 @@
     <g id="display-scroller" transform="translate(154,0)">
       <text id="display-text" x="272" y="187"
         font-family="'Courier New', Courier, monospace" font-size="14"
-        fill="#18ee18" letter-spacing="0.08em" filter="url(#led-glow)">Cloud Veil</text>
+        fill="#18ee18" letter-spacing="0.03em" filter="url(#led-glow)">Cloud Veil</text>
     </g>
   </g>
 
-  <!-- Skip arrows (inside the skip housing on right of wooden box) -->
+  <!-- Skip arrows: pulsating >> synced to blinker (2s cycle), box 3px wider on left -->
   <g onclick="skipTrack()" style="cursor:pointer">
-    <rect x="423" y="168" width="18" height="32" fill="transparent"/>
-    <!-- >> chevrons side-by-side, dropped 3px, nudge animation on the pair -->
-    <g>
-      <animateTransform attributeName="transform" type="translate"
-        values="0,0;0,0;2,0;0,0;2,0;0,0;0,0;0,0"
-        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"
-        calcMode="spline"
-        keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
-      <!-- Left chevron > -->
-      <path d="M426,178 L429,182 L426,186" fill="none" stroke="#20f020" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      <!-- Right chevron > -->
-      <path d="M429,178 L432,182 L429,186" fill="none" stroke="#20f020" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-    </g>
-    <!-- Glow ring: always visible at base opacity -->
-    <rect x="425" y="171" width="14" height="22" rx="1" fill="none" stroke="#20f020" stroke-width="0.8" opacity="0.5">
-      <animate attributeName="opacity" values="0.4;0.4;0.9;0.4;0.9;0.4;0.4;0.4"
-        keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
+    <rect x="420" y="168" width="21" height="32" fill="transparent"/>
+    <!-- Left chevron > (pulse stroke colour, 2s) -->
+    <path d="M423,178 L426,182 L423,186" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="2s" repeatCount="indefinite"/>
+    </path>
+    <!-- Right chevron > (slight lag) -->
+    <path d="M426,178 L429,182 L426,186" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="2s" begin="0.1s" repeatCount="indefinite"/>
+    </path>
+    <!-- Glow ring: pulse opacity, 2s cycle -->
+    <rect x="422" y="171" width="17" height="22" rx="1" fill="none" stroke="#20f020" stroke-width="0.8">
+      <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2s" repeatCount="indefinite"/>
     </rect>
     <title>Skip to next track</title>
   </g>
@@ -971,6 +1071,18 @@
     <animate attributeName="fill" values="#0a500a;#20f020;#0a500a" dur="2s" repeatCount="indefinite"/>
   </circle>
 </g>
+
+<!-- ── WINDOW WIDE CLICK ZONE (whole window+curtain area toggles curtain) ── -->
+<rect x="444" y="14" width="218" height="198" fill="transparent" style="cursor:pointer"
+  onclick="toggleCurtain()">
+  <title>Click to open or close curtain</title>
+</rect>
+
+<!-- ── BOOKS CLICK ZONE (opens notebook popup) ── -->
+<rect x="246" y="42" width="190" height="122" fill="transparent" style="cursor:pointer"
+  onclick="openBook()">
+  <title>Read about this page</title>
+</rect>
 
 <!-- ── FLOOR LAMP (right side, behind couch) ── -->
 <!-- Base -->
@@ -1023,11 +1135,14 @@ const FULL_MONTHS = ['January','February','March','April','May','June','July','A
 let weatherCity = '...', weatherTemp = '--';
 
 // ── Playlist ──────────────────────────────────────────────────────────
+// ── PLAYLIST — add new Suno tracks here ──────────────────────────────
+// 1. Drop the .mp3 into this folder  2. Add a line below  3. git push
 const TRACKS = [
   { file:'cloud-veil.mp3',    name:'Cloud Veil'    },
   { file:'morning-mist.mp3',  name:'Morning Mist'  },
   { file:'rain-on-glass.mp3', name:'Rain on Glass' },
   { file:'night-study.mp3',   name:'Night Study'   },
+  // { file:'new-track.mp3',  name:'New Track'     },  ← add more here
 ];
 let playlist = [...TRACKS], trackIdx = 0;
 
@@ -1069,6 +1184,7 @@ function loadTrack(idx) {
   pianoEl.src = playlist[idx].file;
   pianoEl.play().catch(()=>{});
   updatePlayerUI();
+  syncMediaSession();
 }
 
 function nextTrack() {
@@ -1158,6 +1274,7 @@ function updateSoundBtn() {
   document.getElementById('snd-label').textContent = isOn ? 'Sound on' : 'Sound off';
   document.getElementById('ico-on').style.display  = isOn ? '' : 'none';
   document.getElementById('ico-off').style.display = isOn ? 'none' : '';
+  syncMediaSession();
 }
 
 // ── Init audio ────────────────────────────────────────────────────────
@@ -1322,7 +1439,131 @@ async function fetchWeather() {
 }
 fetchWeather();
 setInterval(fetchWeather, 30 * 60 * 1000); // refresh every 30 minutes
+
+// ── Toggle curtain (window click zone calls this) ─────────────────
+function toggleCurtain() {
+  curtainIsOpen ? closeCurtain() : openCurtain();
+}
+
+// ── Media Session API (keeps audio playing when screen locks) ─────
+function syncMediaSession() {
+  if (!('mediaSession' in navigator)) return;
+  const track = playlist[trackIdx];
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: track?.name || 'Lemon Teapot',
+    artist: 'Lemon Teapot',
+    album: 'Ambient Piano'
+  });
+  navigator.mediaSession.playbackState = (audioStarted && !muted) ? 'playing' : 'paused';
+  navigator.mediaSession.setActionHandler('play',      () => { if (muted) toggleSound(); });
+  navigator.mediaSession.setActionHandler('pause',     () => { if (!muted) toggleSound(); });
+  navigator.mediaSession.setActionHandler('nexttrack', skipTrack);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && ctx && ctx.state === 'suspended') {
+    ctx.resume().catch(() => {});
+  }
+});
+
+// ── Notebook popup ────────────────────────────────────────────────
+let bookPage = 0;
+
+const BOOK_CHAPTERS = [
+  {
+    title: 'What is this place',
+    html: `<p>It started as a placeholder. Then I added a fireplace. Then some creatures on a sofa. Then a clock that shows real time. It got away from me a bit.</p>
+<p>There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table.</p>
+<p>It's cosy in a way that probably took longer to build than it should have.</p>`
+  },
+  {
+    title: 'The music',
+    html: `<p>Four piano pieces, all made with Suno.ai. No copyright — take them, use them, do whatever.</p>
+<table>
+<tr><th>Track</th><th>Download</th></tr>
+<tr><td>Cloud Veil</td><td><a href="https://github.com/lemon-teapot/lemonteapot-home/raw/main/cloud-veil.mp3">cloud-veil.mp3</a></td></tr>
+<tr><td>Morning Mist</td><td><a href="https://github.com/lemon-teapot/lemonteapot-home/raw/main/morning-mist.mp3">morning-mist.mp3</a></td></tr>
+<tr><td>Rain on Glass</td><td><a href="https://github.com/lemon-teapot/lemonteapot-home/raw/main/rain-on-glass.mp3">rain-on-glass.mp3</a></td></tr>
+<tr><td>Night Study</td><td><a href="https://github.com/lemon-teapot/lemonteapot-home/raw/main/night-study.mp3">night-study.mp3</a></td></tr>
+</table>
+<p>The rain track is from a free sound library.</p>`
+  },
+  {
+    title: 'Curtain and sound',
+    html: `<p>Click anywhere on the window or curtain to open it. Rain fades in over the piano. Click again and it closes. Piano only.</p>
+<p>The button at the top right mutes everything. The LED display on the bookshelf scrolls the current track name, your city and temperature if you allow location, and today's date.</p>
+<p>The skip arrows on the display jump to the next track. The clock above the fireplace reads your local time.</p>`
+  },
+  {
+    title: "How it's built",
+    html: `<p>One HTML file. No framework, no build tools, nothing installed. The scene is inline SVG. Audio uses the Web Audio API with regular HTML audio elements. The MP3s live in the same folder as the page.</p>
+<p>Claude — Anthropic's AI assistant — designed and built the whole thing. The source is at <a href="https://github.com/lemon-teapot/lemonteapot-home">github.com/lemon-teapot/lemonteapot-home</a> if you want to look.</p>`
+  },
+  {
+    title: 'Hosted and open',
+    html: `<p>Runs on GitHub Pages and served through Cloudflare. No analytics. No cookies. Nothing tracked.</p>
+<p>The music was generated on <a href="https://suno.com">suno.com</a> — no copyright, free to use. The rain track came from a free sound library. Everything else was made from scratch.</p>
+<p>Repository: <a href="https://github.com/lemon-teapot/lemonteapot-home">lemon-teapot/lemonteapot-home</a></p>`
+  },
+  {
+    title: 'Credits',
+    html: `<div class="nb-credits-wrap">
+<hr class="nb-credits-divider">
+<div class="nb-credits-name">bunbun</div>
+<div class="nb-credits-latin">fecit · anno MMXXVI</div>
+<hr class="nb-credits-divider">
+</div>`
+  }
+];
+
+function openBook() {
+  bookPage = 0;
+  document.getElementById('book-overlay').classList.add('open');
+  renderBook();
+}
+function closeBook() {
+  document.getElementById('book-overlay').classList.remove('open');
+}
+function closeBookOutside(e) {
+  if (e.target.id === 'book-overlay') closeBook();
+}
+function flipBook(dir) {
+  const next = bookPage + dir;
+  if (next < 0 || next >= BOOK_CHAPTERS.length) return;
+  bookPage = next;
+  renderBook();
+}
+function renderBook() {
+  const ch = BOOK_CHAPTERS[bookPage];
+  document.getElementById('nb-content').innerHTML = `<h2>${ch.title}</h2>${ch.html}`;
+  document.getElementById('nb-footer').textContent =
+    `${bookPage + 1}  /  ${BOOK_CHAPTERS.length}`;
+  document.querySelector('.nb-prev').classList.toggle('dim', bookPage === 0);
+  document.querySelector('.nb-next').classList.toggle('dim', bookPage === BOOK_CHAPTERS.length - 1);
+}
 </script>
+
+<!-- ── Notebook popup ── -->
+<div id="book-overlay" onclick="closeBookOutside(event)" role="dialog" aria-modal="true">
+  <div class="nb-wrap">
+    <!-- Spiral rings -->
+    <div class="nb-rings" aria-hidden="true">
+      <div class="nb-ring"></div><div class="nb-ring"></div>
+      <div class="nb-ring"></div><div class="nb-ring"></div>
+      <div class="nb-ring"></div><div class="nb-ring"></div>
+      <div class="nb-ring"></div><div class="nb-ring"></div>
+      <div class="nb-ring"></div><div class="nb-ring"></div>
+      <div class="nb-ring"></div>
+    </div>
+    <!-- Notebook page -->
+    <div class="nb-page">
+      <div class="nb-prev" onclick="flipBook(-1)" title="Previous chapter"></div>
+      <div class="nb-content" id="nb-content"></div>
+      <div class="nb-footer"  id="nb-footer"></div>
+      <div class="nb-next" onclick="flipBook(1)"  title="Next chapter"></div>
+    </div>
+    <button class="nb-close" onclick="closeBook()" aria-label="Close">✕</button>
+  </div>
+</div>
 
 </body>
 </html>

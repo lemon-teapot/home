@@ -1,23 +1,42 @@
-# lemonteapot.com — Holding Page
+# lemonteapot.com
 
-A placeholder page for [lemonteapot.com](https://lemonteapot.com) while the site is being built.
+A holding page while the real site gets built.
 
-## What it is
+## What is this place
 
-A hand-crafted animated illustration of a warm, cozy room — fireplace crackling, three fluffy friends curled up under a blanket, a cup of something hot, rain outside. The kind of corner you want to settle into while something good is on its way.
+It started as a placeholder. Then I added a fireplace. Then some creatures on a sofa. Then a clock that shows real time. It got away from me a bit.
 
-The mood: unhurried. Warm. The feeling of being indoors when the weather outside is grey and drizzly.
+There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table. It's cosy in a way that probably took longer to build than it should have.
 
-## Sound modes
+## The music
 
-The curtain in the top-right corner has two states:
+Four piano pieces, all made with Suno.ai. No copyright — take them, use them, do whatever.
 
-**Curtain closed** — the default. A slow, dreamy piano melody plays. Quiet and interior, like background music to a rainy afternoon.
+| Track | Download |
+|-------|----------|
+| Cloud Veil | [cloud-veil.mp3](https://github.com/lemon-teapot/lemonteapot-home/raw/main/cloud-veil.mp3) |
+| Morning Mist | [morning-mist.mp3](https://github.com/lemon-teapot/lemonteapot-home/raw/main/morning-mist.mp3) |
+| Rain on Glass | [rain-on-glass.mp3](https://github.com/lemon-teapot/lemonteapot-home/raw/main/rain-on-glass.mp3) |
+| Night Study | [night-study.mp3](https://github.com/lemon-teapot/lemonteapot-home/raw/main/night-study.mp3) |
 
-**Curtain open** (click to open) — reveals the night sky and pine trees outside. Sound shifts to light rain on glass and a low fire crackle. Click the open curtain to close it again.
+The rain is from a free sound library.
 
-The **Sound on / Sound off** button (bottom-right) mutes and unmutes whichever mode is active.
+## Curtain and sound
 
-## Tech
+Click the window or the curtain to open it. Rain fades in over the piano. Click again and it closes. Piano only.
 
-Pure HTML, CSS, and inline SVG — no frameworks, no build step, no external assets. Audio is synthesised at runtime using the Web Audio API. Hosted on GitHub Pages via [lemon-teapot/lemonteapot-home](https://github.com/lemon-teapot/lemonteapot-home), served at `lemonteapot.com` through Cloudflare DNS.
+The button at the top right mutes everything. The LED display on the bookshelf scrolls the current track name, your city and temperature if you allow location, and today's date. The little skip arrows jump to the next track. The clock above the fireplace is real — it reads your local time.
+
+## How it's built
+
+One HTML file. No framework, no build tools, nothing installed. The scene is inline SVG. Audio uses the Web Audio API with regular HTML audio elements. The MP3s live in the same folder as the page.
+
+Claude (Anthropic) built it. All of it. The source is there if you want to read through it.
+
+## Hosted and open
+
+GitHub Pages at [lemon-teapot/lemonteapot-home](https://github.com/lemon-teapot/lemonteapot-home), served through Cloudflare. No analytics, no cookies, nothing tracked.
+
+## Credits
+
+Made by bunbun.
