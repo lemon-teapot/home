@@ -6,7 +6,7 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; img-src 'self' data:; media-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src https://api.open-meteo.com https://api.bigdatacloud.net; base-uri 'self'; form-action 'none'; frame-ancestors 'none'">
   <title>Lemon Teapot — Something warm is brewing</title>
   <!-- Favicon: lemon teapot emoji as SVG data URI -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🫖</text></svg>">
@@ -180,7 +180,7 @@
   </linearGradient>
 
   <clipPath id="wclip"><rect x="460" y="30" width="178" height="138" rx="3"/></clipPath>
-  <clipPath id="display-clip"><rect x="250" y="195" width="150" height="13"/></clipPath>
+  <clipPath id="display-clip"><rect x="254" y="197" width="143" height="11"/></clipPath>
   <filter id="led-glow" x="-25%" y="-25%" width="150%" height="150%">
     <feGaussianBlur stdDeviation="0.9" result="blur"/>
     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -323,9 +323,10 @@
 <rect x="396" y="124" width="12" height="32" rx="1" fill="#481050"/>
 <rect x="409" y="125" width="14" height="31" rx="1" fill="#604010"/>
 <rect x="424" y="124" width="10" height="32" rx="1" fill="#1a2838"/>
-<!-- Small decorative object on top shelf -->
-<rect x="252" y="36" width="24" height="5" rx="2" fill="#3a2010"/>
-<circle cx="276" cy="36" r="5" fill="#c8a838" opacity="0.7"/>
+<!-- Small decorative books stacked on top of shelf -->
+<rect x="254" y="34" width="8"  height="8" rx="1" fill="#7a1c1c"/>
+<rect x="263" y="35" width="6"  height="7" rx="1" fill="#1a3820"/>
+<rect x="270" y="33" width="9"  height="9" rx="1" fill="#1c3468"/>
 <!-- Outer frame highlight -->
 <rect x="244" y="40" width="200" height="152" rx="4" fill="none" stroke="#2c1808" stroke-width="4"/>
 <rect x="246" y="42" width="196" height="148" rx="3" fill="none" stroke="#3a2210" stroke-width="1"/>
@@ -897,42 +898,70 @@
   <ellipse cx="643" cy="212" rx="17" ry="5" fill="#4a3008" opacity="0.55"/>
 </g>
 
-<!-- ── LED DISPLAY (bottom of bookshelf, scrolling track title + skip) ── -->
+<!-- ── LED DISPLAY (3-row: music / location+temp / day+date+time) ── -->
 <g id="music-display" style="opacity:0">
   <!-- Bezel -->
-  <rect x="244" y="193" width="202" height="17" rx="3" fill="#1a0e06"/>
-  <!-- Screen -->
-  <rect x="247" y="195" width="196" height="13" rx="2" fill="#050e05"/>
-  <!-- Subtle scanline texture -->
-  <line x1="247" y1="198" x2="443" y2="198" stroke="#081208" stroke-width="0.6" opacity="0.5"/>
-  <line x1="247" y1="201" x2="443" y2="201" stroke="#081208" stroke-width="0.6" opacity="0.5"/>
-  <line x1="247" y1="204" x2="443" y2="204" stroke="#081208" stroke-width="0.6" opacity="0.5"/>
-  <line x1="247" y1="207" x2="443" y2="207" stroke="#081208" stroke-width="0.6" opacity="0.5"/>
-  <!-- Divider between text and skip area -->
-  <line x1="403" y1="195" x2="403" y2="208" stroke="#0a1a08" stroke-width="1.5"/>
-  <!-- Skip button background -->
-  <rect x="404" y="195" width="37" height="13" rx="1" fill="#040c04"/>
+  <rect x="244" y="193" width="202" height="50" rx="3" fill="#1a0e06"/>
+  <!-- Screen background -->
+  <rect x="247" y="195" width="196" height="46" rx="2" fill="#030a03"/>
+  <!-- Scanlines (subtle) -->
+  <line x1="247" y1="199" x2="443" y2="199" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
+  <line x1="247" y1="203" x2="443" y2="203" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
+  <line x1="247" y1="207" x2="443" y2="207" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
+  <line x1="247" y1="211" x2="443" y2="211" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
+  <line x1="247" y1="215" x2="443" y2="215" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
+  <line x1="247" y1="219" x2="443" y2="219" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
+  <line x1="247" y1="223" x2="443" y2="223" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
+  <line x1="247" y1="227" x2="443" y2="227" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
+  <line x1="247" y1="231" x2="443" y2="231" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
+  <line x1="247" y1="235" x2="443" y2="235" stroke="#060f06" stroke-width="0.7" opacity="0.6"/>
 
-  <!-- Scrolling track title (clipped) -->
+  <!-- Row dividers -->
+  <line x1="247" y1="211" x2="443" y2="211" stroke="#0e240e" stroke-width="1.2"/>
+  <line x1="247" y1="226" x2="403" y2="226" stroke="#0e240e" stroke-width="1.2"/>
+
+  <!-- Vertical divider (text / skip button) -->
+  <line x1="403" y1="195" x2="403" y2="241" stroke="#0e240e" stroke-width="1.5"/>
+
+  <!-- Skip button area -->
+  <rect x="404" y="195" width="39" height="46" rx="1" fill="#040d04"/>
+
+  <!-- ── ROW 1: Scrolling track title ── -->
   <g clip-path="url(#display-clip)">
     <g id="display-scroller">
       <animateTransform id="display-anim" attributeName="transform" type="translate"
-        values="150,0; -110,0; -110,0; 150,0; 150,0"
+        values="143,0; -120,0; -120,0; 143,0; 143,0"
         keyTimes="0; 0.58; 0.70; 0.701; 1"
-        dur="13s" repeatCount="indefinite"
+        dur="14s" repeatCount="indefinite"
         calcMode="spline"
         keySplines="0.35 0 0.65 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"/>
-      <text id="display-text" x="250" y="204"
+      <text id="display-text" x="254" y="206"
         font-family="'Courier New', Courier, monospace" font-size="9"
-        fill="#18ee18" letter-spacing="0.1em" filter="url(#led-glow)">Cloud Veil</text>
+        fill="#18ee18" letter-spacing="0.08em" filter="url(#led-glow)">Cloud Veil</text>
     </g>
   </g>
 
-  <!-- Skip arrows (animated double-nudge, green LED) -->
+  <!-- ── ROW 2: Location + Temperature ── -->
+  <text id="led-city" x="254" y="221"
+    font-family="'Courier New', Courier, monospace" font-size="8.5"
+    fill="#14cc14" letter-spacing="0.06em" filter="url(#led-glow)">…</text>
+  <text id="led-temp" x="398" y="221" text-anchor="end"
+    font-family="'Courier New', Courier, monospace" font-size="8.5"
+    fill="#14cc14" letter-spacing="0.06em" filter="url(#led-glow)">--°C</text>
+
+  <!-- ── ROW 3: Day + Date + Time ── -->
+  <text id="led-day" x="254" y="236"
+    font-family="'Courier New', Courier, monospace" font-size="8.5"
+    fill="#14cc14" letter-spacing="0.06em" filter="url(#led-glow)">---</text>
+  <text id="led-datetime" x="398" y="236" text-anchor="end"
+    font-family="'Courier New', Courier, monospace" font-size="8.5"
+    fill="#14cc14" letter-spacing="0.06em" filter="url(#led-glow)">-- --- ----  --:--:--</text>
+
+  <!-- ── SKIP BUTTON (right column, centred vertically) ── -->
   <g onclick="skipTrack()" style="cursor:pointer">
-    <rect x="404" y="195" width="37" height="13" rx="1" fill="transparent"/>
+    <rect x="404" y="195" width="39" height="46" fill="transparent"/>
     <!-- Arrow 1 -->
-    <polygon points="411,198 416,201.5 411,205" fill="#18ee18">
+    <polygon points="416,211 423,218 416,225" fill="#18ee18">
       <animateTransform attributeName="transform" type="translate"
         values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"
@@ -941,8 +970,8 @@
       <animate attributeName="opacity" values="0.7;0.7;1;0.7;1;0.7;0.7;0.7"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
     </polygon>
-    <!-- Arrow 2 (cascade lag) -->
-    <polygon points="417,198 422,201.5 417,205" fill="#18ee18">
+    <!-- Arrow 2 -->
+    <polygon points="423,211 430,218 423,225" fill="#18ee18">
       <animateTransform attributeName="transform" type="translate"
         values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.1s" repeatCount="indefinite"
@@ -951,17 +980,17 @@
       <animate attributeName="opacity" values="0.7;0.7;1;0.7;1;0.7;0.7;0.7"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.1s" repeatCount="indefinite"/>
     </polygon>
-    <!-- Button glow pulse -->
-    <rect x="404" y="195" width="37" height="13" rx="1" fill="none" stroke="#18ee18" stroke-width="0.5">
-      <animate attributeName="opacity" values="0.2;0.2;0.6;0.2;0.6;0.2;0.2;0.2"
+    <!-- Skip box glow pulse -->
+    <rect x="405" y="196" width="37" height="44" rx="1" fill="none" stroke="#18ee18" stroke-width="0.6">
+      <animate attributeName="opacity" values="0.15;0.15;0.55;0.15;0.55;0.15;0.15;0.15"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"/>
     </rect>
     <title>Skip to next track</title>
   </g>
 
-  <!-- LED power dot (always on when display is visible) -->
-  <circle cx="251" cy="201.5" r="1.8" fill="#18ee18" opacity="0.5">
-    <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2s" repeatCount="indefinite"/>
+  <!-- Power LED dot -->
+  <circle cx="251" cy="218" r="2" fill="#18ee18" opacity="0.45">
+    <animate attributeName="opacity" values="0.35;0.65;0.35" dur="2s" repeatCount="indefinite"/>
   </circle>
 </g>
 
@@ -1182,13 +1211,17 @@ function onFirstInteraction(){if(!audioStarted)initAudio();}
 document.addEventListener('click',      onFirstInteraction,{once:true,passive:true});
 document.addEventListener('touchstart', onFirstInteraction,{once:true,passive:true});
 
-// ── Analog wall clock (shows actual local time, updates every second) ─
+// ── Clock + LED display (time/date every second, weather every 30 min) ─
+const DAYS  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let weatherCity = '...', weatherTemp = '--';
+
 function updateClock() {
   const now = new Date();
-  const h = now.getHours() % 12 + now.getMinutes() / 60;
-  const m = now.getMinutes() + now.getSeconds() / 60;
-  const s = now.getSeconds();
-  const cx = 133, cy = 115;
+  const h   = now.getHours() % 12 + now.getMinutes() / 60;
+  const m   = now.getMinutes() + now.getSeconds() / 60;
+  const s   = now.getSeconds();
+  const cx  = 133, cy = 115;
 
   function hand(id, deg, r) {
     const el = document.getElementById(id);
@@ -1200,18 +1233,60 @@ function updateClock() {
   function tail(id, deg, r) {
     const el = document.getElementById(id);
     if (!el) return;
-    const rad = (deg + 90) * Math.PI / 180; // opposite direction
+    const rad = (deg + 90) * Math.PI / 180;
     el.setAttribute('x2', (cx + r * Math.cos(rad)).toFixed(2));
     el.setAttribute('y2', (cy + r * Math.sin(rad)).toFixed(2));
   }
+  hand('clock-hour',   h * 30, 18);
+  hand('clock-minute', m * 6,  23);
+  hand('clock-second', s * 6,  26);
+  tail('clock-second-tail', s * 6, 7);
 
-  hand('clock-hour',        h * 30,  18);
-  hand('clock-minute',      m * 6,   23);
-  hand('clock-second',      s * 6,   26);
-  tail('clock-second-tail', s * 6,    7); // counterweight
+  // LED row 2: location + temp (updates when weather data arrives)
+  const cityEl = document.getElementById('led-city');
+  const tempEl = document.getElementById('led-temp');
+  if (cityEl) cityEl.textContent = weatherCity;
+  if (tempEl) tempEl.textContent = weatherTemp + '°C';
+
+  // LED row 3: day + date + time (every second)
+  const pad  = n => String(n).padStart(2, '0');
+  const day  = DAYS[now.getDay()].slice(0, 3).toUpperCase();
+  const date = now.getDate() + ' ' + MONS[now.getMonth()] + ' ' + now.getFullYear();
+  const time = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  const dayEl = document.getElementById('led-day');
+  const dtEl  = document.getElementById('led-datetime');
+  if (dayEl) dayEl.textContent = day;
+  if (dtEl)  dtEl.textContent  = date + '  ' + time;
 }
 setInterval(updateClock, 1000);
 updateClock();
+
+// Weather: fetches once on load, refreshes every 30 minutes
+async function fetchWeather() {
+  if (!navigator.geolocation) {
+    weatherCity = 'Location off'; weatherTemp = '--';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(async pos => {
+    try {
+      const { latitude: lat, longitude: lon } = pos.coords;
+      const [geoRes, wxRes] = await Promise.all([
+        fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`),
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+      ]);
+      const geo = await geoRes.json();
+      const wx  = await wxRes.json();
+      weatherCity = (geo.city || geo.locality || geo.principalSubdivision || 'Unknown').slice(0, 20);
+      weatherTemp = Math.round(wx.current_weather.temperature);
+    } catch(e) {
+      weatherCity = 'Unavailable'; weatherTemp = '--';
+    }
+  }, () => {
+    weatherCity = 'No permission'; weatherTemp = '--';
+  }, { timeout: 8000 });
+}
+fetchWeather();
+setInterval(fetchWeather, 30 * 60 * 1000); // refresh every 30 minutes
 </script>
 
 </body>
