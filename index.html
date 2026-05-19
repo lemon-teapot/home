@@ -934,8 +934,8 @@
   <!-- Scrolling ticker (clipped to LED screen area) -->
   <g clip-path="url(#display-clip)">
     <g id="display-scroller" transform="translate(0,0)">
-      <text id="display-text" x="259" y="184"
-        font-family="'Courier New', Courier, monospace" font-size="12"
+      <text id="display-text" x="259" y="187"
+        font-family="'Courier New', Courier, monospace" font-size="13"
         fill="#18ee18" letter-spacing="0.08em" filter="url(#led-glow)">Cloud Veil</text>
     </g>
   </g>
@@ -944,7 +944,7 @@
   <g onclick="skipTrack()" style="cursor:pointer">
     <rect x="425" y="168" width="13" height="32" fill="transparent"/>
     <!-- Arrow 1: always bright, nudges right on pulse -->
-    <polygon points="428,178 433,182 428,186" fill="#20f020">
+    <polygon points="428,181 433,185 428,189" fill="#20f020">
       <animateTransform attributeName="transform" type="translate"
         values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" repeatCount="indefinite"
@@ -952,7 +952,7 @@
         keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
     </polygon>
     <!-- Arrow 2: always bright, slight lag -->
-    <polygon points="428,188 433,192 428,196" fill="#20f020">
+    <polygon points="428,191 433,195 428,199" fill="#20f020">
       <animateTransform attributeName="transform" type="translate"
         values="0,0;0,0;2.5,0;0,0;2.5,0;0,0;0,0;0,0"
         keyTimes="0;0.25;0.35;0.45;0.55;0.65;0.8;1" dur="2.4s" begin="0.12s" repeatCount="indefinite"
@@ -968,7 +968,7 @@
   </g>
 
   <!-- Power LED: always on, pulses between dim and bright green -->
-  <circle cx="260" cy="182" r="2" fill="#20f020">
+  <circle cx="260" cy="185" r="2" fill="#20f020">
     <animate attributeName="fill" values="#0a500a;#20f020;#0a500a" dur="2s" repeatCount="indefinite"/>
   </circle>
 </g>
