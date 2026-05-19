@@ -153,11 +153,13 @@
       width: min(420px, 80vw); height: min(580px, 84vh);
       background: #f0e6ca;
       background-image: repeating-linear-gradient(
-        transparent, transparent 31px,
-        rgba(180,150,100,0.18) 31px, rgba(180,150,100,0.18) 32px
+        transparent, transparent 20px,
+        rgba(180,150,100,0.22) 20px, rgba(180,150,100,0.22) 21px,
+        transparent 21px, transparent 32px
       );
+      background-position-y: 4px; /* baseline sits 3px above each stripe */
       border-radius: 0 4px 4px 0;
-      padding: 2.8rem 2.2rem 3rem 1.8rem;
+      padding: 2rem 2.2rem 3rem 1.8rem;
       position: relative; overflow: hidden;
       box-shadow: inset -3px 0 8px rgba(0,0,0,0.1);
     }
@@ -192,11 +194,11 @@
     .nb-content h2 {
       font-family: 'Lora', Georgia, serif;
       font-size: 1.1rem; letter-spacing: 0.08em; text-transform: uppercase;
-      font-weight: 600; color: #2a1a08; border-bottom: 1px solid #c8a870;
-      padding-bottom: 0.3rem; margin-bottom: 0rem; margin-top: 0;
-      line-height: 32px;
+      font-weight: 600; color: #2a1a08;
+      margin: 0; line-height: 32px;
+      /* no border-bottom or padding-bottom — ruled line serves as separator */
     }
-    .nb-content p  { margin-bottom: 0.7rem; }
+    .nb-content p  { margin-bottom: 0; } /* blank <p>&nbsp;</p> used for gaps */
     .nb-content ul { padding-left: 1.2em; }
     .nb-content li { margin-bottom: 0.3rem; }
     .nb-content a  { color: #7a4010; }
@@ -1475,13 +1477,11 @@ let bookPage = 0;
 const BOOK_CHAPTERS = [
   {
     title: 'What is this place',
-    html: `<p>It started as a placeholder. Then I added a fireplace. Then some creatures on a sofa. Then a clock that shows real time. It got away from me a bit.</p>
-<p>There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table.</p>
-<p>It's cosy in a way that probably took longer to build than it should have.</p>`
+    html: `<p>&nbsp;</p><p>It started as a placeholder. Then I added a fireplace. Then some creatures on a sofa. Then a clock that shows real time. It got away from me a bit.</p><p>&nbsp;</p><p>There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table.</p><p>&nbsp;</p><p>It's cosy in a way that probably took longer to build than it should have.</p>`
   },
   {
     title: 'The music',
-    html: `<p>Four piano pieces, all made with Suno.ai. No copyright — take them, use them, do whatever.</p>
+    html: `<p>&nbsp;</p><p>Four piano pieces, all made with Suno.ai. No copyright — take them, use them, do whatever.</p><p>&nbsp;</p>
 <table>
 <tr><th>Track</th><th>Download</th></tr>
 <tr><td>Cloud Veil I</td><td><a href="https://github.com/lemon-teapot/lemonteapot-home/raw/main/cloud-veil-1.mp3">cloud-veil-1.mp3</a></td></tr>
@@ -1495,20 +1495,15 @@ const BOOK_CHAPTERS = [
   },
   {
     title: 'Curtain and sound',
-    html: `<p>Click anywhere on the window or curtain to open it. Rain fades in over the piano. Click again and it closes. Piano only.</p>
-<p>The button at the top right mutes everything. The LED display on the bookshelf scrolls the current track name, your city and temperature if you allow location, and today's date.</p>
-<p>The skip arrows on the display jump to the next track. The clock above the fireplace reads your local time.</p>`
+    html: `<p>&nbsp;</p><p>Click anywhere on the window or curtain to open it. Rain fades in over the piano. Click again and it closes. Piano only.</p><p>&nbsp;</p><p>The button at the top right mutes everything. The LED display on the bookshelf scrolls the current track name, your city and temperature if you allow location, and today's date.</p><p>&nbsp;</p><p>The skip arrows on the display jump to the next track. The clock above the fireplace reads your local time.</p>`
   },
   {
     title: "How it's built",
-    html: `<p>One HTML file. No framework, no build tools, nothing installed. The scene is inline SVG. Audio uses the Web Audio API with regular HTML audio elements. The MP3s live in the same folder as the page.</p>
-<p>Claude — Anthropic's AI assistant — designed and built the whole thing. The source is at <a href="https://github.com/lemon-teapot/lemonteapot-home">github.com/lemon-teapot/lemonteapot-home</a> if you want to look.</p>`
+    html: `<p>&nbsp;</p><p>One HTML file. No framework, no build tools, nothing installed. The scene is inline SVG. Audio uses the Web Audio API with regular HTML audio elements. The MP3s live in the same folder as the page.</p><p>&nbsp;</p><p>Claude — Anthropic's AI assistant — designed and built the whole thing. The source is at <a href="https://github.com/lemon-teapot/lemonteapot-home">github.com/lemon-teapot/lemonteapot-home</a> if you want to look.</p>`
   },
   {
     title: 'Hosted and open',
-    html: `<p>Runs on GitHub Pages and served through Cloudflare. No analytics. No cookies. Nothing tracked.</p>
-<p>The music was generated on <a href="https://suno.com">suno.com</a> — no copyright, free to use. The rain track came from a free sound library. Everything else was made from scratch.</p>
-<p>Repository: <a href="https://github.com/lemon-teapot/lemonteapot-home">lemon-teapot/lemonteapot-home</a></p>`
+    html: `<p>&nbsp;</p><p>Runs on GitHub Pages and served through Cloudflare. No analytics. No cookies. Nothing tracked.</p><p>&nbsp;</p><p>The music was generated on <a href="https://suno.com">suno.com</a> — no copyright, free to use. The rain track came from a free sound library. Everything else was made from scratch.</p><p>&nbsp;</p><p>Repository: <a href="https://github.com/lemon-teapot/lemonteapot-home">lemon-teapot/lemonteapot-home</a></p>`
   },
   {
     title: 'Credits', noTitle: true,
