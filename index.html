@@ -993,7 +993,7 @@ function initAudio() {
   if (audioStarted) return;
   audioStarted = true;
   ctx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = ctx.createGain(); masterGain.gain.value = muted ? 0 : 1;
+  masterGain = ctx.createGain(); masterGain.gain.value = muted ? 0 : 0.5;
   masterGain.connect(ctx.destination);
   musicGain = ctx.createGain(); musicGain.gain.value = curtainIsOpen ? 0 : 1;
   musicGain.connect(masterGain);
@@ -1073,7 +1073,7 @@ function toggleSound() {
   document.getElementById('ico-on').style.display  = muted ? 'none' : '';
   document.getElementById('ico-off').style.display = muted ? '' : 'none';
   if (!audioStarted) { if (!muted) initAudio(); return; }
-  masterGain.gain.linearRampToValueAtTime(muted ? 0 : 1, ctx.currentTime + 0.5);
+  masterGain.gain.linearRampToValueAtTime(muted ? 0 : 0.5, ctx.currentTime + 0.5);
 }
 
 // ── Start audio on first user interaction (browser autoplay policy) ──
