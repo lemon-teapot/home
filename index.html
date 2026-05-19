@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lemon Teapot — Something warm is brewing</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #120805;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: Georgia, 'Times New Roman', serif;
+      padding: 1.5rem 1rem 2.5rem;
+      overflow-x: hidden;
+    }
+
+    /* Page-level warm pulse from fire */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 18% 90%, #c85000 0%, transparent 60%);
+      opacity: 0.08;
+      pointer-events: none;
+      animation: pageglow 2s ease-in-out infinite alternate;
+    }
+    @keyframes pageglow {
+      from { opacity: 0.06; }
+      to   { opacity: 0.13; }
+    }
+
+    .scene {
+      width: 100%;
+      max-width: 680px;
+      filter: drop-shadow(0 8px 40px rgba(180,80,0,0.25));
+    }
+
+    .text-area {
+      margin-top: 2rem;
+      text-align: center;
+      max-width: 480px;
+    }
+    .tagline {
+      font-size: clamp(1.15rem, 3.5vw, 1.65rem);
+      color: #d4a870;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.55rem;
+    }
+    .subtitle {
+      font-size: clamp(0.78rem, 2vw, 0.95rem);
+      color: #7a5535;
+      font-style: italic;
+      line-height: 1.6;
+    }
+    .domain {
+      margin-top: 1.2rem;
+      font-size: 0.7rem;
+      color: #4a3020;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-style: normal;
+    }
+  </style>
+</head>
+<body>
+
+<svg class="scene" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg">
+<defs>
+
+  <!-- Fire glow radiating left -->
+  <radialGradient id="fg" cx="17%" cy="88%" r="45%" gradientUnits="userSpaceOnUse">
+    <stop offset="0%"   stop-color="#d06000" stop-opacity="0.45"/>
+    <stop offset="60%"  stop-color="#b03000" stop-opacity="0.12"/>
+    <stop offset="100%" stop-color="#120805" stop-opacity="0"/>
+  </radialGradient>
+
+  <!-- Window outside gradient (gloomy) -->
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%"   stop-color="#1a2535"/>
+    <stop offset="100%" stop-color="#0e1a28"/>
+  </linearGradient>
+
+  <!-- Clip for window rain -->
+  <clipPath id="wclip">
+    <rect x="453" y="28" width="185" height="138" rx="3"/>
+  </clipPath>
+
+  <!-- Clip for firebox -->
+  <clipPath id="fclip">
+    <path d="M52 228 Q52 218 62 218 L178 218 Q188 218 188 228 L188 340 L52 340 Z"/>
+  </clipPath>
+
+  <!-- Fluffy edge filter -->
+  <filter id="fluffy" x="-8%" y="-8%" width="116%" height="116%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" seed="2" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+
+  <!-- Soft couch shadow -->
+  <filter id="cshadow" x="-10%" y="-10%" width="120%" height="130%">
+    <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.4"/>
+  </filter>
+
+</defs>
+
+<!-- ── ROOM BACKGROUND ── -->
+<rect width="680" height="420" fill="#1a0d08"/>
+<!-- Floor -->
+<rect x="0" y="345" width="680" height="75" fill="#120905"/>
+<!-- Floor/wall shadow line -->
+<line x1="0" y1="345" x2="680" y2="345" stroke="#0a0603" stroke-width="3"/>
+<!-- Baseboard -->
+<rect x="0" y="342" width="680" height="5" fill="#1e1208"/>
+
+<!-- Fire wall glow (animated) -->
+<rect width="680" height="420" fill="url(#fg)">
+  <animate attributeName="opacity" values="0.85;1;0.9;1;0.85" dur="1.8s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ── WINDOW (top-right) ── -->
+<!-- Outer frame -->
+<rect x="445" y="20" width="205" height="158" rx="6" fill="#241408"/>
+<!-- Glass (outside) -->
+<rect x="453" y="28" width="185" height="138" rx="3" fill="url(#sky)"/>
+
+<!-- Rain streaks (clipped to window) -->
+<g clip-path="url(#wclip)">
+  <!-- Each rain streak: line with translate + opacity animation -->
+  <g opacity="0.55">
+    <line x1="464" y1="0"  x2="459" y2="55"  stroke="#4a6a88" stroke-width="1">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="0.85s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.6;0.6;0" dur="0.85s" repeatCount="indefinite"/>
+    </line>
+    <line x1="479" y1="0"  x2="474" y2="55"  stroke="#3a5878" stroke-width="0.8">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="0.72s" begin="-0.2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.5;0.5;0" dur="0.72s" begin="-0.2s" repeatCount="indefinite"/>
+    </line>
+    <line x1="496" y1="0"  x2="491" y2="55"  stroke="#506888" stroke-width="1">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="1.05s" begin="-0.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.5;0.5;0" dur="1.05s" begin="-0.5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="512" y1="0"  x2="507" y2="55"  stroke="#4a6a88" stroke-width="0.8">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="0.9s" begin="-0.1s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.6;0.6;0" dur="0.9s" begin="-0.1s" repeatCount="indefinite"/>
+    </line>
+    <line x1="528" y1="0"  x2="523" y2="55"  stroke="#3a5878" stroke-width="1.2">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="0.78s" begin="-0.35s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.55;0.55;0" dur="0.78s" begin="-0.35s" repeatCount="indefinite"/>
+    </line>
+    <line x1="544" y1="0"  x2="539" y2="55"  stroke="#4a6a88" stroke-width="0.8">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="1.1s" begin="-0.6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.45;0.45;0" dur="1.1s" begin="-0.6s" repeatCount="indefinite"/>
+    </line>
+    <line x1="560" y1="0"  x2="555" y2="55"  stroke="#506888" stroke-width="1">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="0.95s" begin="-0.15s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.5;0.5;0" dur="0.95s" begin="-0.15s" repeatCount="indefinite"/>
+    </line>
+    <line x1="578" y1="0"  x2="573" y2="55"  stroke="#3a5878" stroke-width="0.8">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="0.82s" begin="-0.42s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.6;0.6;0" dur="0.82s" begin="-0.42s" repeatCount="indefinite"/>
+    </line>
+    <line x1="594" y1="0"  x2="589" y2="55"  stroke="#4a6a88" stroke-width="1">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="1.0s" begin="-0.25s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.5;0.5;0" dur="1.0s" begin="-0.25s" repeatCount="indefinite"/>
+    </line>
+    <line x1="612" y1="0"  x2="607" y2="55"  stroke="#506888" stroke-width="1.2">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="0.87s" begin="-0.7s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.55;0.55;0" dur="0.87s" begin="-0.7s" repeatCount="indefinite"/>
+    </line>
+    <line x1="628" y1="0"  x2="623" y2="55"  stroke="#3a5878" stroke-width="0.8">
+      <animateTransform attributeName="transform" type="translate" values="0,-30; -4,120" dur="1.15s" begin="-0.4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.45;0.45;0" dur="1.15s" begin="-0.4s" repeatCount="indefinite"/>
+    </line>
+  </g>
+</g>
+<!-- Window cross bars -->
+<line x1="547" y1="28"  x2="547" y2="166" stroke="#241408" stroke-width="4.5"/>
+<line x1="453" y1="97"  x2="638" y2="97"  stroke="#241408" stroke-width="4.5"/>
+<!-- Window frame border -->
+<rect x="445" y="20" width="205" height="158" rx="6" fill="none" stroke="#2e1a0a" stroke-width="7"/>
+<!-- Window sill -->
+<rect x="438" y="174" width="218" height="11" rx="4" fill="#2a1808"/>
+<!-- Condensation blob on glass (subtle) -->
+<ellipse cx="482" cy="130" rx="14" ry="8" fill="#fff" opacity="0.025"/>
+<ellipse cx="610" cy="80"  rx="10" ry="6" fill="#fff" opacity="0.02"/>
+
+<!-- ── FIREPLACE ── -->
+<!-- Stone surround body -->
+<rect x="28" y="192" width="210" height="155" rx="8" fill="#1e1208"/>
+<!-- Mantle shelf -->
+<rect x="18" y="186" width="228" height="16" rx="5" fill="#281808"/>
+<!-- Stone row lines -->
+<line x1="28" y1="215" x2="238" y2="215" stroke="#251508" stroke-width="2"/>
+<line x1="28" y1="248" x2="52"  y2="248" stroke="#251508" stroke-width="2"/>
+<line x1="188" y1="248" x2="238" y2="248" stroke="#251508" stroke-width="2"/>
+<line x1="28" y1="282" x2="52"  y2="282" stroke="#251508" stroke-width="2"/>
+<line x1="188" y1="282" x2="238" y2="282" stroke="#251508" stroke-width="2"/>
+<line x1="28" y1="316" x2="52"  y2="316" stroke="#251508" stroke-width="2"/>
+<line x1="188" y1="316" x2="238" y2="316" stroke="#251508" stroke-width="2"/>
+<!-- Firebox arch -->
+<path d="M52 228 Q52 218 62 218 L178 218 Q188 218 188 228 L188 345 L52 345 Z" fill="#0c0503"/>
+<!-- Arch keystone highlight -->
+<path d="M115 218 Q120 214 125 218" stroke="#2a1808" stroke-width="3" fill="none"/>
+
+<!-- Fire logs -->
+<ellipse cx="120" cy="341" rx="48" ry="8"  fill="#3a1a08"/>
+<ellipse cx="140" cy="338" rx="38" ry="6"  fill="#2a1205" transform="rotate(-7,140,338)"/>
+<ellipse cx="95"  cy="339" rx="32" ry="5.5" fill="#2a1205" transform="rotate(6,95,339)"/>
+<!-- Log surface highlight -->
+<ellipse cx="120" cy="337" rx="30" ry="3" fill="#4e2810" opacity="0.55"/>
+
+<!-- FLAMES (path morphing + scale) -->
+<!-- Outer glow / halo -->
+<ellipse cx="120" cy="315" rx="44" ry="30" fill="#d04000" opacity="0.15">
+  <animate attributeName="opacity" values="0.12;0.22;0.14;0.2;0.12" dur="1.4s" repeatCount="indefinite"/>
+  <animate attributeName="ry" values="30;34;28;32;30" dur="1.4s" repeatCount="indefinite"/>
+</ellipse>
+
+<!-- Back large flame (deepest orange) -->
+<path fill="#e07010">
+  <animate attributeName="d" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1" values="
+    M105 340 C102 318 88 300 98 272 C105 252 115 268 116 282 C121 260 128 244 120 222 C132 242 140 262 136 280 C142 264 150 250 148 270 C154 288 150 314 132 340 Z;
+    M107 340 C100 315 86 302 96 274 C103 254 113 270 114 284 C119 262 126 246 118 224 C130 244 138 264 134 282 C140 266 148 252 146 272 C152 290 148 316 130 340 Z;
+    M103 340 C104 320 90 298 100 270 C107 250 117 266 118 280 C123 258 130 242 122 220 C134 240 142 260 138 278 C144 262 152 248 150 268 C156 286 152 312 134 340 Z;
+    M106 340 C101 316 87 304 97 276 C104 256 114 272 115 286 C120 264 127 248 119 226 C131 246 139 266 135 284 C141 268 149 254 147 274 C153 292 149 318 131 340 Z;
+    M105 340 C102 318 88 300 98 272 C105 252 115 268 116 282 C121 260 128 244 120 222 C132 242 140 262 136 280 C142 264 150 250 148 270 C154 288 150 314 132 340 Z
+  "/>
+</path>
+
+<!-- Middle bright flame (orange-yellow) -->
+<path fill="#f09020">
+  <animate attributeName="d" dur="1.1s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1" values="
+    M108 340 C106 320 96 305 103 282 C109 264 118 276 119 290 C124 272 128 258 123 240 C133 256 138 273 134 288 C139 274 145 262 143 278 C148 295 144 318 125 340 Z;
+    M110 340 C104 318 94 307 101 284 C107 266 116 278 117 292 C122 274 126 260 121 242 C131 258 136 275 132 290 C137 276 143 264 141 280 C146 297 142 320 123 340 Z;
+    M106 340 C108 322 98 303 105 280 C111 262 120 274 121 288 C126 270 130 256 125 238 C135 254 140 271 136 286 C141 272 147 260 145 276 C150 293 146 316 127 340 Z;
+    M108 340 C106 320 96 305 103 282 C109 264 118 276 119 290 C124 272 128 258 123 240 C133 256 138 273 134 288 C139 274 145 262 143 278 C148 295 144 318 125 340 Z
+  "/>
+</path>
+
+<!-- Left accent flame -->
+<path fill="#f0a030">
+  <animate attributeName="d" dur="0.9s" begin="-0.3s" repeatCount="indefinite" values="
+    M72 340 C70 326 63 316 67 298 C71 282 78 290 80 302 C84 287 87 275 82 260 C90 272 94 286 91 298 C95 286 101 276 99 288 C104 302 102 320 86 340 Z;
+    M74 340 C68 324 61 318 65 300 C69 284 76 292 78 304 C82 289 85 277 80 262 C88 274 92 288 89 300 C93 288 99 278 97 290 C102 304 100 322 84 340 Z;
+    M70 340 C72 328 65 314 69 296 C73 280 80 288 82 300 C86 285 89 273 84 258 C92 270 96 284 93 296 C97 284 103 274 101 286 C106 300 104 318 88 340 Z;
+    M72 340 C70 326 63 316 67 298 C71 282 78 290 80 302 C84 287 87 275 82 260 C90 272 94 286 91 298 C95 286 101 276 99 288 C104 302 102 320 86 340 Z
+  "/>
+</path>
+
+<!-- Right accent flame -->
+<path fill="#f0a030">
+  <animate attributeName="d" dur="1.0s" begin="-0.5s" repeatCount="indefinite" values="
+    M142 340 C140 322 135 312 139 294 C143 278 150 286 151 298 C155 283 158 270 154 255 C162 268 165 282 162 295 C166 283 172 273 170 285 C175 299 173 319 157 340 Z;
+    M144 340 C138 320 133 314 137 296 C141 280 148 288 149 300 C153 285 156 272 152 257 C160 270 163 284 160 297 C164 285 170 275 168 287 C173 301 171 321 155 340 Z;
+    M140 340 C142 324 137 310 141 292 C145 276 152 284 153 296 C157 281 160 268 156 253 C164 266 167 280 164 293 C168 281 174 271 172 283 C177 297 175 317 159 340 Z;
+    M142 340 C140 322 135 312 139 294 C143 278 150 286 151 298 C155 283 158 270 154 255 C162 268 165 282 162 295 C166 283 172 273 170 285 C175 299 173 319 157 340 Z
+  "/>
+</path>
+
+<!-- Bright tip (yellow-white center) -->
+<path fill="#ffd060" opacity="0.6">
+  <animate attributeName="d" dur="0.7s" repeatCount="indefinite" values="
+    M115 335 C113 318 108 305 113 285 C117 268 122 278 122 292 C126 275 129 265 124 248 C132 262 134 278 130 292 C134 280 137 272 134 284 C138 296 133 316 120 335 Z;
+    M117 335 C111 316 106 307 111 287 C115 270 120 280 120 294 C124 277 127 267 122 250 C130 264 132 280 128 294 C132 282 135 274 132 286 C136 298 131 318 118 335 Z;
+    M113 335 C115 320 110 303 115 283 C119 266 124 276 124 290 C128 273 131 263 126 246 C134 260 136 276 132 290 C136 278 139 270 136 282 C140 294 135 314 122 335 Z;
+    M115 335 C113 318 108 305 113 285 C117 268 122 278 122 292 C126 275 129 265 124 248 C132 262 134 278 130 292 C134 280 137 272 134 284 C138 296 133 316 120 335 Z
+  "/>
+</path>
+
+<!-- Ember glow at base of fire -->
+<ellipse cx="120" cy="340" rx="52" ry="7" fill="#e04800" opacity="0.35">
+  <animate attributeName="opacity" values="0.28;0.45;0.3;0.42;0.28" dur="1.3s" repeatCount="indefinite"/>
+</ellipse>
+
+<!-- Candle on mantle -->
+<rect x="96" y="174" width="7" height="12" rx="3" fill="#d8c888"/>
+<ellipse cx="99.5" cy="174" rx="5" ry="3.5" fill="#ffe8a0"/>
+<!-- Candle flame -->
+<path d="M99.5 173 Q101 169 99.5 164" stroke="#ffb830" stroke-width="2" fill="none" stroke-linecap="round">
+  <animate attributeName="d" values="M99.5 173 Q101.5 169 99.5 164;M99.5 173 Q97.5 169 99.5 165;M99.5 173 Q101 170 99.5 164" dur="0.9s" repeatCount="indefinite"/>
+</path>
+
+<!-- Small decorative object right of candle -->
+<rect x="115" y="180" width="16" height="6" rx="3" fill="#2e1a08"/>
+<rect x="113" y="178" width="20" height="4" rx="2" fill="#3a2210"/>
+
+<!-- ── COUCH & RUG ── -->
+<!-- Rug under couch -->
+<ellipse cx="400" cy="372" rx="210" ry="24" fill="#2e1208" opacity="0.7"/>
+<!-- Rug border pattern (simple) -->
+<ellipse cx="400" cy="372" rx="196" ry="20" fill="none" stroke="#3a1a0a" stroke-width="3"/>
+<ellipse cx="400" cy="372" rx="185" ry="16" fill="none" stroke="#2a1208" stroke-width="1.5"/>
+
+<!-- Couch (with shadow filter) -->
+<g filter="url(#cshadow)">
+  <!-- Couch back -->
+  <rect x="252" y="238" width="368" height="52" rx="16" fill="#4e2318"/>
+  <!-- Couch seat -->
+  <rect x="258" y="282" width="356" height="80" rx="16" fill="#3e1c12"/>
+  <!-- Seat cushion highlight -->
+  <rect x="268" y="286" width="152" height="18" rx="8" fill="#4a2015" opacity="0.6"/>
+  <rect x="432" y="286" width="152" height="18" rx="8" fill="#4a2015" opacity="0.6"/>
+  <!-- Couch arms -->
+  <rect x="244" y="258" width="38" height="96" rx="16" fill="#4e2318"/>
+  <rect x="590" y="258" width="38" height="96" rx="16" fill="#4e2318"/>
+  <!-- Arm top caps -->
+  <rect x="240" y="252" width="46" height="12" rx="6" fill="#5a2820"/>
+  <rect x="586" y="252" width="46" height="12" rx="6" fill="#5a2820"/>
+</g>
+
+<!-- Blanket draped over couch -->
+<path d="M275 295 Q400 283 598 298 L600 362 Q400 372 272 360 Z" fill="#8a3828" opacity="0.9"/>
+<!-- Blanket folds (vertical lines) -->
+<path d="M318 294 Q320 327 316 362" stroke="#722e20" stroke-width="2.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+<path d="M370 288 Q373 321 369 364" stroke="#722e20" stroke-width="2.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+<path d="M422 287 Q425 320 421 365" stroke="#722e20" stroke-width="2.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+<path d="M474 289 Q476 322 472 364" stroke="#722e20" stroke-width="2.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+<path d="M526 292 Q528 325 524 363" stroke="#722e20" stroke-width="2.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+<!-- Blanket bottom fringe suggestion -->
+<path d="M272 362 Q400 372 600 364" stroke="#c06040" stroke-width="2.5" fill="none" opacity="0.35"/>
+<!-- Small pattern dots on blanket -->
+<circle cx="345" cy="330" r="2.5" fill="#c05040" opacity="0.3"/>
+<circle cx="395" cy="322" r="2.5" fill="#c05040" opacity="0.3"/>
+<circle cx="445" cy="328" r="2.5" fill="#c05040" opacity="0.3"/>
+<circle cx="495" cy="320" r="2.5" fill="#c05040" opacity="0.3"/>
+<circle cx="545" cy="326" r="2.5" fill="#c05040" opacity="0.3"/>
+
+<!-- ── THREE FLUFFY AVATARS ── -->
+
+<!-- === AVATAR 1 — Cream/Biscuit (left, leaning into middle) === -->
+<g filter="url(#fluffy)" transform="translate(312, 248)">
+  <!-- Body -->
+  <ellipse cx="0" cy="60"  rx="34" ry="30" fill="#eddcb0"/>
+  <ellipse cx="-2" cy="56" rx="22" ry="20" fill="#f5e8c8" opacity="0.55"/>
+  <!-- Neck connection -->
+  <ellipse cx="0" cy="32"  rx="18" ry="10" fill="#eddcb0"/>
+  <!-- Head -->
+  <circle cx="0" cy="15"   r="24"  fill="#eddcb0"/>
+  <circle cx="-2" cy="13"  r="16"  fill="#f5e8c8" opacity="0.45"/>
+  <!-- Ears (round, fluffy) -->
+  <circle cx="-14" cy="-6"  r="11"  fill="#eddcb0"/>
+  <circle cx="14"  cy="-8"  r="11"  fill="#eddcb0"/>
+  <!-- Inner ear -->
+  <circle cx="-14" cy="-5"  r="6"   fill="#f0b098" opacity="0.45"/>
+  <circle cx="14"  cy="-7"  r="6"   fill="#f0b098" opacity="0.45"/>
+  <!-- Eyes (glancing right toward friends) -->
+  <circle cx="-6"  cy="12"  r="4"   fill="#2e1a08"/>
+  <circle cx="9"   cy="13"  r="4"   fill="#2e1a08"/>
+  <circle cx="-5"  cy="11"  r="1.5" fill="#fff" opacity="0.9"/>
+  <circle cx="10"  cy="12"  r="1.5" fill="#fff" opacity="0.9"/>
+  <!-- Nose -->
+  <ellipse cx="1.5" cy="19" rx="3" ry="2" fill="#c8907a"/>
+  <!-- Blush -->
+  <ellipse cx="-10" cy="21" rx="6" ry="3.5" fill="#f09080" opacity="0.3"/>
+  <ellipse cx="11"  cy="22" rx="6" ry="3.5" fill="#f09080" opacity="0.3"/>
+  <!-- Smile -->
+  <path d="M-4 23 Q1.5 27 7 23" stroke="#9a6048" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <!-- Tiny snuggle arm toward middle -->
+  <ellipse cx="30" cy="52" rx="14" ry="9" fill="#eddcb0" opacity="0.8"/>
+</g>
+
+<!-- === AVATAR 2 — Warm Brown (middle, eyes closed, happiest) === -->
+<g filter="url(#fluffy)" transform="translate(400, 240)">
+  <!-- Body (biggest, central) -->
+  <ellipse cx="0" cy="66"  rx="38" ry="32" fill="#c07848"/>
+  <ellipse cx="-2" cy="62" rx="26" ry="22" fill="#d08858" opacity="0.5"/>
+  <!-- Neck -->
+  <ellipse cx="0" cy="36"  rx="20" ry="11" fill="#c07848"/>
+  <!-- Head -->
+  <circle cx="0" cy="18"   r="27"  fill="#c07848"/>
+  <circle cx="-2" cy="16"  r="18"  fill="#d08858" opacity="0.45"/>
+  <!-- Ears (big fluffy) -->
+  <circle cx="-16" cy="-4"  r="13"  fill="#c07848"/>
+  <circle cx="16"  cy="-6"  r="13"  fill="#c07848"/>
+  <circle cx="-16" cy="-3"  r="7"   fill="#e8a080" opacity="0.4"/>
+  <circle cx="16"  cy="-5"  r="7"   fill="#e8a080" opacity="0.4"/>
+  <!-- Eyes CLOSED (happy upside-down arcs) -->
+  <path d="M-10 15 Q-5 10 0 15"   stroke="#2a1505" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M2  15 Q7  10 12 15"   stroke="#2a1505" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Little eyelash dots -->
+  <circle cx="-12" cy="13" r="1" fill="#2a1505" opacity="0.5"/>
+  <circle cx="14"  cy="13" r="1" fill="#2a1505" opacity="0.5"/>
+  <!-- Nose -->
+  <ellipse cx="1" cy="22" rx="3.5" ry="2.2" fill="#7a4828"/>
+  <!-- Blush (bigger, happiest) -->
+  <ellipse cx="-14" cy="24" rx="7" ry="4" fill="#f09070" opacity="0.38"/>
+  <ellipse cx="14"  cy="25" rx="7" ry="4" fill="#f09070" opacity="0.38"/>
+  <!-- Big happy smile -->
+  <path d="M-7 28 Q1 34 9 28" stroke="#6a3820" stroke-width="2" fill="none" stroke-linecap="round"/>
+</g>
+
+<!-- === AVATAR 3 — Rust/Terracotta (right, sleepy, leaning on middle) === -->
+<g filter="url(#fluffy)" transform="translate(488, 252)">
+  <!-- Body -->
+  <ellipse cx="0" cy="57"  rx="32" ry="27" fill="#b05532"/>
+  <ellipse cx="-2" cy="53" rx="20" ry="18" fill="#c06842" opacity="0.5"/>
+  <!-- Neck -->
+  <ellipse cx="0" cy="30"  rx="17" ry="9"  fill="#b05532"/>
+  <!-- Head (slightly tilted left, leaning) -->
+  <ellipse cx="-3" cy="14" rx="23" ry="22" fill="#b05532" transform="rotate(-8,-3,14)"/>
+  <ellipse cx="-5" cy="12" rx="15" ry="14" fill="#c06842" opacity="0.45"/>
+  <!-- Ears -->
+  <circle cx="-17" cy="-3"  r="10"  fill="#b05532"/>
+  <circle cx="12"  cy="-5"  r="10"  fill="#b05532"/>
+  <circle cx="-17" cy="-2"  r="5.5" fill="#e89070" opacity="0.4"/>
+  <circle cx="12"  cy="-4"  r="5.5" fill="#e89070" opacity="0.4"/>
+  <!-- Eyes (one droopy/sleepy) -->
+  <!-- Left eye nearly closed -->
+  <path d="M-10 12 Q-6 8 -2 12"  stroke="#2a1505" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Right eye half-open -->
+  <circle cx="6"  cy="13" r="3.5" fill="#2a1505"/>
+  <circle cx="7"  cy="12" r="1.2" fill="#fff" opacity="0.8"/>
+  <!-- Tiny zzz effect (sleepy puff) -->
+  <text x="18" y="0" font-size="8" fill="#c8a070" opacity="0.5" font-family="serif">z</text>
+  <text x="22" y="-7" font-size="6" fill="#c8a070" opacity="0.35" font-family="serif">z</text>
+  <!-- Nose -->
+  <ellipse cx="-2" cy="18" rx="2.5" ry="1.8" fill="#804025"/>
+  <!-- Blush -->
+  <ellipse cx="-13" cy="20" rx="5.5" ry="3" fill="#e87860" opacity="0.35"/>
+  <ellipse cx="8"   cy="21" rx="5.5" ry="3" fill="#e87860" opacity="0.35"/>
+  <!-- Sleepy small mouth -->
+  <path d="M-6 23 Q-2 25 2 23" stroke="#7a3518" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Leaning arm on middle avatar -->
+  <ellipse cx="-28" cy="50" rx="12" ry="8" fill="#b05532" opacity="0.75"/>
+</g>
+
+<!-- ── COFFEE CUP (right side, near couch armrest) ── -->
+<!-- Saucer -->
+<ellipse cx="578" cy="350" rx="33" ry="8"  fill="#352010"/>
+<ellipse cx="578" cy="348" rx="27" ry="6"  fill="#42280e"/>
+<!-- Cup body -->
+<path d="M558 316 L561 344 Q578 350 595 344 L598 316 Q578 308 558 316 Z" fill="#c8884a"/>
+<!-- Cup top rim ellipse -->
+<ellipse cx="578" cy="316" rx="20" ry="5.5" fill="#d89860"/>
+<!-- Coffee surface -->
+<ellipse cx="578" cy="317" rx="17" ry="4" fill="#2a1408"/>
+<!-- Coffee sheen -->
+<ellipse cx="573" cy="317" rx="8"  ry="2" fill="#3e2012" opacity="0.5"/>
+<!-- Cup shine stripe -->
+<path d="M563 324 Q564 332 563 340" stroke="#e0a860" stroke-width="2.5" fill="none" opacity="0.35" stroke-linecap="round"/>
+<!-- Handle -->
+<path d="M597 322 Q614 322 613 332 Q612 342 597 340" stroke="#c8884a" stroke-width="6" fill="none" stroke-linecap="round"/>
+<path d="M597 322 Q614 322 613 332 Q612 342 597 340" stroke="#d89860" stroke-width="2"  fill="none" stroke-linecap="round" opacity="0.5"/>
+
+<!-- Steam wisps from coffee -->
+<path d="M570 313 Q567 304 569 295 Q571 286 569 277" stroke="#d8b880" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0">
+  <animate attributeName="opacity" values="0;0;0.45;0.45;0" dur="3s" repeatCount="indefinite"/>
+  <animateTransform attributeName="transform" type="translate" values="0,0; -4,-18" dur="3s" repeatCount="indefinite"/>
+</path>
+<path d="M578 310 Q580 301 578 292 Q576 283 578 274" stroke="#d8b880" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0">
+  <animate attributeName="opacity" values="0;0.4;0.4;0" dur="3s" begin="-1s" repeatCount="indefinite"/>
+  <animateTransform attributeName="transform" type="translate" values="0,0; 3,-18" dur="3s" begin="-1s" repeatCount="indefinite"/>
+</path>
+<path d="M587 313 Q590 304 587 295 Q585 286 587 277" stroke="#d8b880" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0">
+  <animate attributeName="opacity" values="0;0;0.35;0.35;0" dur="3s" begin="-2s" repeatCount="indefinite"/>
+  <animateTransform attributeName="transform" type="translate" values="0,0; 5,-18" dur="3s" begin="-2s" repeatCount="indefinite"/>
+</path>
+
+<!-- ── SMALL DETAILS ── -->
+<!-- Side table leg suggestion near cup -->
+<rect x="564" y="354" width="8"  height="30" rx="3" fill="#1e1008"/>
+<rect x="590" y="354" width="8"  height="30" rx="3" fill="#1e1008"/>
+<rect x="560" y="350" width="44" height="6"  rx="3" fill="#281808"/>
+
+<!-- Fireplace poker leaning against wall -->
+<line x1="238" y1="190" x2="244" y2="345" stroke="#1a1008" stroke-width="4" stroke-linecap="round"/>
+<circle cx="238" cy="192" r="5" fill="#1e1408"/>
+
+<!-- Floor reflection from fire (very subtle) -->
+<ellipse cx="130" cy="365" rx="90" ry="12" fill="#c84000" opacity="0.05">
+  <animate attributeName="opacity" values="0.04;0.08;0.05;0.07;0.04" dur="2s" repeatCount="indefinite"/>
+</ellipse>
+
+</svg>
+
+<div class="text-area">
+  <p class="tagline">Something warm is brewing.</p>
+  <p class="subtitle">
+    Outside it's grey and drizzly.<br>
+    In here there's fire, blankets, and very good company.
+  </p>
+  <p class="domain">lemonteapot.com</p>
+</div>
+
+</body>
+</html>
