@@ -10,7 +10,7 @@ There's a room. Three small fluffy things huddle under a blanket. Rain on the wi
 
 ## The music
 
-Six pieces generated with suno.com, a mix of solo piano and piano with strings arrangements. No copyright attached. Take them, use them, do whatever you like.
+A collection of ambient pieces generated with suno.com, a mix of solo piano and piano with strings arrangements. No copyright attached. Take them, use them, do whatever you like.
 
 - [Cloud Veil I](https://github.com/lemon-teapot/home/raw/main/music/cloud-veil-1.mp3)
 - [Cloud Veil II](https://github.com/lemon-teapot/home/raw/main/music/cloud-veil-2.mp3)
@@ -23,7 +23,7 @@ The rain track is from a free sound library.
 
 ## Features
 
-The music shuffles through all six pieces on loop. Click the curtain to layer rain in over the music. Click again to remove it.
+The music shuffles through the playlist on loop. Click the curtain to layer rain in over the music. Click again to remove it.
 
 The LED display on the shelf scrolls the current track, your local weather with a simple icon (sunny, cloudy, rainy and so on), and today's date. The >> arrows skip to the next track. Click the display to mute or unmute.
 
