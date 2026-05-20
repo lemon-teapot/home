@@ -158,7 +158,7 @@
         rgba(180,150,100,0.22) 20px, rgba(180,150,100,0.22) 21px,
         transparent 21px, transparent 32px
       );
-      background-position-y: -4px; /* nudge stripes up to meet text baseline */
+      background-position-y: 4px; /* baseline sits 3px above each stripe */
       border-radius: 0 4px 4px 0;
       padding: 2rem 2.2rem 3rem 1.8rem;
       position: relative; overflow: hidden;
@@ -1482,7 +1482,7 @@ const BOOK_CHAPTERS = [
   },
   {
     title: 'The music',
-    html: `<p>&nbsp;</p><p>Four piano pieces, all made with Suno.ai. No copyright — take them, use them, do whatever.</p><p>&nbsp;</p>
+    html: `<p>&nbsp;</p><p>Six pieces generated with Suno.ai — a mix of solo piano and piano with strings. No copyright. Take them, use them, do whatever.</p><p>&nbsp;</p>
 <table>
 <tr><th>Track</th><th>Download</th></tr>
 <tr><td>Cloud Veil I</td><td><a href="https://github.com/lemon-teapot/lemonteapot-home/raw/main/cloud-veil-1.mp3">cloud-veil-1.mp3</a></td></tr>
@@ -1509,13 +1509,11 @@ const BOOK_CHAPTERS = [
   {
     title: 'Privacy',
     html: `<p>&nbsp;</p>
-<p>No cookies. No analytics. No tracking scripts of any kind.</p>
+<p>No cookies. No analytics. No tracking scripts.</p>
 <p>&nbsp;</p>
-<p>If you see your city and temperature in the LED display, that means you allowed location access when the browser asked. Your coordinates were sent to two open weather services — open-meteo.com for temperature, and bigdatacloud.net to look up the city name. Neither receives anything beyond the coordinates, and nothing is stored on our end. Declining the permission prompt changes nothing except the weather won't show.</p>
+<p>Location access is optional — it only exists to show your city and temperature in the display. If you allow it, your coordinates go to open-meteo.com and bigdatacloud.net. Nothing is stored on our end. Declining changes nothing except the weather won't show.</p>
 <p>&nbsp;</p>
-<p>Fonts are loaded from Google's CDN (Google Fonts). Google may log the request, which includes your IP address. This is standard practice for web fonts and is covered by Google's own privacy policy.</p>
-<p>&nbsp;</p>
-<p>Cloudflare routes the traffic. GitHub Pages hosts the files. Both are standard infrastructure — neither has been configured here to collect anything beyond their own access logs.</p>`
+<p>Fonts load from Google's CDN. Cloudflare routes traffic. GitHub Pages hosts the files. All standard infrastructure.</p>`
   },
   {
     title: 'Credits', noTitle: true,
