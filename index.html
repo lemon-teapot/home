@@ -1082,12 +1082,12 @@
   <line x1="275" y1="171" x2="275" y2="193" stroke="#0e240e" stroke-width="1.5"/>
   <!-- Musical note blinker (centred in zone x:257-275) -->
   <g id="note-blinker" fill="#20f020" stroke="#20f020">
-    <ellipse cx="263" cy="189" rx="4" ry="2.8" transform="rotate(-20,263,189)"/>
-    <line x1="267" y1="188" x2="267" y2="174" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M267,174 Q274,178 270,184" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="263" cy="189" rx="2.8" ry="1.9" transform="rotate(-20,263,189)"/>
+    <line x1="265.8" y1="188" x2="265.8" y2="179" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M265.8,179 Q270,181 268,185" stroke-width="1.2" fill="none" stroke-linecap="round"/>
   </g>
   <!-- Off-state: diagonal line through the note (hidden when sound is on) -->
-  <line id="note-off-line" x1="257" y1="173" x2="274" y2="193" stroke="#20f020" stroke-width="1.8" stroke-linecap="round"/>
+  <line id="note-off-line" x1="258" y1="175" x2="272" y2="192" stroke="#20f020" stroke-width="1.5" stroke-linecap="round"/>
   <!-- Transparent rect: makes entire wooden box clickable to start music -->
   <rect x="250" y="164" width="192" height="44" fill="transparent" style="cursor:pointer"/>
 </g>
@@ -1285,7 +1285,9 @@ function updatePlayerUI() {
   startTicker(); // restart from segment 0 (shows new track name immediately)
 }
 
-function onLEDClick() { onFirstInteraction(); }
+function onLEDClick() {
+  if (!audioStarted) { onFirstInteraction(); } else { toggleSound(); }
+}
 
 // ── Sound button state ────────────────────────────────────────────────
 function updateSoundBtn() {
@@ -1493,18 +1495,28 @@ document.addEventListener('visibilitychange', () => {
 // ── Notebook popup ────────────────────────────────────────────────
 let bookPage = 0;
 
-// Auto-paginates the TRACKS list (4 per page); adding new tracks just works
+// Page 1: description + first 4 tracks. Overflow onto further pages automatically.
 function musicTableChapters() {
   const PER_PAGE = 4;
   const pages = [];
-  for (let i = 0; i < TRACKS.length; i += PER_PAGE) {
+  const makeRows = batch => batch.map(t =>
+    `<tr><td>${t.name}</td><td><a href="https://github.com/lemon-teapot/home/raw/main/${t.file}">${t.file}</a></td></tr>`
+  ).join('');
+  const makeTable = rows => `<table><tr><th>Track</th><th>Download</th></tr>${rows}</table>`;
+
+  // First page: description + first batch
+  const first = TRACKS.slice(0, PER_PAGE);
+  const firstIsLast = TRACKS.length <= PER_PAGE;
+  pages.push({ title: 'The music',
+    html: `<p>&nbsp;</p><p>Six pieces made with Suno.ai — a mix of solo piano and piano with strings. No copyright attached. Take them, use them, do whatever you like.</p><p>&nbsp;</p>${makeTable(makeRows(first))}${firstIsLast ? '<p>&nbsp;</p><p>The rain track is from a free sound library.</p>' : ''}`
+  });
+
+  // Overflow pages (tracks 5+)
+  for (let i = PER_PAGE; i < TRACKS.length; i += PER_PAGE) {
     const batch = TRACKS.slice(i, i + PER_PAGE);
-    const rows = batch.map(t =>
-      `<tr><td>${t.name}</td><td><a href="https://github.com/lemon-teapot/home/raw/main/${t.file}">${t.file}</a></td></tr>`
-    ).join('');
     const isLast = i + PER_PAGE >= TRACKS.length;
     pages.push({ title: 'The music', noTitle: true,
-      html: `<p>&nbsp;</p><table><tr><th>Track</th><th>Download</th></tr>${rows}</table>${isLast ? '<p>&nbsp;</p><p>The rain track is from a free sound library.</p>' : ''}`
+      html: `<p>&nbsp;</p>${makeTable(makeRows(batch))}${isLast ? '<p>&nbsp;</p><p>The rain track is from a free sound library.</p>' : ''}`
     });
   }
   return pages;
@@ -1515,10 +1527,7 @@ const BOOK_CHAPTERS = [
     title: 'What is this place',
     html: `<p>&nbsp;</p><p>It started as a placeholder. Then I added a fireplace. Then some creatures on a sofa. Then a clock that shows real time. It got away from me a bit.</p><p>&nbsp;</p><p>There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table.</p><p>&nbsp;</p><p>It's cosy in a way that probably took longer to build than it should have.</p>`
   },
-  { title: 'The music',
-    html: `<p>&nbsp;</p><p>Six pieces made with Suno.ai — a mix of solo piano and piano with strings. No copyright attached. Take them, use them, do whatever you like.</p>`
-  },
-  // Music table pages: auto-generated from TRACKS (4 per page) — see musicTableChapters()
+  // Music: description + first 4 tracks on page 1, overflow pages auto-generated
   ...musicTableChapters(),
   {
     title: 'Curtain and sound',
