@@ -8,6 +8,7 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src https://api.open-meteo.com https://api.bigdatacloud.net; base-uri 'self'; form-action 'none'; frame-ancestors 'none'">
   <meta name="robots" content="noindex, nofollow">
+  <link rel="manifest" href="/manifest.json">
   <title>Lemon Teapot — Something warm is brewing</title>
   <!-- Favicon: lemon teapot emoji as SVG data URI -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🫖</text></svg>">
@@ -1477,6 +1478,11 @@ async function fetchWeather() {
 fetchWeather();
 setInterval(fetchWeather, 30 * 60 * 1000); // refresh every 30 minutes
 
+// ── Service Worker (offline / airplane mode support) ──────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
 // ── Toggle curtain (window click zone calls this) ─────────────────
 function toggleCurtain() {
   curtainIsOpen ? closeCurtain() : openCurtain();
@@ -1508,39 +1514,36 @@ function musicTableChapters() {
     `<tr><td>${t.name}</td><td><a href="https://github.com/lemon-teapot/home/raw/main/${t.file}">${t.file}</a></td></tr>`
   ).join('');
   return [{ title: 'The music',
-    html: `<p>&nbsp;</p><p>Six pieces made with Suno.ai — a mix of solo piano and piano with strings. No copyright attached. Take them, use them, do whatever you like.</p><p>&nbsp;</p><table><tr><th>Track</th><th>Download</th></tr>${rows}</table><p>&nbsp;</p><p>The rain track is from a free sound library.</p>`
+    html: `<p>&nbsp;</p><p>Six pieces generated with Suno.ai — a mix of solo piano and piano with strings arrangements. No copyright attached. Take them, use them, do whatever you like.</p><p>&nbsp;</p><table><tr><th>Track</th><th>Download</th></tr>${rows}</table><p>&nbsp;</p><p>The rain track is from a free sound library.</p>`
   }];
 }
 
 const BOOK_CHAPTERS = [
   {
     title: 'What is this place',
-    html: `<p>&nbsp;</p><p>It started as a placeholder. Then I added a fireplace. Then some creatures on a sofa. Then a clock that shows real time. It got away from me a bit.</p><p>&nbsp;</p><p>There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table.</p><p>&nbsp;</p><p>It's cosy in a way that probably took longer to build than it should have.</p>`
+    html: `<p>&nbsp;</p><p>It started as a placeholder. Then a fireplace appeared. Then some creatures on a sofa. Then a clock that reads real time. It got away from me a bit.</p><p>&nbsp;</p><p>There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table.</p><p>&nbsp;</p><p>It's cosy in a way that probably took longer to build than it should have.</p>`
   },
-  // Music: description + first 4 tracks on page 1, overflow pages auto-generated
+  // Music chapter — auto-generated from TRACKS array
   ...musicTableChapters(),
   {
-    title: 'Curtain and sound',
-    html: `<p>&nbsp;</p><p>Click anywhere on the window or curtain to open it. Rain fades in over the piano. Click again and it closes. Piano only.</p><p>&nbsp;</p><p>The button at the top right mutes everything. The LED display on the bookshelf scrolls the current track name, your city and temperature if you allow location, and today's date.</p><p>&nbsp;</p><p>The skip arrows on the display jump to the next track. The clock above the fireplace reads your local time.</p>`
+    title: 'How to use it',
+    html: `<p>&nbsp;</p><p>Click anywhere on the window or curtain to reveal the rainy night outside. Rain layers in gently over the music. Click again to close the curtain and return to music only.</p><p>&nbsp;</p><p>The LED display on the shelf shows the current track, your city and temperature if you allow location, and today's date. The >> arrows skip to the next track. Click anywhere on the display to mute or unmute.</p><p>&nbsp;</p><p>The clock above the fireplace shows your local time, live. The books on the shelf open this notebook.</p>`
   },
   {
-    title: "How it's built",
-    html: `<p>&nbsp;</p><p>The whole thing is one file. No apps, no installs — just a single page that opens in your browser and does everything from there.</p><p>&nbsp;</p><p>An AI called Claude (made by Anthropic) built it from scratch. If you want to see how it works, the code is public at <a href="https://github.com/lemon-teapot/home">github.com/lemon-teapot/home</a>.</p>`
+    title: 'Works offline too',
+    html: `<p>&nbsp;</p><p>The first time you visit on WiFi, the page quietly saves itself to your device — music and all. After that it works in airplane mode, on the train, wherever. No connection needed.</p><p>&nbsp;</p><p>On iPhone or Android, tap Share and choose Add to Home Screen. It opens full-screen like an app, with no browser chrome in the way.</p><p>&nbsp;</p><p>The weather and location won't update offline, but everything else — the music, the room, the clock — keeps going.</p>`
   },
   {
-    title: 'Hosted and open',
-    html: `<p>&nbsp;</p><p>No tracking, no cookies, nothing stored about you.</p><p>&nbsp;</p><p>The music was made with <a href="https://suno.com">suno.com</a> and has no copyright attached — take it, use it, do whatever you want. The rain sound came from a free library. Everything else was built from scratch.</p><p>&nbsp;</p><p>Full project at <a href="https://github.com/lemon-teapot/home">github.com/lemon-teapot/home</a>.</p>`
+    title: "How it's made",
+    html: `<p>&nbsp;</p><p>The whole thing is one HTML file. No apps, no installs, no framework — just a page that opens in your browser and does everything from there.</p><p>&nbsp;</p><p>The room is drawn in SVG. The music plays through standard browser audio. The clock updates every second. The weather comes from two free open APIs.</p><p>&nbsp;</p><p>An AI called Claude (made by Anthropic) designed and built it. The source code is public at <a href="https://github.com/lemon-teapot/home">github.com/lemon-teapot/home</a> if you want to look around.</p>`
+  },
+  {
+    title: 'Open and free',
+    html: `<p>&nbsp;</p><p>The music was generated with <a href="https://suno.com">suno.com</a>. No copyright attached — download the tracks, use them however you like.</p><p>&nbsp;</p><p>The site lives on GitHub Pages and runs through Cloudflare. No ads. No analytics. No account needed. The whole project is open source.</p><p>&nbsp;</p><p>The rain track came from a free sound library. Everything else was made from scratch.</p>`
   },
   {
     title: 'Privacy',
-    html: `<p>&nbsp;</p>
-<p>No cookies. No tracking. Nothing is collected here.</p>
-<p>&nbsp;</p>
-<p>If you see your city and temperature in the display, you allowed location access when the browser asked. You don't have to.</p>
-<p>&nbsp;</p>
-<p>If you do say yes, your location quietly goes to two free weather services to figure out what city you're in and how warm it is. We never see it. Say no and the weather won't show, but everything else still works.</p>
-<p>&nbsp;</p>
-<p>The fonts load from Google's servers, which is pretty standard for most websites. The site itself lives on GitHub and runs through Cloudflare. Neither is set up to track you.</p>`
+    html: `<p>&nbsp;</p><p>No cookies. No tracking. Nothing collected.</p><p>&nbsp;</p><p>Location access is optional — it only exists to show your city and temperature. If you allow it, your location goes to two free weather services. We never see it. Say no and the weather just won't show.</p><p>&nbsp;</p><p>Fonts load from Google's servers, which is standard for most sites. The site runs through Cloudflare and GitHub. Neither is configured to track you.</p>`
   },
   {
     title: 'Credits', noTitle: true,
