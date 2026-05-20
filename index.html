@@ -116,6 +116,14 @@
 
     /* LED display always visible */
     #music-display { cursor: pointer; }
+    /* Musical note blinker pulse */
+    #note-blinker, #note-off-line {
+      animation: note-pulse 2s ease-in-out infinite;
+    }
+    @keyframes note-pulse {
+      0%, 100% { opacity: 0.3; }
+      50%       { opacity: 1; }
+    }
 
     /* Fade-in curtain hint */
     #curtain-hint-text {
@@ -292,7 +300,8 @@
 
   <clipPath id="wclip"><rect x="460" y="30" width="178" height="138" rx="3"/></clipPath>
   <!-- Blinker zone x:257-270, text zone x:272-413 -->
-  <clipPath id="display-clip"><rect x="272" y="171" width="141" height="22"/></clipPath>
+  <!-- Blinker zone x:257-275 (18px), text clip starts at x:277 -->
+  <clipPath id="display-clip"><rect x="277" y="171" width="136" height="22"/></clipPath>
   <filter id="led-glow" x="-25%" y="-25%" width="150%" height="150%">
     <feGaussianBlur stdDeviation="0.9" result="blur"/>
     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -1045,7 +1054,7 @@
   <!-- Scrolling ticker (clipped to LED screen area) -->
   <g clip-path="url(#display-clip)">
     <g id="display-scroller" transform="translate(154,0)">
-      <text id="display-text" x="272" y="187"
+      <text id="display-text" x="277" y="187"
         font-family="'Courier New', Courier, monospace" font-size="14"
         fill="#18ee18" letter-spacing="0.03em" filter="url(#led-glow)">Cloud Veil</text>
     </g>
@@ -1069,12 +1078,18 @@
     <title>Skip to next track</title>
   </g>
 
-  <!-- Blinker zone divider (separates LED dot from scrolling text) -->
-  <line x1="270" y1="171" x2="270" y2="193" stroke="#0e240e" stroke-width="1.5"/>
-  <!-- Power LED: centred in blinker zone (x:257-270), always on -->
-  <circle cx="263" cy="183" r="2" fill="#20f020">
-    <animate attributeName="fill" values="#0a500a;#20f020;#0a500a" dur="2s" repeatCount="indefinite"/>
-  </circle>
+  <!-- Blinker zone divider (widened to x:257-275) -->
+  <line x1="275" y1="171" x2="275" y2="193" stroke="#0e240e" stroke-width="1.5"/>
+  <!-- Musical note blinker (centred in zone x:257-275) -->
+  <g id="note-blinker" fill="#20f020" stroke="#20f020">
+    <ellipse cx="263" cy="189" rx="4" ry="2.8" transform="rotate(-20,263,189)"/>
+    <line x1="267" y1="188" x2="267" y2="174" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M267,174 Q274,178 270,184" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- Off-state: diagonal line through the note (hidden when sound is on) -->
+  <line id="note-off-line" x1="257" y1="173" x2="274" y2="193" stroke="#20f020" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Transparent rect: makes entire wooden box clickable to start music -->
+  <rect x="250" y="164" width="192" height="44" fill="transparent" style="cursor:pointer"/>
 </g>
 
 <!-- ── WINDOW WIDE CLICK ZONE (whole window+curtain area toggles curtain) ── -->
@@ -1281,6 +1296,9 @@ function updateSoundBtn() {
   document.getElementById('snd-label').textContent = isOn ? 'Sound on' : 'Sound off';
   document.getElementById('ico-on').style.display  = isOn ? '' : 'none';
   document.getElementById('ico-off').style.display = isOn ? 'none' : '';
+  // Musical note state: show diagonal off-line when sound is off
+  const offLine = document.getElementById('note-off-line');
+  if (offLine) offLine.style.display = isOn ? 'none' : '';
   syncMediaSession();
 }
 
@@ -1475,30 +1493,33 @@ document.addEventListener('visibilitychange', () => {
 // ── Notebook popup ────────────────────────────────────────────────
 let bookPage = 0;
 
+// Auto-paginates the TRACKS list (4 per page); adding new tracks just works
+function musicTableChapters() {
+  const PER_PAGE = 4;
+  const pages = [];
+  for (let i = 0; i < TRACKS.length; i += PER_PAGE) {
+    const batch = TRACKS.slice(i, i + PER_PAGE);
+    const rows = batch.map(t =>
+      `<tr><td>${t.name}</td><td><a href="https://github.com/lemon-teapot/home/raw/main/${t.file}">${t.file}</a></td></tr>`
+    ).join('');
+    const isLast = i + PER_PAGE >= TRACKS.length;
+    pages.push({ title: 'The music', noTitle: true,
+      html: `<p>&nbsp;</p><table><tr><th>Track</th><th>Download</th></tr>${rows}</table>${isLast ? '<p>&nbsp;</p><p>The rain track is from a free sound library.</p>' : ''}`
+    });
+  }
+  return pages;
+}
+
 const BOOK_CHAPTERS = [
   {
     title: 'What is this place',
     html: `<p>&nbsp;</p><p>It started as a placeholder. Then I added a fireplace. Then some creatures on a sofa. Then a clock that shows real time. It got away from me a bit.</p><p>&nbsp;</p><p>There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table.</p><p>&nbsp;</p><p>It's cosy in a way that probably took longer to build than it should have.</p>`
   },
-  {
-    title: 'The music',
+  { title: 'The music',
     html: `<p>&nbsp;</p><p>Six pieces made with Suno.ai — a mix of solo piano and piano with strings. No copyright attached. Take them, use them, do whatever you like.</p>`
   },
-  {
-    title: 'The music', noTitle: true,
-    html: `<p>&nbsp;</p>
-<table>
-<tr><th>Track</th><th>Download</th></tr>
-<tr><td>Cloud Veil I</td><td><a href="https://github.com/lemon-teapot/home/raw/main/cloud-veil-1.mp3">cloud-veil-1.mp3</a></td></tr>
-<tr><td>Cloud Veil II</td><td><a href="https://github.com/lemon-teapot/home/raw/main/cloud-veil-2.mp3">cloud-veil-2.mp3</a></td></tr>
-<tr><td>Rain on Glass I</td><td><a href="https://github.com/lemon-teapot/home/raw/main/rain-on-glass-1.mp3">rain-on-glass-1.mp3</a></td></tr>
-<tr><td>Rain on Glass II</td><td><a href="https://github.com/lemon-teapot/home/raw/main/rain-on-glass-2.mp3">rain-on-glass-2.mp3</a></td></tr>
-<tr><td>Soft Pedal Drift I</td><td><a href="https://github.com/lemon-teapot/home/raw/main/soft-pedal-drift-1.mp3">soft-pedal-drift-1.mp3</a></td></tr>
-<tr><td>Soft Pedal Drift II</td><td><a href="https://github.com/lemon-teapot/home/raw/main/soft-pedal-drift-2.mp3">soft-pedal-drift-2.mp3</a></td></tr>
-</table>
-<p>&nbsp;</p>
-<p>The rain track is from a free sound library.</p>`
-  },
+  // Music table pages: auto-generated from TRACKS (4 per page) — see musicTableChapters()
+  ...musicTableChapters(),
   {
     title: 'Curtain and sound',
     html: `<p>&nbsp;</p><p>Click anywhere on the window or curtain to open it. Rain fades in over the piano. Click again and it closes. Piano only.</p><p>&nbsp;</p><p>The button at the top right mutes everything. The LED display on the bookshelf scrolls the current track name, your city and temperature if you allow location, and today's date.</p><p>&nbsp;</p><p>The skip arrows on the display jump to the next track. The clock above the fireplace reads your local time.</p>`
