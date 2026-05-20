@@ -1169,7 +1169,19 @@ let pianoEl = null, rainEl = null;
 // Must be declared before buildTicker() is first called
 const DAYS        = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-let weatherCity = '...', weatherTemp = '--', weatherFetching = false;
+let weatherCity = '...', weatherTemp = '--', weatherCode = 0, weatherFetching = false;
+
+function getWeatherIcon(code) {
+  if (code === 0)          return '☀';  // ☀ clear
+  if (code <= 2)           return '⛅';  // ⛅ partly cloudy
+  if (code <= 3)           return '☁';  // ☁ overcast
+  if (code <= 48)          return '≈';  // ≈ fog
+  if (code <= 67)          return '⛆';  // ⛆ rain
+  if (code <= 77)          return '❄';  // ❄ snow
+  if (code <= 82)          return '⛆';  // ⛆ showers
+  if (code <= 86)          return '❄';  // ❄ snow showers
+  return '⚡';                           // ⚡ thunderstorm
+}
 
 // ── Playlist ──────────────────────────────────────────────────────────
 // ── PLAYLIST — add new Suno tracks here ──────────────────────────────
@@ -1233,7 +1245,7 @@ function buildSegments() {
   const hasLoc = weatherCity && !noLoc.includes(weatherCity);
   const track  = audioStarted ? (playlist[trackIdx]?.name || '---') : '♪  Click to Play';
   const segs   = [track];
-  if (hasLoc) segs.push(weatherCity + '  ' + weatherTemp + '°C');
+  if (hasLoc) segs.push(weatherCity + ' ' + getWeatherIcon(weatherCode) + ' ' + weatherTemp + '°C');
   segs.push(day + ', ' + date);
   return segs;
 }
@@ -1465,6 +1477,7 @@ async function fetchWeather() {
       const wx  = await wxRes.json();
       weatherCity = (geo.city || geo.locality || geo.principalSubdivision || 'Unknown').slice(0, 18);
       weatherTemp = Math.round(wx.current_weather.temperature);
+      weatherCode = wx.current_weather.weathercode || 0;
     } catch(e) {
       weatherCity = 'Unavailable'; weatherTemp = '--';
     }
@@ -1513,37 +1526,29 @@ function musicTableChapters() {
   const rows = TRACKS.map(t =>
     `<tr><td>${t.name}</td><td><a href="https://github.com/lemon-teapot/home/raw/main/${t.file}">${t.file}</a></td></tr>`
   ).join('');
-  return [{ title: 'The music',
+  return [{ title: 'Music',
     html: `<p>&nbsp;</p><p>Six pieces generated with Suno.ai — a mix of solo piano and piano with strings arrangements. No copyright attached. Take them, use them, do whatever you like.</p><p>&nbsp;</p><table><tr><th>Track</th><th>Download</th></tr>${rows}</table><p>&nbsp;</p><p>The rain track is from a free sound library.</p>`
   }];
 }
 
 const BOOK_CHAPTERS = [
   {
-    title: 'What is this place',
+    title: 'Story',
     html: `<p>&nbsp;</p><p>It started as a placeholder. Then a fireplace appeared. Then some creatures on a sofa. Then a clock that reads real time. It got away from me a bit.</p><p>&nbsp;</p><p>There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table.</p><p>&nbsp;</p><p>It's cosy in a way that probably took longer to build than it should have.</p>`
   },
   // Music chapter — auto-generated from TRACKS array
   ...musicTableChapters(),
   {
-    title: 'How to use it',
-    html: `<p>&nbsp;</p><p>Click anywhere on the window or curtain to reveal the rainy night outside. Rain layers in gently over the music. Click again to close the curtain and return to music only.</p><p>&nbsp;</p><p>The LED display on the shelf shows the current track, your city and temperature if you allow location, and today's date. The >> arrows skip to the next track. Click anywhere on the display to mute or unmute.</p><p>&nbsp;</p><p>The clock above the fireplace shows your local time, live. The books on the shelf open this notebook.</p>`
-  },
-  {
-    title: 'Works offline too',
-    html: `<p>&nbsp;</p><p>The first time you visit on WiFi, the page quietly saves itself to your device — music and all. After that it works in airplane mode, on the train, wherever. No connection needed.</p><p>&nbsp;</p><p>On iPhone or Android, tap Share and choose Add to Home Screen. It opens full-screen like an app, with no browser chrome in the way.</p><p>&nbsp;</p><p>The weather and location won't update offline, but everything else — the music, the room, the clock — keeps going.</p>`
-  },
-  {
-    title: "How it's made",
-    html: `<p>&nbsp;</p><p>The whole thing is one HTML file. No apps, no installs, no framework — just a page that opens in your browser and does everything from there.</p><p>&nbsp;</p><p>The room is drawn in SVG. The music plays through standard browser audio. The clock updates every second. The weather comes from two free open APIs.</p><p>&nbsp;</p><p>An AI called Claude (made by Anthropic) designed and built it. The source code is public at <a href="https://github.com/lemon-teapot/home">github.com/lemon-teapot/home</a> if you want to look around.</p>`
-  },
-  {
-    title: 'Open and free',
-    html: `<p>&nbsp;</p><p>The music was generated with <a href="https://suno.com">suno.com</a>. No copyright attached — download the tracks, use them however you like.</p><p>&nbsp;</p><p>The site lives on GitHub Pages and runs through Cloudflare. No ads. No analytics. No account needed. The whole project is open source.</p><p>&nbsp;</p><p>The rain track came from a free sound library. Everything else was made from scratch.</p>`
+    title: 'Features',
+    html: `<p>&nbsp;</p><p>The music shuffles through six ambient pieces and loops. A mix of solo piano and piano with strings arrangements, all generated by Suno.ai. Click the curtain to layer in rain. Click again to remove it.</p><p>&nbsp;</p><p>The LED display scrolls the current track, your local weather with a small icon (sunny, cloudy, rainy and so on), and today's date. The >> arrows skip to the next track. Click the display or the musical note to mute or unmute.</p><p>&nbsp;</p><p>The clock above the fireplace reads your actual local time, live. The analog hands move every second.</p><p>&nbsp;</p><p>The first time you visit on WiFi, the page saves itself to your device, music and all. After that it works in airplane mode. On iPhone or Android, Add to Home Screen opens it full-screen.</p>`
   },
   {
     title: 'Privacy',
-    html: `<p>&nbsp;</p><p>No cookies. No tracking. Nothing collected.</p><p>&nbsp;</p><p>Location access is optional — it only exists to show your city and temperature. If you allow it, your location goes to two free weather services. We never see it. Say no and the weather just won't show.</p><p>&nbsp;</p><p>Fonts load from Google's servers, which is standard for most sites. The site runs through Cloudflare and GitHub. Neither is configured to track you.</p>`
+    html: `<p>&nbsp;</p><p>The music was made with <a href="https://suno.com">suno.com</a> and has no copyright. Take it, use it, do whatever you like. The rain track came from a free sound library. Everything else was built from scratch.</p><p>&nbsp;</p><p>No cookies. No tracking. Nothing collected. No ads. No account needed. The whole project is open source at <a href="https://github.com/lemon-teapot/home">github.com/lemon-teapot/home</a>.</p><p>&nbsp;</p><p>Location is optional. If you allow it, your location goes to two free weather services to get your city and temperature. Say no and the weather just won't show.</p>`
+  },
+  {
+    title: 'Framework',
+    html: `<p>&nbsp;</p><p>The whole thing is one HTML file. No apps, no installs, no framework. Just a page that opens in your browser and does everything from there.</p><p>&nbsp;</p><p>The room is drawn in SVG. The music plays through standard browser audio. The clock updates every second in JavaScript. The weather comes from two free open APIs.</p><p>&nbsp;</p><p>An AI called Claude (made by Anthropic) built it from scratch. The source code is public at <a href="https://github.com/lemon-teapot/home">github.com/lemon-teapot/home</a> if you want to look.</p>`
   },
   {
     title: 'Credits', noTitle: true,
