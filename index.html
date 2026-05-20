@@ -202,7 +202,8 @@
       overflow-y: auto; overflow-x: hidden;
       scrollbar-width: thin;
       scrollbar-color: #c8a870 transparent;
-      padding-right: 4px; /* breathing room from scrollbar */
+      margin-right: -1rem;          /* push scrollbar toward right page edge */
+      padding-right: calc(1rem + 6px); /* keep text inset; scrollbar in the extra space */
     }
     .nb-content::-webkit-scrollbar { width: 4px; }
     .nb-content::-webkit-scrollbar-track { background: transparent; }
@@ -1502,29 +1503,13 @@ let bookPage = 0;
 
 // Page 1: description + first 4 tracks. Overflow onto further pages automatically.
 function musicTableChapters() {
-  const PER_PAGE = 4;
-  const pages = [];
-  const makeRows = batch => batch.map(t =>
+  // All tracks in one scrollable chapter — no splitting needed
+  const rows = TRACKS.map(t =>
     `<tr><td>${t.name}</td><td><a href="https://github.com/lemon-teapot/home/raw/main/${t.file}">${t.file}</a></td></tr>`
   ).join('');
-  const makeTable = rows => `<table><tr><th>Track</th><th>Download</th></tr>${rows}</table>`;
-
-  // First page: description + first batch
-  const first = TRACKS.slice(0, PER_PAGE);
-  const firstIsLast = TRACKS.length <= PER_PAGE;
-  pages.push({ title: 'The music',
-    html: `<p>&nbsp;</p><p>Six pieces made with Suno.ai — a mix of solo piano and piano with strings. No copyright attached. Take them, use them, do whatever you like.</p><p>&nbsp;</p>${makeTable(makeRows(first))}${firstIsLast ? '<p>&nbsp;</p><p>The rain track is from a free sound library.</p>' : ''}`
-  });
-
-  // Overflow pages (tracks 5+)
-  for (let i = PER_PAGE; i < TRACKS.length; i += PER_PAGE) {
-    const batch = TRACKS.slice(i, i + PER_PAGE);
-    const isLast = i + PER_PAGE >= TRACKS.length;
-    pages.push({ title: 'The music', noTitle: true,
-      html: `<p>&nbsp;</p>${makeTable(makeRows(batch))}${isLast ? '<p>&nbsp;</p><p>The rain track is from a free sound library.</p>' : ''}`
-    });
-  }
-  return pages;
+  return [{ title: 'The music',
+    html: `<p>&nbsp;</p><p>Six pieces made with Suno.ai — a mix of solo piano and piano with strings. No copyright attached. Take them, use them, do whatever you like.</p><p>&nbsp;</p><table><tr><th>Track</th><th>Download</th></tr>${rows}</table><p>&nbsp;</p><p>The rain track is from a free sound library.</p>`
+  }];
 }
 
 const BOOK_CHAPTERS = [
