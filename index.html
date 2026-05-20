@@ -194,11 +194,21 @@
     }
     .nb-next:hover { border-width: 0 0 56px 56px; }
     .nb-next.dim    { opacity: 0.25; cursor: default; }
-    /* Page content — Lora for book-like feel, line-height matches ruled lines */
+    /* Page content — scrollable so text is never cut off */
     .nb-content {
       font-family: 'Lora', Georgia, serif;
       font-size: 1rem; color: #3a2a14; line-height: 32px;
-      height: calc(100% - 2.6rem); overflow: hidden;
+      height: calc(100% - 2.6rem);
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: #c8a870 transparent;
+      padding-right: 4px; /* breathing room from scrollbar */
+    }
+    .nb-content::-webkit-scrollbar { width: 4px; }
+    .nb-content::-webkit-scrollbar-track { background: transparent; }
+    .nb-content::-webkit-scrollbar-thumb {
+      background: rgba(180,140,80,0.45);
+      border-radius: 2px;
     }
     .nb-content h2 {
       font-family: 'Lora', Georgia, serif;
@@ -245,6 +255,13 @@
       font-family: 'Inter', sans-serif;
     }
     .nb-close:hover { color: #e0c880; }
+    /* Dog-ear pulse — draws attention on mobile */
+    @keyframes crease-pulse {
+      0%, 70%, 100% { opacity: 0.75; }
+      35%            { opacity: 1; }
+    }
+    .nb-next:not(.dim) { animation: crease-pulse 2.5s ease-in-out infinite; }
+    .nb-prev:not(.dim) { animation: crease-pulse 2.5s ease-in-out infinite 1.2s; }
   </style>
 </head>
 <body>
@@ -1141,9 +1158,9 @@
 // ── Audio ──────────────────────────────────────────────────────────────
 // Piano MP3 playlist: ALWAYS playing once started (50% vol)
 // Rain MP3: layers on top when curtain is open (25% vol)
-// masterGain: mute toggle (1 ↔ 0); fire crackle always at 0.04
+// Piano: 50% vol · Rain: 12.5% vol (curtain open only) · no Web Audio API
 
-let ctx = null, masterGain; // Web Audio used only for fire crackle synthesis
+// No Web Audio API needed — all audio uses native HTML5 elements
 let muted = false, curtainIsOpen = false, audioStarted = false;
 let pianoEl = null, rainEl = null;
 
@@ -1174,30 +1191,6 @@ function shuffle(arr) {
 }
 
 // ── Fire crackle (always, very subtle) ───────────────────────────────
-function startFireCrackle() {
-  if (!ctx || !masterGain) return; // guard: only safe to call after initAudio
-  const sr=ctx.sampleRate, len=sr*3;
-  const buf=ctx.createBuffer(1,len,sr); const d=buf.getChannelData(0); let last=0;
-  for (let i=0;i<len;i++){last=(last+0.02*(Math.random()*2-1))/1.02;d[i]=last*3;}
-  const src=ctx.createBufferSource(); src.buffer=buf; src.loop=true;
-  const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=500;
-  const g=ctx.createGain(); g.gain.value=0.04;
-  src.connect(lp); lp.connect(g); g.connect(masterGain); src.start();
-  (function crackle(){
-    setTimeout(()=>{
-      if(!ctx)return;
-      const len=Math.floor(ctx.sampleRate*(0.02+Math.random()*0.05));
-      const buf=ctx.createBuffer(1,len,ctx.sampleRate);
-      const d=buf.getChannelData(0);
-      for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len)*(1-i/len);
-      const src=ctx.createBufferSource();src.buffer=buf;
-      const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=800;
-      const g=ctx.createGain();g.gain.value=0.03+Math.random()*0.07;
-      src.connect(lp);lp.connect(g);g.connect(masterGain);src.start();
-      crackle();
-    },600+Math.random()*2800);
-  })();
-}
 
 // ── MP3 playlist controls ─────────────────────────────────────────────
 function loadTrack(idx) {
@@ -1294,8 +1287,7 @@ function onLEDClick() {
 function setVolumes() {
   const m = muted ? 0 : 1;
   if (pianoEl) pianoEl.volume = m * 0.5;
-  if (rainEl)  rainEl.volume  = m * (curtainIsOpen ? 0.25 : 0);
-  if (masterGain) masterGain.gain.value = m; // fire crackle
+  if (rainEl)  rainEl.volume  = m * (curtainIsOpen ? 0.125 : 0);
 }
 
 function fadeVolume(el, fromVol, toVol, ms) {
@@ -1335,29 +1327,22 @@ function updateSoundBtn() {
 function initAudio() {
   if (audioStarted) return;
   audioStarted = true;
-  ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-  // Web Audio only for fire crackle synthesis (stops on lock screen — acceptable)
-  masterGain = ctx.createGain();
-  masterGain.gain.value = muted ? 0 : 1;
-  masterGain.connect(ctx.destination);
-
-  // Piano MP3 — native HTML5 Audio (NO Web Audio graph → survives screen lock)
+  // Piano MP3 — native HTML5 Audio (survives screen lock)
   pianoEl = new Audio();
   pianoEl.volume = muted ? 0 : 0.5;
   pianoEl.addEventListener('ended', nextTrack);
   shuffle(playlist); trackIdx = 0;
   loadTrack(trackIdx);
 
-  // Rain MP3 — native HTML5 Audio (same reason)
+  // Rain MP3 — native HTML5 Audio
   rainEl = new Audio('music/rain.mp3');
   rainEl.loop = true;
-  rainEl.volume = (curtainIsOpen && !muted) ? 0.25 : 0;
+  rainEl.volume = (curtainIsOpen && !muted) ? 0.125 : 0;
   if (curtainIsOpen) rainEl.play().catch(()=>{});
 
-  startFireCrackle();
-  updatePlayerUI();   // rebuild ticker with actual track name
-  updateSoundBtn();   // show "Sound on" now that audio is running
+  updatePlayerUI();
+  updateSoundBtn();
 }
 
 // ── Curtain: open ─────────────────────────────────────────────────────
@@ -1380,7 +1365,7 @@ function openCurtain() {
 
   if (!audioStarted) { initAudio(); return; }
   // Fade rain in via native volume — piano uninterrupted, survives screen lock
-  if (rainEl) { rainEl.play().catch(()=>{}); fadeVolume(rainEl, 0, muted ? 0 : 0.25, 1200); }
+  if (rainEl) { rainEl.play().catch(()=>{}); fadeVolume(rainEl, 0, muted ? 0 : 0.125, 1200); }
   updatePlayerUI();
 }
 
@@ -1411,9 +1396,9 @@ function closeCurtain() {
 
 // ── Sound toggle ──────────────────────────────────────────────────────
 function toggleSound() {
-  if (!audioStarted) { initAudio(); return; } // first click starts audio (unmuted)
+  if (!audioStarted) { initAudio(); return; }
   muted = !muted;
-  setVolumes(); // updates pianoEl.volume, rainEl.volume, and masterGain for crackle
+  setVolumes();
   updateSoundBtn();
 }
 
@@ -1510,11 +1495,7 @@ function syncMediaSession() {
   navigator.mediaSession.setActionHandler('pause',     () => { if (!muted) toggleSound(); });
   navigator.mediaSession.setActionHandler('nexttrack', skipTrack);
 }
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && ctx && ctx.state === 'suspended') {
-    ctx.resume().catch(() => {});
-  }
-});
+
 
 // ── Notebook popup ────────────────────────────────────────────────
 let bookPage = 0;
