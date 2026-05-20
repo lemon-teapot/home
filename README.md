@@ -14,12 +14,12 @@ Four piano pieces, all made with Suno.ai. No copyright — take them, use them, 
 
 | Track | Download |
 |-------|----------|
-| Cloud Veil I | [cloud-veil-1.mp3](https://github.com/lemon-teapot/home/raw/main/cloud-veil-1.mp3) |
-| Cloud Veil II | [cloud-veil-2.mp3](https://github.com/lemon-teapot/home/raw/main/cloud-veil-2.mp3) |
-| Rain on Glass I | [rain-on-glass-1.mp3](https://github.com/lemon-teapot/home/raw/main/rain-on-glass-1.mp3) |
-| Rain on Glass II | [rain-on-glass-2.mp3](https://github.com/lemon-teapot/home/raw/main/rain-on-glass-2.mp3) |
-| Soft Pedal Drift I | [soft-pedal-drift-1.mp3](https://github.com/lemon-teapot/home/raw/main/soft-pedal-drift-1.mp3) |
-| Soft Pedal Drift II | [soft-pedal-drift-2.mp3](https://github.com/lemon-teapot/home/raw/main/soft-pedal-drift-2.mp3) |
+| Cloud Veil I | [cloud-veil-1.mp3](https://github.com/lemon-teapot/home/raw/main/music/cloud-veil-1.mp3) |
+| Cloud Veil II | [cloud-veil-2.mp3](https://github.com/lemon-teapot/home/raw/main/music/cloud-veil-2.mp3) |
+| Rain on Glass I | [rain-on-glass-1.mp3](https://github.com/lemon-teapot/home/raw/main/music/rain-on-glass-1.mp3) |
+| Rain on Glass II | [rain-on-glass-2.mp3](https://github.com/lemon-teapot/home/raw/main/music/rain-on-glass-2.mp3) |
+| Soft Pedal Drift I | [soft-pedal-drift-1.mp3](https://github.com/lemon-teapot/home/raw/main/music/soft-pedal-drift-1.mp3) |
+| Soft Pedal Drift II | [soft-pedal-drift-2.mp3](https://github.com/lemon-teapot/home/raw/main/music/soft-pedal-drift-2.mp3) |
 
 The rain is from a free sound library.
 

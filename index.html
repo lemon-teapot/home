@@ -1051,6 +1051,8 @@
 <!-- ── LED DISPLAY (3-row: music / location+temp / day+date+time) ── -->
 <!-- ── LED SINGLE-ROW TICKER (inside wooden box in bookshelf slot 4) ── -->
 <g id="music-display" onclick="onLEDClick()">
+  <!-- Full wooden box click capture (drawn FIRST = behind chevron so chevron intercepts its own clicks) -->
+  <rect x="250" y="164" width="192" height="44" fill="transparent" style="cursor:pointer"/>
   <!-- Scrolling ticker (clipped to LED screen area) -->
   <g clip-path="url(#display-clip)">
     <g id="display-scroller" transform="translate(154,0)">
@@ -1086,8 +1088,6 @@
   </g>
   <!-- Off-state: diagonal line through the note (hidden when sound is on) -->
   <line id="note-off-line" x1="260" y1="178" x2="270" y2="191" stroke="#20f020" stroke-width="0.9" stroke-linecap="round"/>
-  <!-- Transparent rect: makes entire wooden box clickable to start music -->
-  <rect x="250" y="164" width="192" height="44" fill="transparent" style="cursor:pointer"/>
 </g>
 
 <!-- ── WINDOW WIDE CLICK ZONE (whole window+curtain area toggles curtain) ── -->
@@ -1156,12 +1156,12 @@ let weatherCity = '...', weatherTemp = '--';
 // ── PLAYLIST — add new Suno tracks here ──────────────────────────────
 // 1. Drop the .mp3 into this folder  2. Add a line below  3. git push
 const TRACKS = [
-  { file:'cloud-veil-1.mp3',       name:'Cloud Veil I'       },
-  { file:'cloud-veil-2.mp3',       name:'Cloud Veil II'      },
-  { file:'rain-on-glass-1.mp3',    name:'Rain on Glass I'    },
-  { file:'rain-on-glass-2.mp3',    name:'Rain on Glass II'   },
-  { file:'soft-pedal-drift-1.mp3', name:'Soft Pedal Drift I' },
-  { file:'soft-pedal-drift-2.mp3', name:'Soft Pedal Drift II'},
+  { file:'music/cloud-veil-1.mp3',       name:'Cloud Veil I'       },
+  { file:'music/cloud-veil-2.mp3',       name:'Cloud Veil II'      },
+  { file:'music/rain-on-glass-1.mp3',    name:'Rain on Glass I'    },
+  { file:'music/rain-on-glass-2.mp3',    name:'Rain on Glass II'   },
+  { file:'music/soft-pedal-drift-1.mp3', name:'Soft Pedal Drift I' },
+  { file:'music/soft-pedal-drift-2.mp3', name:'Soft Pedal Drift II'},
   // { file:'new-track.mp3',  name:'New Track'     },  ← add more here
 ];
 let playlist = [...TRACKS], trackIdx = 0;
@@ -1332,7 +1332,7 @@ function initAudio() {
   rainGain = ctx.createGain();
   rainGain.gain.value = curtainIsOpen ? 0.25 : 0;
   rainGain.connect(masterGain);
-  rainEl = new Audio('rain.mp3');
+  rainEl = new Audio('music/rain.mp3');
   rainEl.loop = true;
   ctx.createMediaElementSource(rainEl).connect(rainGain);
   if (curtainIsOpen) rainEl.play().catch(()=>{});
