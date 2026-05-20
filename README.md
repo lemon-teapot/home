@@ -10,16 +10,14 @@ There's a room. Three small fluffy things huddle under a blanket. Rain on the wi
 
 ## The music
 
-Six pieces generated with Suno.ai, a mix of solo piano and piano with strings arrangements. No copyright attached. Take them, use them, do whatever you like.
+Six pieces generated with suno.com, a mix of solo piano and piano with strings arrangements. No copyright attached. Take them, use them, do whatever you like.
 
-| Track | Download |
-|-------|----------|
-| Cloud Veil I | [cloud-veil-1.mp3](https://github.com/lemon-teapot/home/raw/main/music/cloud-veil-1.mp3) |
-| Cloud Veil II | [cloud-veil-2.mp3](https://github.com/lemon-teapot/home/raw/main/music/cloud-veil-2.mp3) |
-| Rain on Glass I | [rain-on-glass-1.mp3](https://github.com/lemon-teapot/home/raw/main/music/rain-on-glass-1.mp3) |
-| Rain on Glass II | [rain-on-glass-2.mp3](https://github.com/lemon-teapot/home/raw/main/music/rain-on-glass-2.mp3) |
-| Soft Pedal Drift I | [soft-pedal-drift-1.mp3](https://github.com/lemon-teapot/home/raw/main/music/soft-pedal-drift-1.mp3) |
-| Soft Pedal Drift II | [soft-pedal-drift-2.mp3](https://github.com/lemon-teapot/home/raw/main/music/soft-pedal-drift-2.mp3) |
+- [Cloud Veil I](https://github.com/lemon-teapot/home/raw/main/music/cloud-veil-1.mp3)
+- [Cloud Veil II](https://github.com/lemon-teapot/home/raw/main/music/cloud-veil-2.mp3)
+- [Rain on Glass I](https://github.com/lemon-teapot/home/raw/main/music/rain-on-glass-1.mp3)
+- [Rain on Glass II](https://github.com/lemon-teapot/home/raw/main/music/rain-on-glass-2.mp3)
+- [Soft Pedal Drift I](https://github.com/lemon-teapot/home/raw/main/music/soft-pedal-drift-1.mp3)
+- [Soft Pedal Drift II](https://github.com/lemon-teapot/home/raw/main/music/soft-pedal-drift-2.mp3)
 
 The rain track is from a free sound library.
 
