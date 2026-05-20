@@ -1143,7 +1143,7 @@
 // Rain MP3: layers on top when curtain is open (25% vol)
 // masterGain: mute toggle (1 ↔ 0); fire crackle always at 0.04
 
-let ctx = null, masterGain, pianoGain, rainGain;
+let ctx = null, masterGain; // Web Audio used only for fire crackle synthesis
 let muted = false, curtainIsOpen = false, audioStarted = false;
 let pianoEl = null, rainEl = null;
 
@@ -1290,6 +1290,27 @@ function onLEDClick() {
   if (!audioStarted) { onFirstInteraction(); } else { toggleSound(); }
 }
 // Clicking the chevron: start audio on first touch, then skip track
+// ── Volume helpers (native HTML5 Audio — no Web Audio dependency) ────
+function setVolumes() {
+  const m = muted ? 0 : 1;
+  if (pianoEl) pianoEl.volume = m * 0.5;
+  if (rainEl)  rainEl.volume  = m * (curtainIsOpen ? 0.25 : 0);
+  if (masterGain) masterGain.gain.value = m; // fire crackle
+}
+
+function fadeVolume(el, fromVol, toVol, ms) {
+  if (!el) return;
+  el.volume = Math.max(0, Math.min(1, fromVol));
+  const steps = 30, stepMs = ms / steps;
+  const diff = (toVol - fromVol) / steps;
+  let n = 0;
+  const t = setInterval(() => {
+    n++;
+    el.volume = Math.max(0, Math.min(1, fromVol + diff * n));
+    if (n >= steps) clearInterval(t);
+  }, stepMs);
+}
+
 function skipOrStart(e) {
   e.stopPropagation(); // prevent bubbling to onLEDClick (which would toggle mute)
   if (!audioStarted) { onFirstInteraction(); } else { skipTrack(); }
@@ -1316,27 +1337,22 @@ function initAudio() {
   audioStarted = true;
   ctx = new (window.AudioContext || window.webkitAudioContext)();
 
+  // Web Audio only for fire crackle synthesis (stops on lock screen — acceptable)
   masterGain = ctx.createGain();
   masterGain.gain.value = muted ? 0 : 1;
   masterGain.connect(ctx.destination);
 
-  // Piano MP3 playlist — always playing (50% vol)
-  pianoGain = ctx.createGain();
-  pianoGain.gain.value = 0.5;
-  pianoGain.connect(masterGain);
+  // Piano MP3 — native HTML5 Audio (NO Web Audio graph → survives screen lock)
   pianoEl = new Audio();
-  ctx.createMediaElementSource(pianoEl).connect(pianoGain);
+  pianoEl.volume = muted ? 0 : 0.5;
   pianoEl.addEventListener('ended', nextTrack);
   shuffle(playlist); trackIdx = 0;
   loadTrack(trackIdx);
 
-  // Rain MP3 — only when curtain open (25% vol)
-  rainGain = ctx.createGain();
-  rainGain.gain.value = curtainIsOpen ? 0.25 : 0;
-  rainGain.connect(masterGain);
+  // Rain MP3 — native HTML5 Audio (same reason)
   rainEl = new Audio('music/rain.mp3');
   rainEl.loop = true;
-  ctx.createMediaElementSource(rainEl).connect(rainGain);
+  rainEl.volume = (curtainIsOpen && !muted) ? 0.25 : 0;
   if (curtainIsOpen) rainEl.play().catch(()=>{});
 
   startFireCrackle();
@@ -1363,9 +1379,8 @@ function openCurtain() {
   if (or_){or_.style.transition='';or_.style.opacity='1';or_.style.pointerEvents='auto';}
 
   if (!audioStarted) { initAudio(); return; }
-  // Fade rain in — piano keeps playing uninterrupted
-  rainGain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 1.2);
-  rainEl.play().catch(()=>{});
+  // Fade rain in via native volume — piano uninterrupted, survives screen lock
+  if (rainEl) { rainEl.play().catch(()=>{}); fadeVolume(rainEl, 0, muted ? 0 : 0.25, 1200); }
   updatePlayerUI();
 }
 
@@ -1388,9 +1403,8 @@ function closeCurtain() {
   },250);
 
   if (!audioStarted) return;
-  // Fade rain out — piano keeps playing uninterrupted
-  rainGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.2);
-  // Only pause rain if curtain is still closed by the time the fade completes
+  // Fade rain out via native volume
+  if (rainEl) fadeVolume(rainEl, rainEl.volume, 0, 1200);
   setTimeout(() => { if (rainEl && !curtainIsOpen) rainEl.pause(); }, 1400);
   updatePlayerUI();
 }
@@ -1398,9 +1412,8 @@ function closeCurtain() {
 // ── Sound toggle ──────────────────────────────────────────────────────
 function toggleSound() {
   if (!audioStarted) { initAudio(); return; } // first click starts audio (unmuted)
-  if (!ctx || !masterGain) return; // defensive: should never be null here but guard anyway
   muted = !muted;
-  masterGain.gain.linearRampToValueAtTime(muted ? 0 : 1, ctx.currentTime + 0.5);
+  setVolumes(); // updates pianoEl.volume, rainEl.volume, and masterGain for crackle
   updateSoundBtn();
 }
 
