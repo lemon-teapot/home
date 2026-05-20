@@ -1299,9 +1299,21 @@ function onLEDClick() {
 // Clicking the chevron: start audio on first touch, then skip track
 // ── Volume helpers (native HTML5 Audio — no Web Audio dependency) ────
 function setVolumes() {
-  const m = muted ? 0 : 1;
-  if (pianoEl) pianoEl.volume = m * 0.5;
-  if (rainEl)  rainEl.volume  = m * (curtainIsOpen ? 0.125 : 0);
+  // iOS Safari ignores element.volume — use pause/play for muting instead
+  if (muted) {
+    if (pianoEl) pianoEl.pause();
+    if (rainEl)  rainEl.pause();
+  } else {
+    if (pianoEl) {
+      pianoEl.volume = 0.5; // no-op on iOS but correct elsewhere
+      if (pianoEl.paused) pianoEl.play().catch(()=>{});
+    }
+    if (rainEl) {
+      rainEl.volume = curtainIsOpen ? 0.125 : 0;
+      if (curtainIsOpen && rainEl.paused) rainEl.play().catch(()=>{});
+      else if (!curtainIsOpen && !rainEl.paused) rainEl.pause();
+    }
+  }
 }
 
 function fadeVolume(el, fromVol, toVol, ms) {
@@ -1379,7 +1391,7 @@ function openCurtain() {
 
   if (!audioStarted) { initAudio(); return; }
   // Fade rain in via native volume — piano uninterrupted, survives screen lock
-  if (rainEl) { rainEl.play().catch(()=>{}); fadeVolume(rainEl, 0, muted ? 0 : 0.125, 1200); }
+  if (rainEl && !muted) { rainEl.play().catch(()=>{}); fadeVolume(rainEl, 0, 0.125, 1200); }
   updatePlayerUI();
 }
 
