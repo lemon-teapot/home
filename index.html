@@ -118,7 +118,7 @@
     #music-display { cursor: pointer; }
     /* Musical note blinker pulse */
     #note-blinker, #note-off-line {
-      animation: note-pulse 2s ease-in-out infinite;
+      animation: note-pulse 3s ease-in-out infinite;
     }
     @keyframes note-pulse {
       0%, 100% { opacity: 0.3; }
@@ -1061,19 +1061,17 @@
   </g>
 
   <!-- Skip arrows: pulsating >> synced to blinker (2s cycle), box 3px wider on left -->
-  <g onclick="skipTrack()" style="cursor:pointer">
+  <!-- Chevron: skip track (or start audio on first click). stopPropagation prevents mute toggle. -->
+  <g onclick="skipOrStart(event)" style="cursor:pointer">
     <rect x="420" y="168" width="21" height="32" fill="transparent"/>
-    <!-- Left chevron > (+5px right, 2px gap between arrows) -->
     <path d="M427,178 L430,182 L427,186" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="3s" repeatCount="indefinite"/>
     </path>
-    <!-- Right chevron > (2px gap from left) -->
     <path d="M432,178 L435,182 L432,186" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="2s" begin="0.1s" repeatCount="indefinite"/>
+      <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="3s" repeatCount="indefinite"/>
     </path>
-    <!-- Glow ring: pulse opacity, 2s cycle -->
     <rect x="422" y="171" width="17" height="22" rx="1" fill="none" stroke="#20f020" stroke-width="0.8">
-      <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;0.9;0.3" dur="3s" repeatCount="indefinite"/>
     </rect>
     <title>Skip to next track</title>
   </g>
@@ -1087,7 +1085,7 @@
     <path d="M265.8,179 Q270,181 268,185" stroke-width="1.2" fill="none" stroke-linecap="round"/>
   </g>
   <!-- Off-state: diagonal line through the note (hidden when sound is on) -->
-  <line id="note-off-line" x1="258" y1="175" x2="272" y2="192" stroke="#20f020" stroke-width="1.5" stroke-linecap="round"/>
+  <line id="note-off-line" x1="260" y1="178" x2="270" y2="191" stroke="#20f020" stroke-width="0.9" stroke-linecap="round"/>
   <!-- Transparent rect: makes entire wooden box clickable to start music -->
   <rect x="250" y="164" width="192" height="44" fill="transparent" style="cursor:pointer"/>
 </g>
@@ -1285,8 +1283,14 @@ function updatePlayerUI() {
   startTicker(); // restart from segment 0 (shows new track name immediately)
 }
 
+// Clicking the note / LED display: start audio on first touch, then toggle mute
 function onLEDClick() {
   if (!audioStarted) { onFirstInteraction(); } else { toggleSound(); }
+}
+// Clicking the chevron: start audio on first touch, then skip track
+function skipOrStart(e) {
+  e.stopPropagation(); // prevent bubbling to onLEDClick (which would toggle mute)
+  if (!audioStarted) { onFirstInteraction(); } else { skipTrack(); }
 }
 
 // ── Sound button state ────────────────────────────────────────────────
