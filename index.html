@@ -8,6 +8,7 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src https://api.open-meteo.com https://api.bigdatacloud.net; base-uri 'self'; form-action 'none'; frame-ancestors 'none'">
   <meta name="robots" content="noindex, nofollow">
+  <link rel="manifest" href="/manifest.json">
   <title>Lemon Teapot — Something warm is brewing</title>
   <!-- Favicon: lemon teapot emoji as SVG data URI -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🫖</text></svg>">
@@ -194,11 +195,22 @@
     }
     .nb-next:hover { border-width: 0 0 56px 56px; }
     .nb-next.dim    { opacity: 0.25; cursor: default; }
-    /* Page content — Lora for book-like feel, line-height matches ruled lines */
+    /* Page content — scrollable so text is never cut off */
     .nb-content {
       font-family: 'Lora', Georgia, serif;
       font-size: 1rem; color: #3a2a14; line-height: 32px;
-      height: calc(100% - 2.6rem); overflow: hidden;
+      height: calc(100% - 2.6rem);
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: #c8a870 transparent;
+      margin-right: -1rem;          /* push scrollbar toward right page edge */
+      padding-right: calc(1rem + 6px); /* keep text inset; scrollbar in the extra space */
+    }
+    .nb-content::-webkit-scrollbar { width: 4px; }
+    .nb-content::-webkit-scrollbar-track { background: transparent; }
+    .nb-content::-webkit-scrollbar-thumb {
+      background: rgba(180,140,80,0.45);
+      border-radius: 2px;
     }
     .nb-content h2 {
       font-family: 'Lora', Georgia, serif;
@@ -245,6 +257,13 @@
       font-family: 'Inter', sans-serif;
     }
     .nb-close:hover { color: #e0c880; }
+    /* Dog-ear pulse — draws attention on mobile */
+    @keyframes crease-pulse {
+      0%, 70%, 100% { opacity: 0.75; }
+      35%            { opacity: 1; }
+    }
+    .nb-next:not(.dim) { animation: crease-pulse 2.5s ease-in-out infinite; }
+    .nb-prev:not(.dim) { animation: crease-pulse 2.5s ease-in-out infinite 1.2s; }
   </style>
 </head>
 <body>
@@ -1051,6 +1070,8 @@
 <!-- ── LED DISPLAY (3-row: music / location+temp / day+date+time) ── -->
 <!-- ── LED SINGLE-ROW TICKER (inside wooden box in bookshelf slot 4) ── -->
 <g id="music-display" onclick="onLEDClick()">
+  <!-- Full wooden box click capture (drawn FIRST = behind chevron so chevron intercepts its own clicks) -->
+  <rect x="250" y="164" width="192" height="44" fill="transparent" style="cursor:pointer"/>
   <!-- Scrolling ticker (clipped to LED screen area) -->
   <g clip-path="url(#display-clip)">
     <g id="display-scroller" transform="translate(154,0)">
@@ -1086,8 +1107,6 @@
   </g>
   <!-- Off-state: diagonal line through the note (hidden when sound is on) -->
   <line id="note-off-line" x1="260" y1="178" x2="270" y2="191" stroke="#20f020" stroke-width="0.9" stroke-linecap="round"/>
-  <!-- Transparent rect: makes entire wooden box clickable to start music -->
-  <rect x="250" y="164" width="192" height="44" fill="transparent" style="cursor:pointer"/>
 </g>
 
 <!-- ── WINDOW WIDE CLICK ZONE (whole window+curtain area toggles curtain) ── -->
@@ -1141,27 +1160,39 @@
 // ── Audio ──────────────────────────────────────────────────────────────
 // Piano MP3 playlist: ALWAYS playing once started (50% vol)
 // Rain MP3: layers on top when curtain is open (25% vol)
-// masterGain: mute toggle (1 ↔ 0); fire crackle always at 0.04
+// Piano: 50% vol · Rain: 12.5% vol (curtain open only) · no Web Audio API
 
-let ctx = null, masterGain, pianoGain, rainGain;
+// No Web Audio API needed — all audio uses native HTML5 elements
 let muted = false, curtainIsOpen = false, audioStarted = false;
 let pianoEl = null, rainEl = null;
 
 // Must be declared before buildTicker() is first called
 const DAYS        = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-let weatherCity = '...', weatherTemp = '--';
+let weatherCity = '...', weatherTemp = '--', weatherCode = 0, weatherFetching = false;
+
+function getWeatherIcon(code) {
+  if (code === 0)          return '☀';  // ☀ clear
+  if (code <= 2)           return '⛅';  // ⛅ partly cloudy
+  if (code <= 3)           return '☁';  // ☁ overcast
+  if (code <= 48)          return '≈';  // ≈ fog
+  if (code <= 67)          return '⛆';  // ⛆ rain
+  if (code <= 77)          return '❄';  // ❄ snow
+  if (code <= 82)          return '⛆';  // ⛆ showers
+  if (code <= 86)          return '❄';  // ❄ snow showers
+  return '⚡';                           // ⚡ thunderstorm
+}
 
 // ── Playlist ──────────────────────────────────────────────────────────
 // ── PLAYLIST — add new Suno tracks here ──────────────────────────────
 // 1. Drop the .mp3 into this folder  2. Add a line below  3. git push
 const TRACKS = [
-  { file:'cloud-veil-1.mp3',       name:'Cloud Veil I'       },
-  { file:'cloud-veil-2.mp3',       name:'Cloud Veil II'      },
-  { file:'rain-on-glass-1.mp3',    name:'Rain on Glass I'    },
-  { file:'rain-on-glass-2.mp3',    name:'Rain on Glass II'   },
-  { file:'soft-pedal-drift-1.mp3', name:'Soft Pedal Drift I' },
-  { file:'soft-pedal-drift-2.mp3', name:'Soft Pedal Drift II'},
+  { file:'music/cloud-veil-1.mp3',       name:'Cloud Veil I'       },
+  { file:'music/cloud-veil-2.mp3',       name:'Cloud Veil II'      },
+  { file:'music/rain-on-glass-1.mp3',    name:'Rain on Glass I'    },
+  { file:'music/rain-on-glass-2.mp3',    name:'Rain on Glass II'   },
+  { file:'music/soft-pedal-drift-1.mp3', name:'Soft Pedal Drift I' },
+  { file:'music/soft-pedal-drift-2.mp3', name:'Soft Pedal Drift II'},
   // { file:'new-track.mp3',  name:'New Track'     },  ← add more here
 ];
 let playlist = [...TRACKS], trackIdx = 0;
@@ -1174,29 +1205,6 @@ function shuffle(arr) {
 }
 
 // ── Fire crackle (always, very subtle) ───────────────────────────────
-function startFireCrackle() {
-  const sr=ctx.sampleRate, len=sr*3;
-  const buf=ctx.createBuffer(1,len,sr); const d=buf.getChannelData(0); let last=0;
-  for (let i=0;i<len;i++){last=(last+0.02*(Math.random()*2-1))/1.02;d[i]=last*3;}
-  const src=ctx.createBufferSource(); src.buffer=buf; src.loop=true;
-  const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=500;
-  const g=ctx.createGain(); g.gain.value=0.04;
-  src.connect(lp); lp.connect(g); g.connect(masterGain); src.start();
-  (function crackle(){
-    setTimeout(()=>{
-      if(!ctx)return;
-      const len=Math.floor(ctx.sampleRate*(0.02+Math.random()*0.05));
-      const buf=ctx.createBuffer(1,len,ctx.sampleRate);
-      const d=buf.getChannelData(0);
-      for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len)*(1-i/len);
-      const src=ctx.createBufferSource();src.buffer=buf;
-      const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=800;
-      const g=ctx.createGain();g.gain.value=0.03+Math.random()*0.07;
-      src.connect(lp);lp.connect(g);g.connect(masterGain);src.start();
-      crackle();
-    },600+Math.random()*2800);
-  })();
-}
 
 // ── MP3 playlist controls ─────────────────────────────────────────────
 function loadTrack(idx) {
@@ -1237,13 +1245,14 @@ function buildSegments() {
   const hasLoc = weatherCity && !noLoc.includes(weatherCity);
   const track  = audioStarted ? (playlist[trackIdx]?.name || '---') : '♪  Click to Play';
   const segs   = [track];
-  if (hasLoc) segs.push(weatherCity + '  ' + weatherTemp + '°C');
+  if (hasLoc) segs.push(weatherCity + ' ' + getWeatherIcon(weatherCode) + ' ' + weatherTemp + '°C');
   segs.push(day + ', ' + date);
   return segs;
 }
 
 function loadSegment(idx) {
-  tickerSegs   = buildSegments();
+  tickerSegs = buildSegments();
+  if (!tickerSegs.length) return; // nothing to display
   tickerSegIdx = ((idx % tickerSegs.length) + tickerSegs.length) % tickerSegs.length;
   const textEl = document.getElementById('display-text');
   if (!textEl) return;
@@ -1288,6 +1297,38 @@ function onLEDClick() {
   if (!audioStarted) { onFirstInteraction(); } else { toggleSound(); }
 }
 // Clicking the chevron: start audio on first touch, then skip track
+// ── Volume helpers (native HTML5 Audio — no Web Audio dependency) ────
+function setVolumes() {
+  // iOS Safari ignores element.volume — use pause/play for muting instead
+  if (muted) {
+    if (pianoEl) pianoEl.pause();
+    if (rainEl)  rainEl.pause();
+  } else {
+    if (pianoEl) {
+      pianoEl.volume = 0.5; // no-op on iOS but correct elsewhere
+      if (pianoEl.paused) pianoEl.play().catch(()=>{});
+    }
+    if (rainEl) {
+      rainEl.volume = curtainIsOpen ? 0.125 : 0;
+      if (curtainIsOpen && rainEl.paused) rainEl.play().catch(()=>{});
+      else if (!curtainIsOpen && !rainEl.paused) rainEl.pause();
+    }
+  }
+}
+
+function fadeVolume(el, fromVol, toVol, ms) {
+  if (!el) return;
+  el.volume = Math.max(0, Math.min(1, fromVol));
+  const steps = 30, stepMs = ms / steps;
+  const diff = (toVol - fromVol) / steps;
+  let n = 0;
+  const t = setInterval(() => {
+    n++;
+    el.volume = Math.max(0, Math.min(1, fromVol + diff * n));
+    if (n >= steps) clearInterval(t);
+  }, stepMs);
+}
+
 function skipOrStart(e) {
   e.stopPropagation(); // prevent bubbling to onLEDClick (which would toggle mute)
   if (!audioStarted) { onFirstInteraction(); } else { skipTrack(); }
@@ -1312,34 +1353,22 @@ function updateSoundBtn() {
 function initAudio() {
   if (audioStarted) return;
   audioStarted = true;
-  ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-  masterGain = ctx.createGain();
-  masterGain.gain.value = muted ? 0 : 1;
-  masterGain.connect(ctx.destination);
-
-  // Piano MP3 playlist — always playing (50% vol)
-  pianoGain = ctx.createGain();
-  pianoGain.gain.value = 0.5;
-  pianoGain.connect(masterGain);
+  // Piano MP3 — native HTML5 Audio (survives screen lock)
   pianoEl = new Audio();
-  ctx.createMediaElementSource(pianoEl).connect(pianoGain);
+  pianoEl.volume = muted ? 0 : 0.5;
   pianoEl.addEventListener('ended', nextTrack);
   shuffle(playlist); trackIdx = 0;
   loadTrack(trackIdx);
 
-  // Rain MP3 — only when curtain open (25% vol)
-  rainGain = ctx.createGain();
-  rainGain.gain.value = curtainIsOpen ? 0.25 : 0;
-  rainGain.connect(masterGain);
-  rainEl = new Audio('rain.mp3');
+  // Rain MP3 — native HTML5 Audio
+  rainEl = new Audio('music/rain.mp3');
   rainEl.loop = true;
-  ctx.createMediaElementSource(rainEl).connect(rainGain);
+  rainEl.volume = (curtainIsOpen && !muted) ? 0.125 : 0;
   if (curtainIsOpen) rainEl.play().catch(()=>{});
 
-  startFireCrackle();
-  updatePlayerUI();   // rebuild ticker with actual track name
-  updateSoundBtn();   // show "Sound on" now that audio is running
+  updatePlayerUI();
+  updateSoundBtn();
 }
 
 // ── Curtain: open ─────────────────────────────────────────────────────
@@ -1361,9 +1390,8 @@ function openCurtain() {
   if (or_){or_.style.transition='';or_.style.opacity='1';or_.style.pointerEvents='auto';}
 
   if (!audioStarted) { initAudio(); return; }
-  // Fade rain in — piano keeps playing uninterrupted
-  rainGain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 1.2);
-  rainEl.play().catch(()=>{});
+  // Fade rain in via native volume — piano uninterrupted, survives screen lock
+  if (rainEl && !muted) { rainEl.play().catch(()=>{}); fadeVolume(rainEl, 0, 0.125, 1200); }
   updatePlayerUI();
 }
 
@@ -1386,18 +1414,17 @@ function closeCurtain() {
   },250);
 
   if (!audioStarted) return;
-  // Fade rain out — piano keeps playing uninterrupted
-  rainGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.2);
-  // Only pause rain if curtain is still closed by the time the fade completes
+  // Fade rain out via native volume
+  if (rainEl) fadeVolume(rainEl, rainEl.volume, 0, 1200);
   setTimeout(() => { if (rainEl && !curtainIsOpen) rainEl.pause(); }, 1400);
   updatePlayerUI();
 }
 
 // ── Sound toggle ──────────────────────────────────────────────────────
 function toggleSound() {
-  if (!audioStarted) { initAudio(); return; } // first click starts audio (unmuted)
+  if (!audioStarted) { initAudio(); return; }
   muted = !muted;
-  masterGain.gain.linearRampToValueAtTime(muted ? 0 : 1, ctx.currentTime + 0.5);
+  setVolumes();
   updateSoundBtn();
 }
 
@@ -1445,10 +1472,12 @@ updateClock();
 
 // Weather: fetches once on load, refreshes every 30 minutes
 async function fetchWeather() {
+  if (weatherFetching) return; // prevent overlapping requests
   if (!navigator.geolocation) {
     weatherCity = 'Location off'; weatherTemp = '--';
     return;
   }
+  weatherFetching = true;
   navigator.geolocation.getCurrentPosition(async pos => {
     try {
       const { latitude: lat, longitude: lon } = pos.coords;
@@ -1460,16 +1489,24 @@ async function fetchWeather() {
       const wx  = await wxRes.json();
       weatherCity = (geo.city || geo.locality || geo.principalSubdivision || 'Unknown').slice(0, 18);
       weatherTemp = Math.round(wx.current_weather.temperature);
+      weatherCode = wx.current_weather.weathercode || 0;
     } catch(e) {
       weatherCity = 'Unavailable'; weatherTemp = '--';
     }
+    weatherFetching = false;
     // No restart needed — loadSegment() calls buildSegments() fresh at each transition
   }, () => {
     weatherCity = 'No location'; weatherTemp = '--';
+    weatherFetching = false;
   }, { timeout: 8000 });
 }
 fetchWeather();
 setInterval(fetchWeather, 30 * 60 * 1000); // refresh every 30 minutes
+
+// ── Service Worker (offline / airplane mode support) ──────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
 
 // ── Toggle curtain (window click zone calls this) ─────────────────
 function toggleCurtain() {
@@ -1490,71 +1527,39 @@ function syncMediaSession() {
   navigator.mediaSession.setActionHandler('pause',     () => { if (!muted) toggleSound(); });
   navigator.mediaSession.setActionHandler('nexttrack', skipTrack);
 }
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && ctx && ctx.state === 'suspended') {
-    ctx.resume().catch(() => {});
-  }
-});
+
 
 // ── Notebook popup ────────────────────────────────────────────────
 let bookPage = 0;
 
 // Page 1: description + first 4 tracks. Overflow onto further pages automatically.
 function musicTableChapters() {
-  const PER_PAGE = 4;
-  const pages = [];
-  const makeRows = batch => batch.map(t =>
-    `<tr><td>${t.name}</td><td><a href="https://github.com/lemon-teapot/home/raw/main/${t.file}">${t.file}</a></td></tr>`
+  const items = TRACKS.map(t =>
+    `<li><a href="https://github.com/lemon-teapot/home/raw/main/${t.file}">${t.name}</a></li>`
   ).join('');
-  const makeTable = rows => `<table><tr><th>Track</th><th>Download</th></tr>${rows}</table>`;
-
-  // First page: description + first batch
-  const first = TRACKS.slice(0, PER_PAGE);
-  const firstIsLast = TRACKS.length <= PER_PAGE;
-  pages.push({ title: 'The music',
-    html: `<p>&nbsp;</p><p>Six pieces made with Suno.ai — a mix of solo piano and piano with strings. No copyright attached. Take them, use them, do whatever you like.</p><p>&nbsp;</p>${makeTable(makeRows(first))}${firstIsLast ? '<p>&nbsp;</p><p>The rain track is from a free sound library.</p>' : ''}`
-  });
-
-  // Overflow pages (tracks 5+)
-  for (let i = PER_PAGE; i < TRACKS.length; i += PER_PAGE) {
-    const batch = TRACKS.slice(i, i + PER_PAGE);
-    const isLast = i + PER_PAGE >= TRACKS.length;
-    pages.push({ title: 'The music', noTitle: true,
-      html: `<p>&nbsp;</p>${makeTable(makeRows(batch))}${isLast ? '<p>&nbsp;</p><p>The rain track is from a free sound library.</p>' : ''}`
-    });
-  }
-  return pages;
+  return [{ title: 'Music',
+    html: `<p>&nbsp;</p><p>A collection of ambient pieces generated with <a href="https://suno.com">suno.com</a>, a mix of solo piano and piano with strings arrangements. No copyright attached. Take them, use them, do whatever you like.</p><p>&nbsp;</p><ul>${items}</ul><p>&nbsp;</p><p>The rain track is from a free sound library.</p>`
+  }];
 }
 
 const BOOK_CHAPTERS = [
   {
-    title: 'What is this place',
-    html: `<p>&nbsp;</p><p>It started as a placeholder. Then I added a fireplace. Then some creatures on a sofa. Then a clock that shows real time. It got away from me a bit.</p><p>&nbsp;</p><p>There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table.</p><p>&nbsp;</p><p>It's cosy in a way that probably took longer to build than it should have.</p>`
+    title: 'Story',
+    html: `<p>&nbsp;</p><p>It started as a placeholder. Then a fireplace appeared. Then some creatures on a sofa. Then a clock that reads real time. It got away from me a bit.</p><p>&nbsp;</p><p>There's a room. Three small fluffy things huddle under a blanket. Rain on the window. Pine trees outside. Something warm in a cup on the side table.</p><p>&nbsp;</p><p>It's cosy in a way that probably took longer to build than it should have.</p>`
   },
-  // Music: description + first 4 tracks on page 1, overflow pages auto-generated
+  // Music chapter — auto-generated from TRACKS array
   ...musicTableChapters(),
   {
-    title: 'Curtain and sound',
-    html: `<p>&nbsp;</p><p>Click anywhere on the window or curtain to open it. Rain fades in over the piano. Click again and it closes. Piano only.</p><p>&nbsp;</p><p>The button at the top right mutes everything. The LED display on the bookshelf scrolls the current track name, your city and temperature if you allow location, and today's date.</p><p>&nbsp;</p><p>The skip arrows on the display jump to the next track. The clock above the fireplace reads your local time.</p>`
-  },
-  {
-    title: "How it's built",
-    html: `<p>&nbsp;</p><p>The whole thing is one file. No apps, no installs — just a single page that opens in your browser and does everything from there.</p><p>&nbsp;</p><p>An AI called Claude (made by Anthropic) built it from scratch. If you want to see how it works, the code is public at <a href="https://github.com/lemon-teapot/home">github.com/lemon-teapot/home</a>.</p>`
-  },
-  {
-    title: 'Hosted and open',
-    html: `<p>&nbsp;</p><p>No tracking, no cookies, nothing stored about you.</p><p>&nbsp;</p><p>The music was made with <a href="https://suno.com">suno.com</a> and has no copyright attached — take it, use it, do whatever you want. The rain sound came from a free library. Everything else was built from scratch.</p><p>&nbsp;</p><p>Full project at <a href="https://github.com/lemon-teapot/home">github.com/lemon-teapot/home</a>.</p>`
+    title: 'Features',
+    html: `<p>&nbsp;</p><p><strong>Ambient music.</strong> Shuffles through the playlist on loop. A mix of solo piano and piano with strings, generated by suno.com. Click the curtain to layer rain in. Click again to remove it.</p><p>&nbsp;</p><p><strong>Local weather.</strong> The LED display scrolls the current track, your city and temperature with a small weather icon (sunny, cloudy, rainy and so on), and today's date. The >> arrows skip tracks. Click the display to mute or unmute.</p><p>&nbsp;</p><p><strong>Live clock.</strong> The analog clock above the fireplace reads your actual local time, moving every second.</p><p>&nbsp;</p><p><strong>Works offline.</strong> The first time you visit on WiFi, the page saves itself to your device, music and all. After that it works in airplane mode. On iPhone or Android, Add to Home Screen opens it full-screen.</p>`
   },
   {
     title: 'Privacy',
-    html: `<p>&nbsp;</p>
-<p>No cookies. No tracking. Nothing is collected here.</p>
-<p>&nbsp;</p>
-<p>If you see your city and temperature in the display, you allowed location access when the browser asked. You don't have to.</p>
-<p>&nbsp;</p>
-<p>If you do say yes, your location quietly goes to two free weather services to figure out what city you're in and how warm it is. We never see it. Say no and the weather won't show, but everything else still works.</p>
-<p>&nbsp;</p>
-<p>The fonts load from Google's servers, which is pretty standard for most websites. The site itself lives on GitHub and runs through Cloudflare. Neither is set up to track you.</p>`
+    html: `<p>&nbsp;</p><p><strong>Open source.</strong> The music was made with <a href="https://suno.com">suno.com</a> and has no copyright. Take it, use it, do whatever you like. The rain track came from a free sound library. Everything else was built from scratch.</p><p>&nbsp;</p><p><strong>No tracking.</strong> No cookies. No analytics. Nothing collected. No ads. No account needed. The whole project is open source at <a href="https://github.com/lemon-teapot/home">github.com</a>.</p><p>&nbsp;</p><p><strong>Location.</strong> Optional. If you allow it, your coordinates go to open-meteo.com for temperature and bigdatacloud.com for the city name. Say no and the weather just won't show.</p>`
+  },
+  {
+    title: 'Framework',
+    html: `<p>&nbsp;</p><p>The whole thing is one HTML file. No apps, no installs, no framework. Just a page that opens in your browser and does everything from there.</p><p>&nbsp;</p><p>The room is drawn in SVG. The music plays through standard browser audio. The clock updates every second in JavaScript. The weather comes from two free open APIs.</p><p>&nbsp;</p><p>An AI called Claude (made by Anthropic) built it from scratch. The source code is public at <a href="https://github.com/lemon-teapot/home">github.com</a> if you want to look.</p>`
   },
   {
     title: 'Credits', noTitle: true,
