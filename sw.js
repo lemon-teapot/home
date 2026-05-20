@@ -1,59 +1,43 @@
-// Service Worker — offline / airplane mode support
+// Service Worker v2 — maximally simple, zero install-time failures
 //
-// Strategy:
-//   Install caches only the page itself (tiny, always succeeds).
-//   MP3s and other assets are cached opportunistically as they load over WiFi.
-//   After a WiFi session where tracks played, those tracks are available offline.
-//
-// Bump CACHE_NAME to force all clients to re-cache on next WiFi visit.
-const CACHE_NAME = 'lemonteapot-v1.1';
+// No caching during install (nothing can go wrong).
+// Everything caches through the fetch handler as pages and tracks load on WiFi.
+// After one WiFi session the page + played tracks are all available offline.
+const CACHE = 'lemonteapot-v2';
 
-// Only these are pre-cached at install — small files, fast, atomic success guaranteed
-const PRECACHE = ['/', '/index.html', '/manifest.json', '/robots.txt'];
+// Install: activate immediately, no blocking work
+self.addEventListener('install', () => self.skipWaiting());
 
-// Install: cache the page shell immediately
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE))
-      .then(() => self.skipWaiting())
-  );
-});
-
-// Activate: remove old caches, take control of all open tabs instantly
+// Activate: clean up old caches, take control of all tabs now
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-      ))
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
 
-// Fetch: serve from cache when available; cache every successful WiFi response
+// Fetch: cache-first for same-origin resources; silently cache every successful response
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-  if (url.origin !== location.origin) return; // weather API calls bypass the SW
+  if (url.origin !== self.location.origin) return; // let weather/font requests through
 
   e.respondWith(
-    caches.match(e.request).then(cached => {
+    caches.open(CACHE).then(async cache => {
+      const cached = await cache.match(e.request);
       if (cached) return cached;
 
-      return fetch(e.request).then(response => {
-        if (response.ok) {
-          // Cache this resource for next time (MP3s build up here as tracks play)
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-        }
+      try {
+        const response = await fetch(e.request);
+        if (response.ok) cache.put(e.request, response.clone());
         return response;
-      }).catch(() => {
-        // Offline and not cached — return the page for navigation requests
-        if (e.request.destination === 'document') {
-          return caches.match('/index.html');
+      } catch {
+        // Offline and not cached — serve the page shell for navigation requests
+        if (e.request.mode === 'navigate') {
+          return cache.match('/') || cache.match('/index.html');
         }
-      });
+      }
     })
   );
 });
