@@ -1482,7 +1482,11 @@ const BOOK_CHAPTERS = [
   },
   {
     title: 'The music',
-    html: `<p>&nbsp;</p><p>Six pieces generated with Suno.ai — a mix of solo piano and piano with strings. No copyright. Take them, use them, do whatever.</p><p>&nbsp;</p>
+    html: `<p>&nbsp;</p><p>Six pieces made with Suno.ai — a mix of solo piano and piano with strings. No copyright attached. Take them, use them, do whatever you like.</p>`
+  },
+  {
+    title: 'The music', noTitle: true,
+    html: `<p>&nbsp;</p>
 <table>
 <tr><th>Track</th><th>Download</th></tr>
 <tr><td>Cloud Veil I</td><td><a href="https://github.com/lemon-teapot/lemonteapot-home/raw/main/cloud-veil-1.mp3">cloud-veil-1.mp3</a></td></tr>
@@ -1492,6 +1496,7 @@ const BOOK_CHAPTERS = [
 <tr><td>Soft Pedal Drift I</td><td><a href="https://github.com/lemon-teapot/lemonteapot-home/raw/main/soft-pedal-drift-1.mp3">soft-pedal-drift-1.mp3</a></td></tr>
 <tr><td>Soft Pedal Drift II</td><td><a href="https://github.com/lemon-teapot/lemonteapot-home/raw/main/soft-pedal-drift-2.mp3">soft-pedal-drift-2.mp3</a></td></tr>
 </table>
+<p>&nbsp;</p>
 <p>The rain track is from a free sound library.</p>`
   },
   {
@@ -1500,22 +1505,22 @@ const BOOK_CHAPTERS = [
   },
   {
     title: "How it's built",
-    html: `<p>&nbsp;</p><p>One HTML file. No framework, no build tools, nothing installed. The scene is inline SVG. Audio uses the Web Audio API with regular HTML audio elements. The MP3s live in the same folder as the page.</p><p>&nbsp;</p><p>Claude — Anthropic's AI assistant — designed and built the whole thing. The source is at <a href="https://github.com/lemon-teapot/lemonteapot-home">github.com/lemon-teapot/lemonteapot-home</a> if you want to look.</p>`
+    html: `<p>&nbsp;</p><p>The whole thing is one file. No apps, no installs — just a single page that opens in your browser and does everything from there.</p><p>&nbsp;</p><p>An AI called Claude (made by Anthropic) built it from scratch. If you want to see how it works, the code is public at <a href="https://github.com/lemon-teapot/lemonteapot-home">github.com/lemon-teapot/lemonteapot-home</a>.</p>`
   },
   {
     title: 'Hosted and open',
-    html: `<p>&nbsp;</p><p>Runs on GitHub Pages and served through Cloudflare. No analytics. No cookies. Nothing tracked.</p><p>&nbsp;</p><p>The music was generated on <a href="https://suno.com">suno.com</a> — no copyright, free to use. The rain track came from a free sound library. Everything else was made from scratch.</p><p>&nbsp;</p><p>Repository: <a href="https://github.com/lemon-teapot/lemonteapot-home">lemon-teapot/lemonteapot-home</a></p>`
+    html: `<p>&nbsp;</p><p>No tracking, no cookies, nothing stored about you.</p><p>&nbsp;</p><p>The music was made with <a href="https://suno.com">suno.com</a> and has no copyright attached — take it, use it, do whatever you want. The rain sound came from a free library. Everything else was built from scratch.</p><p>&nbsp;</p><p>Full project at <a href="https://github.com/lemon-teapot/lemonteapot-home">github.com/lemon-teapot/lemonteapot-home</a>.</p>`
   },
   {
     title: 'Privacy',
     html: `<p>&nbsp;</p>
-<p>No cookies. No analytics. No tracking scripts.</p>
+<p>No cookies. No tracking. Nothing is collected here.</p>
 <p>&nbsp;</p>
-<p>Location access is optional. It only exists to show your city and temperature in the display.</p>
+<p>If you see your city and temperature in the display, you allowed location access when the browser asked. You don't have to.</p>
 <p>&nbsp;</p>
-<p>If you allow it, your coordinates go to open-meteo.com and bigdatacloud.net. Nothing is stored on our end. Declining changes nothing except the weather won't show.</p>
+<p>If you do say yes, your location quietly goes to two free weather services to figure out what city you're in and how warm it is. We never see it. Say no and the weather won't show, but everything else still works.</p>
 <p>&nbsp;</p>
-<p>Fonts load from Google's CDN. Cloudflare routes traffic. GitHub Pages hosts the files. All standard infrastructure.</p>`
+<p>The fonts load from Google's servers, which is pretty standard for most websites. The site itself lives on GitHub and runs through Cloudflare. Neither is set up to track you.</p>`
   },
   {
     title: 'Credits', noTitle: true,
