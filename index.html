@@ -1150,7 +1150,7 @@ let pianoEl = null, rainEl = null;
 // Must be declared before buildTicker() is first called
 const DAYS        = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-let weatherCity = '...', weatherTemp = '--';
+let weatherCity = '...', weatherTemp = '--', weatherFetching = false;
 
 // ── Playlist ──────────────────────────────────────────────────────────
 // ── PLAYLIST — add new Suno tracks here ──────────────────────────────
@@ -1175,6 +1175,7 @@ function shuffle(arr) {
 
 // ── Fire crackle (always, very subtle) ───────────────────────────────
 function startFireCrackle() {
+  if (!ctx || !masterGain) return; // guard: only safe to call after initAudio
   const sr=ctx.sampleRate, len=sr*3;
   const buf=ctx.createBuffer(1,len,sr); const d=buf.getChannelData(0); let last=0;
   for (let i=0;i<len;i++){last=(last+0.02*(Math.random()*2-1))/1.02;d[i]=last*3;}
@@ -1243,7 +1244,8 @@ function buildSegments() {
 }
 
 function loadSegment(idx) {
-  tickerSegs   = buildSegments();
+  tickerSegs = buildSegments();
+  if (!tickerSegs.length) return; // nothing to display
   tickerSegIdx = ((idx % tickerSegs.length) + tickerSegs.length) % tickerSegs.length;
   const textEl = document.getElementById('display-text');
   if (!textEl) return;
@@ -1396,6 +1398,7 @@ function closeCurtain() {
 // ── Sound toggle ──────────────────────────────────────────────────────
 function toggleSound() {
   if (!audioStarted) { initAudio(); return; } // first click starts audio (unmuted)
+  if (!ctx || !masterGain) return; // defensive: should never be null here but guard anyway
   muted = !muted;
   masterGain.gain.linearRampToValueAtTime(muted ? 0 : 1, ctx.currentTime + 0.5);
   updateSoundBtn();
@@ -1445,10 +1448,12 @@ updateClock();
 
 // Weather: fetches once on load, refreshes every 30 minutes
 async function fetchWeather() {
+  if (weatherFetching) return; // prevent overlapping requests
   if (!navigator.geolocation) {
     weatherCity = 'Location off'; weatherTemp = '--';
     return;
   }
+  weatherFetching = true;
   navigator.geolocation.getCurrentPosition(async pos => {
     try {
       const { latitude: lat, longitude: lon } = pos.coords;
@@ -1463,9 +1468,11 @@ async function fetchWeather() {
     } catch(e) {
       weatherCity = 'Unavailable'; weatherTemp = '--';
     }
+    weatherFetching = false;
     // No restart needed — loadSegment() calls buildSegments() fresh at each transition
   }, () => {
     weatherCity = 'No location'; weatherTemp = '--';
+    weatherFetching = false;
   }, { timeout: 8000 });
 }
 fetchWeather();
