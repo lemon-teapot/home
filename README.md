@@ -47,7 +47,7 @@ Location is optional. If you allow it, your location goes to two free weather se
 
 The whole thing is one HTML file. No framework, no build tools, no dependencies. The room is drawn in SVG. The music plays through standard browser audio. The clock updates every second in JavaScript. The weather comes from two free open APIs.
 
-An AI called Claude (made by Anthropic) built it. The source is at [github.com/lemon-teapot/home](https://github.com/lemon-teapot/home).
+An AI called Claude (made by Anthropic) built it. The source is at [github.com](https://github.com/lemon-teapot/home).
 
 ## Credits
 
