@@ -29,12 +29,6 @@ The LED display on the shelf scrolls the current track, your local weather with 
 
 The clock above the fireplace reads your actual local time, live.
 
-## Works offline too
-
-The first time you visit on WiFi, the page saves itself to your device, music and all. After that it works in airplane mode, on the train, wherever.
-
-On iPhone or Android, tap Share and choose **Add to Home Screen**. It opens full-screen.
-
 ## Open, free and private
 
 The music was made with [suno.com](https://suno.com) and has no copyright. Take it, use it, do whatever you like. The rain track came from a free sound library. Everything else was built from scratch.
