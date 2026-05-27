@@ -497,12 +497,12 @@
 <line x1="257" y1="182" x2="420" y2="182" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
 <line x1="257" y1="186" x2="420" y2="186" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
 <line x1="257" y1="190" x2="420" y2="190" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
-<!-- Repeat button housing (left of skip) -->
-<rect x="399" y="168" width="21" height="32" rx="2" fill="#1a0e06"/>
-<rect x="401" y="171" width="17" height="22" rx="1" fill="#030a03"/>
-<!-- Skip button housing (right side of wooden box) -->
-<rect x="420" y="168" width="21" height="32" rx="2" fill="#1a0e06"/>
-<rect x="422" y="171" width="17" height="22" rx="1" fill="#030a03"/>
+<!-- Repeat button housing (left of skip) — full wooden-box height -->
+<rect x="399" y="164" width="21" height="44" rx="2" fill="#1a0e06"/>
+<rect x="401" y="165" width="17" height="42" rx="1" fill="#030a03"/>
+<!-- Skip button housing (right side of wooden box) — full wooden-box height -->
+<rect x="420" y="164" width="21" height="44" rx="2" fill="#1a0e06"/>
+<rect x="422" y="165" width="17" height="42" rx="1" fill="#030a03"/>
 <!-- Wooden knob on skip button -->
 <rect x="250" y="172" width="3" height="4" rx="1" fill="#5a2a10"/>
 <rect x="250" y="180" width="3" height="4" rx="1" fill="#5a2a10"/>
@@ -1071,15 +1071,19 @@
 
   <!-- Repeat button: toggle single-track repeat. stopPropagation prevents mute toggle. -->
   <g id="repeat-btn" onclick="toggleRepeat(event)" style="cursor:pointer">
-    <rect x="399" y="168" width="21" height="32" fill="transparent"/>
-    <!-- Loop rectangle (clockwise) + arrowhead at top-right corner -->
-    <path id="repeat-loop" d="M404,178 L415,178 L415,188 L404,188 L404,178" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="399" y="164" width="21" height="44" fill="transparent"/>
+    <!-- Circular arc ~260° clockwise (gap at top), centred at 409.5,186 r=5 -->
+    <path id="repeat-loop" d="M413,183 A5,5 0 1,1 406,183" fill="none" stroke-width="1.8" stroke-linecap="round">
       <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="3s" repeatCount="indefinite"/>
     </path>
-    <path id="repeat-arrow" d="M412,176 L415,178 L412,180" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Arrowhead at arc end (top-left), pointing clockwise/right -->
+    <path id="repeat-arrow" d="M404,181.5 L406,183 L404,184.5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="3s" repeatCount="indefinite"/>
     </path>
-    <rect id="repeat-border" x="401" y="171" width="17" height="22" rx="1" fill="none" stroke="#20f020" stroke-width="0.8">
+    <!-- Diagonal slash — visible when repeat OFF, hidden when repeat ON -->
+    <line id="repeat-off-line" x1="403" y1="181" x2="416" y2="191" stroke="#20f020" stroke-width="0.9" stroke-linecap="round"/>
+    <!-- Pulsing border — full wooden-box height -->
+    <rect id="repeat-border" x="401" y="165" width="17" height="42" rx="1" fill="none" stroke="#20f020" stroke-width="0.8">
       <animate attributeName="opacity" values="0.3;0.9;0.3" dur="3s" repeatCount="indefinite"/>
     </rect>
     <title>Toggle repeat</title>
@@ -1088,14 +1092,14 @@
   <!-- Skip arrows: pulsating >> synced to blinker (2s cycle), box 3px wider on left -->
   <!-- Chevron: skip track (or start audio on first click). stopPropagation prevents mute toggle. -->
   <g onclick="skipOrStart(event)" style="cursor:pointer">
-    <rect x="420" y="168" width="21" height="32" fill="transparent"/>
-    <path d="M427,178 L430,182 L427,186" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="420" y="164" width="21" height="44" fill="transparent"/>
+    <path d="M427,182 L430,186 L427,190" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="3s" repeatCount="indefinite"/>
     </path>
-    <path d="M432,178 L435,182 L432,186" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M432,182 L435,186 L432,190" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="3s" repeatCount="indefinite"/>
     </path>
-    <rect x="422" y="171" width="17" height="22" rx="1" fill="none" stroke="#20f020" stroke-width="0.8">
+    <rect x="422" y="165" width="17" height="42" rx="1" fill="none" stroke="#20f020" stroke-width="0.8">
       <animate attributeName="opacity" values="0.3;0.9;0.3" dur="3s" repeatCount="indefinite"/>
     </rect>
     <title>Skip to next track</title>
@@ -1440,16 +1444,17 @@ function updateRepeatBtn() {
   const loop   = document.getElementById('repeat-loop');
   const arrow  = document.getElementById('repeat-arrow');
   const border = document.getElementById('repeat-border');
+  const slash  = document.getElementById('repeat-off-line');
   if (repeatMode) {
-    // CSS inline stroke overrides SMIL animation → solid bright green
     if (loop)   loop.style.stroke   = '#40ff40';
     if (arrow)  arrow.style.stroke  = '#40ff40';
     if (border) { border.style.stroke = '#40ff40'; border.style.opacity = '1'; }
+    if (slash)  slash.style.display = 'none';
   } else {
-    // Remove overrides → SMIL pulse resumes
     if (loop)   loop.style.stroke   = '';
     if (arrow)  arrow.style.stroke  = '';
     if (border) { border.style.stroke = ''; border.style.opacity = ''; }
+    if (slash)  slash.style.display = '';
   }
 }
 
