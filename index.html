@@ -329,9 +329,8 @@
   </linearGradient>
 
   <clipPath id="wclip"><rect x="460" y="30" width="178" height="138" rx="3"/></clipPath>
-  <!-- Blinker zone x:257-270, text zone x:272-413 -->
-  <!-- Blinker zone x:257-275 (18px), text clip starts at x:277 -->
-  <clipPath id="display-clip"><rect x="277" y="171" width="136" height="22"/></clipPath>
+  <!-- Blinker zone x:257-275 (18px), text clip starts at x:277, ends x:392 (narrowed for repeat btn) -->
+  <clipPath id="display-clip"><rect x="277" y="171" width="115" height="22"/></clipPath>
   <filter id="led-glow" x="-25%" y="-25%" width="150%" height="150%">
     <feGaussianBlur stdDeviation="0.9" result="blur"/>
     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -498,6 +497,9 @@
 <line x1="257" y1="182" x2="420" y2="182" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
 <line x1="257" y1="186" x2="420" y2="186" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
 <line x1="257" y1="190" x2="420" y2="190" stroke="#060f06" stroke-width="0.6" opacity="0.7"/>
+<!-- Repeat button housing (left of skip) -->
+<rect x="399" y="168" width="21" height="32" rx="2" fill="#1a0e06"/>
+<rect x="401" y="171" width="17" height="22" rx="1" fill="#030a03"/>
 <!-- Skip button housing (right side of wooden box) -->
 <rect x="420" y="168" width="21" height="32" rx="2" fill="#1a0e06"/>
 <rect x="422" y="171" width="17" height="22" rx="1" fill="#030a03"/>
@@ -1067,6 +1069,22 @@
     </g>
   </g>
 
+  <!-- Repeat button: toggle single-track repeat. stopPropagation prevents mute toggle. -->
+  <g id="repeat-btn" onclick="toggleRepeat(event)" style="cursor:pointer">
+    <rect x="399" y="168" width="21" height="32" fill="transparent"/>
+    <!-- Loop rectangle (clockwise) + arrowhead at top-right corner -->
+    <path id="repeat-loop" d="M404,178 L415,178 L415,188 L404,188 L404,178" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="3s" repeatCount="indefinite"/>
+    </path>
+    <path id="repeat-arrow" d="M412,176 L415,178 L412,180" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="stroke" values="#0a500a;#20f020;#0a500a" dur="3s" repeatCount="indefinite"/>
+    </path>
+    <rect id="repeat-border" x="401" y="171" width="17" height="22" rx="1" fill="none" stroke="#20f020" stroke-width="0.8">
+      <animate attributeName="opacity" values="0.3;0.9;0.3" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <title>Toggle repeat</title>
+  </g>
+
   <!-- Skip arrows: pulsating >> synced to blinker (2s cycle), box 3px wider on left -->
   <!-- Chevron: skip track (or start audio on first click). stopPropagation prevents mute toggle. -->
   <g onclick="skipOrStart(event)" style="cursor:pointer">
@@ -1149,7 +1167,7 @@
 // Piano: 50% vol · Rain: 12.5% vol (curtain open only) · no Web Audio API
 
 // No Web Audio API needed — all audio uses native HTML5 elements
-let muted = false, curtainIsOpen = false, audioStarted = false;
+let muted = false, curtainIsOpen = false, audioStarted = false, repeatMode = false;
 let pianoEl = null, rainEl = null;
 
 // Must be declared before buildTicker() is first called
@@ -1348,7 +1366,7 @@ function initAudio() {
   // Piano MP3 — native HTML5 Audio (survives screen lock)
   pianoEl = new Audio();
   pianoEl.volume = muted ? 0 : 0.5;
-  pianoEl.addEventListener('ended', nextTrack);
+  pianoEl.addEventListener('ended', () => repeatMode ? loadTrack(trackIdx) : nextTrack());
   shuffle(playlist); trackIdx = 0;
   loadTrack(trackIdx);
 
@@ -1409,6 +1427,30 @@ function closeCurtain() {
   if (rainEl) fadeVolume(rainEl, rainEl.volume, 0, 1200);
   setTimeout(() => { if (rainEl && !curtainIsOpen) rainEl.pause(); }, 1400);
   updatePlayerUI();
+}
+
+// ── Repeat toggle ─────────────────────────────────────────────────────
+function toggleRepeat(e) {
+  e.stopPropagation();
+  repeatMode = !repeatMode;
+  updateRepeatBtn();
+}
+
+function updateRepeatBtn() {
+  const loop   = document.getElementById('repeat-loop');
+  const arrow  = document.getElementById('repeat-arrow');
+  const border = document.getElementById('repeat-border');
+  if (repeatMode) {
+    // CSS inline stroke overrides SMIL animation → solid bright green
+    if (loop)   loop.style.stroke   = '#40ff40';
+    if (arrow)  arrow.style.stroke  = '#40ff40';
+    if (border) { border.style.stroke = '#40ff40'; border.style.opacity = '1'; }
+  } else {
+    // Remove overrides → SMIL pulse resumes
+    if (loop)   loop.style.stroke   = '';
+    if (arrow)  arrow.style.stroke  = '';
+    if (border) { border.style.stroke = ''; border.style.opacity = ''; }
+  }
 }
 
 // ── Sound toggle ──────────────────────────────────────────────────────
